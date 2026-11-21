@@ -1,0 +1,18 @@
+# Lighthouse, sunset to night
+
+![poster](../../gallery/posters/3d-dao.jpg)
+
+**You give the AI:** A prompt  
+**Tools:** Claude Code, HyperFrames, Three.js  
+**Cost:** Free  
+**Length:** 16s, 1080x1920
+
+## Prompt
+
+```text
+Make a 16-second vertical (1080x1920) 3D reel drawn entirely in code with Three.js inside HyperFrames, no AI images and no paid services: a flat-shaded low-poly red-and-white lighthouse with a small keeper's cottage, pine trees and a grassy plateau on a faceted rocky island, set in a stylised ocean of animated low-poly waves with foam pieces at the waterline. Play it as a time-lapse from golden sunset to night. The sky gradient moves from gold to coral, magenta, violet and then deep navy, while the sun disc sinks below the horizon, stars fade in one by one and twinkle, and a crescent moon appears. A small sailboat crosses behind the island, bobbing on the waves, and lights a tiny lantern at dusk. Seagulls circle the tower, then drift away as it gets dark. When the lamp turns on, two soft volumetric beams sweep through light fog, and the beams are the only glow. Tower and cottage windows light up one at a time. Use a slow cinematic dolly-in with a slight orbit, rich colour that is sunset-warm and then moonlit-blue, and seeded randomness, with every frame computed from timeline time so the render is deterministic. Add a calm cinematic music bed with fades and no sound effects, put no text on screen, and fade in from black and out to black.
+```
+
+## Source
+
+`source/` is the HyperFrames project. Add the media listed in `source/MEDIA.md`, then run `npx hyperframes render`.

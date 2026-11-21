@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script type="importmap">{ "imports": { "three": "./lib/three.module.js" } }</script>
+<style>
+@font-face { font-family: "LoraI"; font-style: italic; font-weight: 500; src: url("assets/fonts/Lora-500-italic-latin.woff2") format("woff2"); }
+:root { --ink: #fbeee2; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #f3d6c6; }
+#root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #f3d6c6; }
+#bg-day, #bg-dusk, #bg-night { position: absolute; inset: 0; }
+#bg-day { background: radial-gradient(ellipse 90% 60% at 50% 46%, #fbe7da 0%, #f2cdbb 55%, #e6b3a3 100%); }
+#bg-dusk { background: radial-gradient(ellipse 90% 60% at 50% 46%, #f4c2a8 0%, #c98a96 55%, #7d5f8e 100%); opacity: 0; }
+#bg-night { background: radial-gradient(ellipse 90% 60% at 50% 46%, #3a3f78 0%, #232657 55%, #14163a 100%); opacity: 0; }
+#gl { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+#title { position: absolute; left: 0; right: 0; top: 1470px; text-align: center; }
+#title span { display: inline-block; font-family: "LoraI", serif; font-style: italic; font-weight: 500; font-size: 66px; line-height: 1.25; letter-spacing: 0.01em; color: var(--ink); opacity: 0; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="17" data-width="1080" data-height="1920">
+  <div id="bg-day"></div>
+  <div id="bg-dusk"></div>
+  <div id="bg-night"></div>
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <div id="title" class="clip" data-start="13.4" data-duration="3.6" data-track-index="1"><span id="title-text" data-var-text="title">Tiny Room</span></div>
+  <audio id="music" src="assets/music.mp3" data-start="0" data-duration="17" data-track-index="9" data-volume="0.9"></audio>
+</div>
+
+<script>
+  window.__timelines = window.__timelines || {};
+  const tl = gsap.timeline({ paused: true });
+  // dusk: page background follows the sky
+  tl.fromTo("#bg-dusk", { opacity: 0 }, { opacity: 1, duration: 1.6, ease: "sine.inOut" }, 8.2);
+  tl.fromTo("#bg-night", { opacity: 0 }, { opacity: 1, duration: 2.2, ease: "sine.inOut" }, 9.6);
+  tl.fromTo("#title-text", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1.1, ease: "power2.out" }, 13.5);
+  tl.set({}, {}, 17);
+  window.__timelines["main"] = tl;
+</script>
+
+<script type="module">
+import * as THREE from "three";
+import { RoundedBoxGeometry } from "./lib/RoundedBoxGeometry.js";
+import { RoomEnvironment } from "./lib/RoomEnvironment.js";
+
+const W = 1080, H = 1920, DUR = 17;
+function mulberry32(a) { return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const rnd = mulberry32(20261121);
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const smooth = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * (3 - 2 * k); };
+const inOut = (k) => 0.5 - 0.5 * Math.cos(Math.PI * clamp(k));
+// soft spring 0 -> 1 with ~10% overshoot, settles by p = 1
+const spring = (p) => (p <= 0 ? 0 : p >= 1 ? 1 : 1 - Math.exp(-6 * p) * Math.cos(p * Math.PI * 2.6));
+
+const canvas = document.getElementById("gl");
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(W, H, false);
+renderer.setClearColor(0x000000, 0);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.VSMShadowMap;
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.55;
+
+const camera = new THREE.PerspectiveCamera(20, W / H, 1, 120);
+
+// ---------- materials ----------
+const mat = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.82, metalness: 0, ...o });
+const C = {
+  wall: mat("#f4e4d4"), wallTrim: mat("#fbf3ea"), slabTop: mat("#f0dcc6"), slabBase: mat("#9fbfae"),
+  frame: mat("#fffaf3", { roughness: 0.6 }), woodBed: mat("#c98e68"), woodDesk: mat("#c79a74"),
+  sheet: mat("#fbf6ef"), blanket: mat("#93b4dc"), pillow: mat("#ffffff"), rug: mat("#f0a993"), rugIn: mat("#f7cbb8"),
+  chair: mat("#f1c35f"), dark: mat("#3d4250", { roughness: 0.5 }), key: mat("#e9e4dc", { roughness: 0.6 }),
+  mug: mat("#e9786b", { roughness: 0.45 }), lampMetal: mat("#7fa7a0", { roughness: 0.45, metalness: 0.15 }),
+  pot: mat("#d98a68"), potW: mat("#f6efe6"), soil: mat("#6b4a3a"),
+  leaf: mat("#6faa78", { flatShading: true, roughness: 0.7 }), leaf2: mat("#4f8d63", { flatShading: true, roughness: 0.7 }),
+  pouf: mat("#b6a6dc"), cat: mat("#f1a85f", { roughness: 0.9 }), catW: mat("#fff3e6", { roughness: 0.9 }),
+};
+const bookColors = ["#f2a0a0", "#9cc7e4", "#f6d38a", "#a9d4b4", "#c9b3e6", "#f5b98f", "#8fb8a8"];
+
+function rb(w, h, d, r, m, seg = 3) {
+  const mesh = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, seg, Math.min(r, w / 2, h / 2, d / 2)), m);
+  mesh.castShadow = true; mesh.receiveShadow = true; return mesh;
+}
+function box(w, h, d, m) { const mesh = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); mesh.castShadow = true; mesh.receiveShadow = true; return mesh; }
+function cyl(rt, rb_, h, m, seg = 28) { const mesh = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb_, h, seg), m); mesh.castShadow = true; mesh.receiveShadow = true; return mesh; }
+function at(mesh, x, y, z) { mesh.position.set(x, y, z); return mesh; }
+
+// ---------- build list ----------
+const room = new THREE.Group(); scene.add(room);
+const items = [];
+// g: group whose origin is the piece's base; t: start second; mode: "pop" (uniform spring), "rise" (y-scale), drop: fall height
+function piece(g, x, y, z, t, mode = "pop", drop = 0.7, dur = 0.85) {
+  g.position.set(x, y, z); room.add(g);
+  items.push({ g, base: new THREE.Vector3(x, y, z), t, mode, drop, dur });
+  return g;
+}
+const G = (...ms) => { const g = new THREE.Group(); ms.forEach((m) => g.add(m)); return g; };
+
+const F = 2.2; // half floor size
+
+// diorama slab
+piece(G(at(rb(4.95, 0.34, 4.95, 0.09, C.slabBase), 0, -0.33, 0), at(rb(4.85, 0.16, 4.85, 0.06, C.slabTop), 0, -0.09, 0)), 0, 0, 0, 0.15, "pop", 1.2, 1.0);
+
+// floor planks
+{
+  const n = 8, pw = (2 * F) / n, tones = ["#dcab80", "#d39f75", "#e0b48b", "#d6a67b"];
+  for (let i = 0; i < n; i++) {
+    const m = mat(tones[Math.floor(rnd() * tones.length)], { roughness: 0.7 });
+    const p = rb(pw - 0.02, 0.06, 2 * F, 0.02, m, 2); p.position.y = 0.03;
+    piece(G(p), -F + pw * (i + 0.5), 0, 0, 0.75 + i * 0.05, "pop", 0.5, 0.7);
+  }
+}
+
+// walls (rise from the floor). Left wall at x=-F carries the window; back wall at z=-F.
+const T = 0.18, WH = 3.0;
+const WIN = { z0: 0.15, z1: 1.55, y0: 1.05, y1: 2.35 };
+{
+  const L = new THREE.Group();
+  const lx = -F - T / 2, zA = -F - T, zB = F;
+  const part = (z0, z1, y0, y1) => L.add(at(box(T, y1 - y0, z1 - z0, C.wall), lx, (y0 + y1) / 2, (z0 + z1) / 2));
+  part(zA, zB, 0, WIN.y0); part(zA, zB, WIN.y1, WH); part(zA, WIN.z0, WIN.y0, WIN.y1); part(WIN.z1, zB, WIN.y0, WIN.y1);
+  L.add(at(rb(T + 0.04, 0.05, zB - zA + 0.04, 0.02, C.wallTrim), lx, WH + 0.02, (zA + zB) / 2));
+  L.add(at(box(0.03, 0.12, zB - zA - T, C.wallTrim), -F + 0.015, 0.12, (zA + T + zB) / 2));
+  piece(L, 0, 0, 0, 1.25, "rise", 0, 0.9);
+  const B = new THREE.Group();
+  B.add(at(box(2 * F, WH, T, C.wall), 0, WH / 2, -F - T / 2));
+  B.add(at(rb(2 * F + 0.04, 0.05, T + 0.04, 0.02, C.wallTrim), 0, WH + 0.02, -F - T / 2));
+  B.add(at(box(2 * F, 0.12, 0.03, C.wallTrim), 0, 0.12, -F + 0.015));
+  piece(B, 0, 0, 0, 1.4, "rise", 0, 0.9);
+}
+
+// window frame + sill (pivot at the window centre on the wall)
+{
+  const wz = (WIN.z0 + WIN.z1) / 2, wy = (WIN.y0 + WIN.y1) / 2, ww = WIN.z1 - WIN.z0, wh = WIN.y1 - WIN.y0;
+  const g = new THREE.Group(), fx = 0.0, ft = 0.07, fd = T + 0.06;
+  g.add(at(rb(fd, ft, ww + 2 * ft, 0.02, C.frame), fx, wh / 2 + ft / 2, 0));
+  g.add(at(rb(fd, ft, ww + 2 * ft, 0.02, C.frame), fx, -wh / 2 - ft / 2, 0));
+  g.add(at(rb(fd, wh, ft, 0.02, C.frame), fx, 0, ww / 2 + ft / 2));
+  g.add(at(rb(fd, wh, ft, 0.02, C.frame), fx, 0, -ww / 2 - ft / 2));
+  g.add(at(box(0.04, wh, 0.04, C.frame), fx, 0, 0));
+  g.add(at(box(0.04, 0.04, ww, C.frame), fx, 0.05, 0));
+  g.add(at(rb(0.22, 0.05, ww + 0.3, 0.02, C.frame), 0.12, -wh / 2 - ft - 0.01, 0));
+  piece(g, -F - T / 2, wy, wz, 2.0, "pop", 0, 0.8);
+}
+
+// sky seen through the window
+const skyU = { uN: { value: 0 }, uSun: { value: 0 }, uT: { value: 0 }, uStar: { value: 0 } };
+const sky = new THREE.Mesh(
+  new THREE.PlaneGeometry(WIN.z1 - WIN.z0 + 0.7, WIN.y1 - WIN.y0 + 0.6).rotateY(Math.PI / 2),
+  new THREE.ShaderMaterial({
+    uniforms: skyU, toneMapped: false,
+    vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }",
+    fragmentShader: `varying vec2 vUv; uniform float uN, uSun, uT, uStar;
+      float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+      void main(){
+        vec2 uv = vUv;
+        vec3 dTop = vec3(0.96,0.63,0.60), dBot = vec3(1.00,0.84,0.62);
+        vec3 nTop = vec3(0.08,0.09,0.24), nBot = vec3(0.28,0.22,0.44);
+        float y = clamp(uv.y, 0.0, 1.0);
+        vec3 c = mix(mix(dBot, dTop, y), mix(nBot, nTop, y), uN);
+        vec2 sp = vec2(0.42, mix(0.62, 0.12, uSun));
+        float d = length((uv - sp) * vec2(1.15, 1.0));
+        c = mix(c, vec3(1.0, 0.93, 0.74), (1.0 - smoothstep(0.085, 0.095, d)) * (1.0 - uN * 0.9));
+        c += vec3(1.0, 0.70, 0.42) * (1.0 - smoothstep(0.0, 0.42, d)) * 0.28 * (1.0 - uN);
+        vec2 g = floor(uv * vec2(46.0, 40.0)); vec2 f = fract(uv * vec2(46.0, 40.0)) - 0.5; float r = h(g);
+        float st = step(0.94, r) * (1.0 - smoothstep(0.0, 0.16, length(f))) * (0.65 + 0.35 * sin(uT * 2.3 + r * 50.0));
+        vec2 mp = vec2(0.66, 0.74); float md = length((uv - mp) * vec2(1.15, 1.0));
+        float moon = (1.0 - smoothstep(0.052, 0.06, md)) * (smoothstep(0.045, 0.06, length((uv - mp - vec2(-0.025, 0.018)) * vec2(1.15, 1.0))));
+        float hill = 0.20 + 0.045 * sin(uv.x * 8.0 + 0.7) + 0.025 * sin(uv.x * 21.0 + 2.0);
+        float hill2 = 0.30 + 0.05 * sin(uv.x * 5.0 + 2.2) + 0.02 * sin(uv.x * 17.0);
+        c += vec3(1.0, 0.97, 0.88) * (st * uStar + moon * uStar * 1.1);
+        vec3 h2c = mix(vec3(0.95, 0.66, 0.62), vec3(0.20, 0.18, 0.36), uN);
+        vec3 h1c = mix(vec3(0.84, 0.54, 0.56), vec3(0.12, 0.12, 0.26), uN);
+        c = mix(c, h2c, 1.0 - smoothstep(hill2 - 0.004, hill2 + 0.004, uv.y));
+        c = mix(c, h1c, 1.0 - smoothstep(hill - 0.004, hill + 0.004, uv.y));
+        gl_FragColor = vec4(c, 1.0);
+      }`,
+  }),
+);
+sky.position.set(-F - T - 0.03, (WIN.y0 + WIN.y1) / 2, (WIN.z0 + WIN.z1) / 2);
+room.add(sky);
+// shadow-only blocker so the low sun cannot sneak past the wall end
+{ const b = new THREE.Mesh(new THREE.BoxGeometry(T, WH, 3), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false })); b.position.set(-F - T / 2, WH / 2, F + 1.5); b.castShadow = true; scene.add(b); }
+
+// rug
+piece(G(at(cyl(1.05, 1.05, 0.025, C.rug, 48), 0, 0.0725, 0), at(cyl(0.72, 0.72, 0.028, C.rugIn, 48), 0, 0.074, 0)), 0.55, 0, 0.6, 2.45, "pop", 0.3, 0.8);
+
+// bed: frame, mattress, blanket, pillow arrive one by one
+const BX = -F + 0.72, BZ = -F + 1.12;
+{
+  const g = new THREE.Group();
+  g.add(at(rb(1.42, 0.26, 2.2, 0.05, C.woodBed), 0, 0.23, 0));
+  [[-0.62, -1.0], [0.62, -1.0], [-0.62, 1.0], [0.62, 1.0]].forEach(([x, z]) => g.add(at(cyl(0.05, 0.05, 0.12, C.woodBed, 12), x, 0.06, z)));
+  g.add(at(rb(1.46, 1.0, 0.1, 0.05, C.woodBed), 0, 0.56, -1.07));
+  g.add(at(rb(1.46, 0.5, 0.1, 0.05, C.woodBed), 0, 0.37, 1.07));
+  piece(g, BX, 0.06, BZ, 2.85, "pop", 0.9);
+}
+piece(G(at(rb(1.32, 0.2, 2.02, 0.08, C.sheet), 0, 0.1, 0)), BX, 0.42, BZ + 0.02, 3.2, "pop", 0.8);
+piece(G(at(rb(1.4, 0.08, 1.3, 0.04, C.blanket), 0, 0.04, 0), at(rb(1.4, 0.06, 0.2, 0.03, C.sheet), 0, 0.05, -0.68)), BX, 0.6, BZ + 0.38, 3.5, "pop", 0.6);
+piece(G(at(rb(0.92, 0.15, 0.42, 0.07, C.pillow), 0, 0.075, 0)), BX, 0.62, BZ - 0.72, 3.75, "pop", 0.6);
+
+// cat curled on the blanket (breathes slowly)
+const catBody = new THREE.Group();
+{
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.22, 20, 14), C.cat); body.scale.set(1.15, 0.6, 0.95); body.position.y = 0.12; body.castShadow = body.receiveShadow = true;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 18, 12), C.cat); head.position.set(0.2, 0.12, 0.12); head.castShadow = true;
+  const muzzle = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 10), C.catW); muzzle.scale.set(1, 0.7, 1); muzzle.position.set(0.29, 0.09, 0.17);
+  const earG = new THREE.ConeGeometry(0.045, 0.09, 4);
+  const e1 = new THREE.Mesh(earG, C.cat); e1.position.set(0.17, 0.23, 0.07); e1.rotation.set(-0.3, 0, 0.25);
+  const e2 = new THREE.Mesh(earG, C.cat); e2.position.set(0.25, 0.22, 0.17); e2.rotation.set(0.25, 0, -0.35);
+  const tail = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.04, 10, 24, Math.PI * 0.9), C.cat); tail.rotation.x = Math.PI / 2; tail.rotation.z = Math.PI * 0.55; tail.position.y = 0.05; tail.castShadow = true;
+  catBody.add(body, head, muzzle, e1, e2, tail);
+  catBody.rotation.y = -0.5;
+}
+piece(G(catBody), BX + 0.05, 0.68, BZ + 0.4, 7.7, "pop", 0.9);
+
+// shelf above the bed with books and a succulent
+const SY = 2.05;
+piece(G(at(rb(1.15, 0.06, 0.3, 0.02, C.woodDesk), 0, 0, 0), at(box(0.04, 0.16, 0.2, C.woodDesk), -0.45, -0.09, -0.04), at(box(0.04, 0.16, 0.2, C.woodDesk), 0.45, -0.09, -0.04)), BX, SY, -F + 0.15, 4.0, "pop", 0);
+{
+  let x = BX - 0.5;
+  for (let i = 0; i < 6; i++) {
+    const w = 0.07 + rnd() * 0.04, h = 0.24 + rnd() * 0.12, tilt = i === 5 ? -0.32 : 0;
+    const b = rb(w, h, 0.2, 0.012, mat(bookColors[i % bookColors.length], { roughness: 0.75 }), 2); b.position.y = h / 2;
+    const g = G(b); g.rotation.z = tilt;
+    piece(g, x + w / 2 + (tilt ? 0.04 : 0), SY + 0.03, -F + 0.15, 4.25 + i * 0.09, "pop", 0.35, 0.7);
+    x += w + 0.008;
+  }
+  const pot = cyl(0.07, 0.055, 0.1, C.potW, 18); pot.position.y = 0.05;
+  const s = new THREE.Group(); s.add(pot);
+  for (let i = 0; i < 7; i++) { const l = new THREE.Mesh(new THREE.ConeGeometry(0.025, 0.14, 5), i % 2 ? C.leaf : C.leaf2); const a = (i / 7) * Math.PI * 2; l.position.set(Math.cos(a) * 0.03, 0.15, Math.sin(a) * 0.03); l.rotation.set(Math.sin(a) * 0.5, 0, -Math.cos(a) * 0.5); l.castShadow = true; s.add(l); }
+  piece(s, BX + 0.38, SY + 0.03, -F + 0.15, 4.9, "pop", 0.4);
+}
+
+// desk
+const DX = 1.0, DZ = -F + 0.42, DY = 0.84;
+{
+  const g = new THREE.Group();
+  g.add(at(rb(1.8, 0.07, 0.8, 0.03, C.woodDesk), 0, DY - 0.035, 0));
+  [[-0.82, -0.32], [0.82, -0.32], [-0.82, 0.32], [0.82, 0.32]].forEach(([x, z]) => g.add(at(cyl(0.035, 0.03, DY - 0.07, C.woodDesk, 12), x, (DY - 0.07) / 2, z)));
+  g.add(at(rb(0.5, 0.2, 0.7, 0.03, C.woodDesk), 0.6, DY - 0.17, 0));
+  piece(g, DX, 0, DZ, 4.45, "pop", 0.9);
+}
+// chair
+{
+  const g = new THREE.Group();
+  g.add(at(rb(0.55, 0.08, 0.52, 0.04, C.chair), 0, 0.48, 0));
+  g.add(at(rb(0.55, 0.46, 0.07, 0.035, C.chair), 0, 0.8, 0.25));
+  [[-0.22, -0.2], [0.22, -0.2], [-0.22, 0.2], [0.22, 0.2]].forEach(([x, z]) => g.add(at(cyl(0.025, 0.025, 0.44, C.woodDesk, 10), x, 0.22, z)));
+  g.rotation.y = -0.22;
+  piece(g, DX - 0.05, 0, DZ + 0.82, 4.8, "pop", 0.8);
+}
+// monitor
+const scrCanvas = document.createElement("canvas"); scrCanvas.width = 512; scrCanvas.height = 300;
+{
+  const x = scrCanvas.getContext("2d");
+  const gr = x.createLinearGradient(0, 0, 512, 300); gr.addColorStop(0, "#9cc9f2"); gr.addColorStop(1, "#c7aef0");
+  x.fillStyle = gr; x.fillRect(0, 0, 512, 300);
+  x.fillStyle = "rgba(255,255,255,0.92)"; x.beginPath(); x.roundRect(40, 38, 280, 224, 16); x.fill();
+  const bars = [[64, 72, 170, "#f2a0a0"], [64, 104, 220, "#c9cfe0"], [64, 136, 150, "#c9cfe0"], [64, 168, 200, "#a9d4b4"], [64, 200, 120, "#c9cfe0"]];
+  bars.forEach(([bx, by, bw, c]) => { x.fillStyle = c; x.beginPath(); x.roundRect(bx, by, bw, 14, 7); x.fill(); });
+  x.fillStyle = "rgba(255,255,255,0.55)"; x.beginPath(); x.roundRect(344, 38, 128, 104, 14); x.fill();
+  x.fillStyle = "#f6d38a"; x.beginPath(); x.arc(408, 90, 26, 0, Math.PI * 2); x.fill();
+  x.fillStyle = "rgba(255,255,255,0.55)"; x.beginPath(); x.roundRect(344, 158, 128, 104, 14); x.fill();
+}
+const scrTex = new THREE.CanvasTexture(scrCanvas); scrTex.colorSpace = THREE.SRGBColorSpace;
+const scrMat = new THREE.MeshBasicMaterial({ map: scrTex, toneMapped: false, color: new THREE.Color(0.25, 0.25, 0.3) });
+{
+  const g = new THREE.Group();
+  g.add(at(rb(0.34, 0.025, 0.2, 0.01, C.dark), 0, 0.0125, 0));
+  g.add(at(box(0.05, 0.26, 0.04, C.dark), 0, 0.15, -0.03));
+  g.add(at(rb(0.94, 0.56, 0.05, 0.025, C.dark), 0, 0.52, 0));
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.88, 0.5), scrMat); scr.position.set(0, 0.52, 0.0262); g.add(scr);
+  piece(g, DX + 0.05, DY, DZ - 0.12, 5.15, "pop", 0.7);
+}
+piece(G(at(rb(0.58, 0.03, 0.18, 0.012, C.key), 0, 0.015, 0)), DX + 0.02, DY, DZ + 0.2, 5.4, "pop", 0.4, 0.7);
+{
+  const m = cyl(0.06, 0.055, 0.13, C.mug, 22); m.position.y = 0.065;
+  const hdl = new THREE.Mesh(new THREE.TorusGeometry(0.038, 0.012, 8, 16), C.mug); hdl.position.set(0.065, 0.07, 0); hdl.castShadow = true;
+  piece(G(m, hdl), DX + 0.66, DY, DZ + 0.16, 5.6, "pop", 0.5, 0.7);
+}
+// desk lamp
+const lampPos = new THREE.Vector3();
+const shadeMat = mat("#ffd9a8", { roughness: 0.6, side: THREE.DoubleSide, emissive: new THREE.Color("#ffb066"), emissiveIntensity: 0 });
+const bulbMat = new THREE.MeshBasicMaterial({ color: new THREE.Color("#fff1d6"), toneMapped: false });
+{
+  const g = new THREE.Group();
+  g.add(at(cyl(0.11, 0.12, 0.035, C.lampMetal, 24), 0, 0.0175, 0));
+  const arm = cyl(0.015, 0.015, 0.55, C.lampMetal, 8); arm.position.set(0.06, 0.29, 0); arm.rotation.z = -0.22; g.add(arm);
+  const head = new THREE.Group(); head.position.set(0.13, 0.56, 0.02);
+  const shade = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.16, 0.2, 24, 1, true), shadeMat); shade.castShadow = true;
+  const cap = cyl(0.05, 0.05, 0.02, C.lampMetal, 16); cap.position.y = 0.1;
+  const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.045, 14, 10), bulbMat); bulb.position.y = -0.02;
+  head.add(shade, cap, bulb); head.rotation.z = -0.35; g.add(head);
+  piece(g, DX - 0.62, DY, DZ - 0.05, 5.85, "pop", 0.6);
+  lampPos.set(DX - 0.62 + 0.15, DY + 0.5, DZ - 0.03);
+}
+// framed picture above the desk
+{
+  const pc = document.createElement("canvas"); pc.width = 256; pc.height = 192; const x = pc.getContext("2d");
+  x.fillStyle = "#fbe7d6"; x.fillRect(0, 0, 256, 192);
+  x.fillStyle = "#f6c27f"; x.beginPath(); x.arc(176, 70, 26, 0, Math.PI * 2); x.fill();
+  x.fillStyle = "#9cc7b1"; x.beginPath(); x.moveTo(0, 192); x.lineTo(70, 92); x.lineTo(130, 150); x.lineTo(180, 110); x.lineTo(256, 192); x.fill();
+  x.fillStyle = "#7fae99"; x.beginPath(); x.moveTo(0, 192); x.lineTo(40, 140); x.lineTo(110, 192); x.fill();
+  const tx = new THREE.CanvasTexture(pc); tx.colorSpace = THREE.SRGBColorSpace;
+  const g = new THREE.Group();
+  g.add(at(rb(0.74, 0.56, 0.05, 0.02, C.frame), 0, 0, 0.025));
+  const art = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.44), mat("#ffffff", { map: tx, roughness: 0.9 })); art.position.z = 0.052; art.receiveShadow = true; g.add(art);
+  piece(g, DX + 0.05, 2.15, -F, 6.2, "pop", 0);
+}
+
+// big leafy plant in the window corner
+const sway = [];
+{
+  const g = new THREE.Group();
+  g.add(at(cyl(0.27, 0.2, 0.46, C.pot, 28), 0, 0.23, 0));
+  g.add(at(cyl(0.285, 0.285, 0.05, C.pot, 28), 0, 0.45, 0));
+  g.add(at(cyl(0.25, 0.25, 0.02, C.soil, 24), 0, 0.46, 0));
+  piece(g, -F + 0.45, 0, F - 0.45, 6.55, "pop", 0.9);
+  const leaves = new THREE.Group();
+  const lg = new THREE.SphereGeometry(1, 7, 5);
+  for (let i = 0; i < 13; i++) {
+    const a = (i / 13) * Math.PI * 2 + rnd() * 0.4, up = 0.55 + rnd() * 0.75, len = 0.26 + rnd() * 0.14;
+    const stem = new THREE.Group(); stem.rotation.set(0, a, 0);
+    const tilt = new THREE.Group(); tilt.rotation.z = -(0.25 + (1 - up / 1.3) * 0.9); stem.add(tilt);
+    const st = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.014, up, 5), C.leaf2); st.position.y = up / 2; st.castShadow = true; tilt.add(st);
+    const lf = new THREE.Mesh(lg, i % 3 ? C.leaf : C.leaf2); lf.scale.set(len * 0.55, len, 0.035); lf.position.set(0, up + len * 0.7, 0); lf.rotation.z = -0.35; lf.castShadow = true; lf.receiveShadow = true;
+    tilt.add(lf); leaves.add(stem);
+    sway.push({ m: tilt, base: tilt.rotation.z, ph: rnd() * 6.28 });
+  }
+  piece(leaves, -F + 0.45, 0.46, F - 0.45, 6.85, "pop", 0, 1.0);
+}
+// pouf on the rug
+piece(G(at(rb(0.6, 0.34, 0.6, 0.16, C.pouf, 5), 0, 0.17, 0)), 1.55, 0.08, 1.15, 7.15, "pop", 0.8);
+// small floor plant by the desk
+{
+  const g = new THREE.Group();
+  g.add(at(cyl(0.13, 0.1, 0.24, C.potW, 20), 0, 0.12, 0));
+  for (let i = 0; i < 6; i++) { const h = 0.35 + rnd() * 0.25; const l = new THREE.Mesh(new THREE.ConeGeometry(0.04, h, 4), i % 2 ? C.leaf : C.leaf2); const a = (i / 6) * Math.PI * 2; l.position.set(Math.cos(a) * 0.04, 0.24 + h / 2, Math.sin(a) * 0.04); l.rotation.set(Math.sin(a) * 0.18, 0, -Math.cos(a) * 0.18); l.castShadow = true; g.add(l); }
+  piece(g, F - 0.28, 0, -F + 1.15, 7.4, "pop", 0.7);
+}
+
+// soft contact shadow under the diorama
+{
+  const sc = document.createElement("canvas"); sc.width = sc.height = 256; const x = sc.getContext("2d");
+  const gr = x.createRadialGradient(128, 128, 0, 128, 128, 128); gr.addColorStop(0, "rgba(40,20,30,0.5)"); gr.addColorStop(0.6, "rgba(40,20,30,0.22)"); gr.addColorStop(1, "rgba(40,20,30,0)");
+  x.fillStyle = gr; x.fillRect(0, 0, 256, 256);
+  const sh = new THREE.Mesh(new THREE.PlaneGeometry(8.2, 8.2).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, depthWrite: false }));
+  sh.position.y = -0.62; scene.add(sh); items.push({ g: sh, base: sh.position.clone(), t: 0.15, mode: "fade", drop: 0, dur: 1.0 });
+}
+
+// ---------- lights ----------
+const hemi = new THREE.HemisphereLight("#fff1e4", "#d2a68c", 1.25); scene.add(hemi);
+const key = new THREE.DirectionalLight("#fff4e8", 1.7);
+key.castShadow = true; key.shadow.mapSize.set(2048, 2048);
+Object.assign(key.shadow.camera, { left: -4.5, right: 4.5, top: 4.5, bottom: -4.5, near: 1, far: 30 });
+key.shadow.radius = 5; key.shadow.blurSamples = 16; key.shadow.bias = -0.0006;
+scene.add(key, key.target);
+const sun = new THREE.DirectionalLight("#ffb46e", 2.6);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -4, right: 4, top: 4, bottom: -4, near: 1, far: 30 });
+sun.shadow.radius = 4; sun.shadow.blurSamples = 12; sun.shadow.bias = -0.0006;
+sun.target.position.set(0.6, 0, 0.8); scene.add(sun, sun.target);
+const lamp = new THREE.PointLight("#ffab5e", 0, 9, 1.6);
+lamp.position.copy(lampPos); lamp.castShadow = true; lamp.shadow.mapSize.set(1024, 1024); lamp.shadow.radius = 5; lamp.shadow.blurSamples = 10; lamp.shadow.bias = -0.002;
+scene.add(lamp);
+const glowScr = new THREE.PointLight("#9cb8ff", 0, 3.2, 2); glowScr.position.set(DX + 0.05, DY + 0.5, DZ + 0.3); scene.add(glowScr);
+
+const cDayKey = new THREE.Color("#fff4e8"), cNightKey = new THREE.Color("#8ea2ff");
+const cDayHs = new THREE.Color("#fff1e4"), cNightHs = new THREE.Color("#6f78c8"), cDayHg = new THREE.Color("#d2a68c"), cNightHg = new THREE.Color("#3b3466");
+const tmp = new THREE.Color();
+
+// ---------- timeline-driven render ----------
+const N0 = 8.7, N1 = 11.6; // dusk window
+const MON = 10.2, LAMP = 11.0;
+function renderAt(t) {
+  t = clamp(t, 0, DUR);
+  for (const it of items) {
+    const p = clamp((t - it.t) / it.dur);
+    if (it.mode === "fade") { it.g.material.opacity = smooth(0, 1, p); continue; }
+    it.g.visible = p > 0;
+    const s = Math.max(1e-4, spring(p));
+    if (it.mode === "rise") it.g.scale.set(1, s, 1); else it.g.scale.setScalar(s);
+    it.g.position.y = it.base.y + it.drop * Math.pow(1 - clamp(p * 1.6), 3);
+  }
+  sky.visible = t >= 1.9;
+
+  const n = inOut((t - N0) / (N1 - N0)); // 0 day -> 1 night
+  const sunK = inOut((t - 7.2) / (N1 - 0.6 - 7.2));
+  skyU.uN.value = n; skyU.uSun.value = sunK; skyU.uT.value = t; skyU.uStar.value = smooth(N1 - 1.2, N1 + 1.0, t);
+
+  // golden low sun through the window, sinking and fading
+  const el = lerp(0.62, 0.16, sunK);
+  sun.position.set(-10, 10 * el + 0.6, 2.2 + 1.5 * sunK);
+  sun.intensity = 5.2 * (1 - smooth(0.55, 1.0, sunK));
+  key.position.set(3.0, 9.5, 7.5);
+  key.intensity = lerp(1.15, 0.42, n);
+  key.color.copy(tmp.copy(cDayKey).lerp(cNightKey, n));
+  hemi.intensity = lerp(0.72, 0.42, n);
+  hemi.color.copy(tmp.copy(cDayHs).lerp(cNightHs, n));
+  hemi.groundColor.copy(tmp.copy(cDayHg).lerp(cNightHg, n));
+  scene.environmentIntensity = lerp(0.42, 0.12, n);
+
+  // monitor wakes, then the lamp clicks on (one deterministic flicker)
+  const mon = smooth(MON, MON + 0.5, t);
+  scrMat.color.setScalar(lerp(0.32, 1.0, mon));
+  glowScr.intensity = 1.6 * mon * n;
+  let lk = smooth(LAMP, LAMP + 0.12, t);
+  if (t > LAMP + 0.12 && t < LAMP + 0.2) lk = 0.35;
+  lamp.intensity = 5.5 * lk;
+  shadeMat.emissiveIntensity = 1.1 * lk;
+  bulbMat.color.setRGB(lerp(0.9, 1.6, lk), lerp(0.86, 1.3, lk), lerp(0.8, 0.95, lk));
+
+  // life: leaves sway, cat breathes
+  for (const s of sway) s.m.rotation.z = s.base + Math.sin(t * 1.1 + s.ph) * 0.035;
+  catBody.scale.set(1, 1 + Math.sin(t * 2.2) * 0.035, 1);
+
+  // camera: slow orbit + gentle push in
+  const k = inOut(t / DUR);
+  const az = lerp(0.4, 1.0, k), elv = lerp(0.62, 0.52, k), R = lerp(37, 32.5, k);
+  const tgt = new THREE.Vector3(0, lerp(0.95, 1.05, k), 0);
+  camera.position.set(tgt.x + R * Math.cos(elv) * Math.cos(az), tgt.y + R * Math.sin(elv), tgt.z + R * Math.cos(elv) * Math.sin(az));
+  camera.lookAt(tgt);
+  room.position.y = 0;
+  renderer.render(scene, camera);
+}
+
+window.__hf = window.__hf || {};
+window.__hf.buildReady = window.__hf.buildReady || {};
+window.__hf.buildReady["tiny-room"] = (async () => {
+  renderAt(LAMP + 1);
+  if (renderer.compileAsync) await renderer.compileAsync(scene, camera);
+  renderAt(window.__hfThreeTime || 0);
+})();
+window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+</script>
+</body>
+</html>

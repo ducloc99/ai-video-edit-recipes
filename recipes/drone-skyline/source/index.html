@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<style>
+/* vietnamese */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 300;
+  font-display: block;
+  src: url(assets/fonts/f00.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 300;
+  font-display: block;
+  src: url(assets/fonts/f01.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 300;
+  font-display: block;
+  src: url(assets/fonts/f02.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f03.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f04.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f05.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f06.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f07.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f08.woff2) format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f09.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f10.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f11.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Drone promo, 9:16, 16 s, music only. A pilot-style flight HUD (horizon, altitude ladder, heading arc, tracking
+   bracket) boots on the take-off punch-in, the live view shrinks into a phone and grows back, the horizon line
+   becomes the title rule. SKYLINE MINI is fictional; ladder numbers are unitless UI decoration, no specs. */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #040507; }
+#root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #040507; color: #fff; --c: #F2F4F0; }
+.sc { position: absolute; inset: 0; overflow: hidden; }
+.clip { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.mono { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+#vig { position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse 75% 60% at 50% 48%, rgba(4,5,7,0) 45%, rgba(4,5,7,.62) 100%),
+              linear-gradient(180deg, rgba(4,5,7,.45) 0%, rgba(4,5,7,0) 18%, rgba(4,5,7,0) 78%, rgba(4,5,7,.5) 100%); }
+/* power-on pulse */
+#pulse { position: absolute; left: 755px; top: 1225px; width: 0; height: 0; }
+#pulse i { position: absolute; left: -60px; top: -60px; width: 120px; height: 120px; border-radius: 50%; border: 2px solid var(--c); opacity: 0; }
+/* HUD */
+#hud { position: absolute; inset: 0; pointer-events: none; filter: drop-shadow(0 0 6px rgba(0,0,0,.45)); }
+.vf { position: absolute; width: 56px; height: 56px; border: 0 solid var(--c); opacity: 0; }
+.vf.a { left: 56px; top: 56px; border-left-width: 2px; border-top-width: 2px; } .vf.b { right: 56px; top: 56px; border-right-width: 2px; border-top-width: 2px; }
+.vf.c { left: 56px; bottom: 56px; border-left-width: 2px; border-bottom-width: 2px; } .vf.d { right: 56px; bottom: 56px; border-right-width: 2px; border-bottom-width: 2px; }
+#hz { position: absolute; left: 0; top: 960px; width: 1080px; height: 0; opacity: 0; }
+#hz i { position: absolute; top: -1px; height: 2px; background: var(--c); }
+#hz .l { left: 170px; width: 280px; transform-origin: 100% 50%; } #hz .r { left: 630px; width: 280px; transform-origin: 0% 50%; }
+#hz .l::after, #hz .r::after { content: ""; position: absolute; top: 0; width: 2px; height: 18px; background: var(--c); }
+#hz .l::after { left: 0; } #hz .r::after { right: 0; }
+#ac { position: absolute; left: 480px; top: 940px; width: 120px; height: 40px; opacity: 0; }
+.lad { position: absolute; top: 680px; height: 560px; width: 120px; clip-path: inset(0% 0% 100% 0%); }
+#ladR { left: 935px; } #ladL { left: 70px; }
+.strip { position: absolute; left: 0; top: 0; width: 120px; }
+.tk { position: absolute; height: 2px; background: var(--c); opacity: .75; }
+.tk b { position: absolute; top: -13px; font-size: 22px; font-weight: 500; font-family: 'JetBrains Mono', monospace; color: var(--c); letter-spacing: 1px; }
+.ptr { position: absolute; top: 278px; width: 0; height: 0; border-top: 9px solid transparent; border-bottom: 9px solid transparent; }
+#ladR .ptr { left: 0; border-left: 14px solid var(--c); } #ladL .ptr { right: 0; border-right: 14px solid var(--c); }
+#hdgWrap { position: absolute; inset: 0; opacity: 0; clip-path: inset(200px 220px 1560px 220px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 22%, #000 35%, #000 65%, transparent 78%); mask-image: linear-gradient(90deg, transparent 22%, #000 35%, #000 65%, transparent 78%); }
+#caret { position: absolute; left: 531px; top: 330px; width: 0; height: 0; border-left: 9px solid transparent; border-right: 9px solid transparent; border-bottom: 14px solid var(--c); opacity: 0; }
+.bk { position: absolute; left: 0; top: 0; width: 44px; height: 44px; border: 0 solid var(--c); opacity: 0; }
+.bk.p { border-left-width: 3px; border-top-width: 3px; } .bk.q { border-right-width: 3px; border-top-width: 3px; }
+.bk.s { border-left-width: 3px; border-bottom-width: 3px; } .bk.t { border-right-width: 3px; border-bottom-width: 3px; }
+#bdot { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--c); opacity: 0; }
+/* phone */
+#S4 { perspective: 2600px; opacity: 0; }
+#bezel, #island, .btn { opacity: 0; }
+#s4b { transform: scale(1.2); }
+#S4dark { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(4,5,7,.1), rgba(4,5,7,.75)); }
+#pg { position: absolute; inset: 0; transform-origin: 50% 50%; }
+#bezel { position: absolute; left: -40px; top: -40px; width: 1160px; height: 2000px; border: 40px solid #0b0c0f; border-radius: 170px;
+  box-shadow: 0 0 0 4px #2b2e34, 0 80px 160px rgba(0,0,0,.7); }
+#island { position: absolute; left: 400px; top: 44px; width: 280px; height: 82px; border-radius: 41px; background: #000; }
+.btn { position: absolute; width: 10px; background: #2b2e34; border-radius: 4px; }
+#mini { position: absolute; inset: 0; opacity: 0; }
+#mini .m { position: absolute; width: 90px; height: 90px; border: 0 solid rgba(255,255,255,.9); }
+#mini .m.a { left: 110px; top: 220px; border-left-width: 5px; border-top-width: 5px; } #mini .m.b { right: 110px; top: 220px; border-right-width: 5px; border-top-width: 5px; }
+#mini .m.c { left: 110px; bottom: 360px; border-left-width: 5px; border-bottom-width: 5px; } #mini .m.d { right: 110px; bottom: 360px; border-right-width: 5px; border-bottom-width: 5px; }
+#shutter { position: absolute; left: 450px; top: 1640px; width: 180px; height: 180px; border-radius: 50%; border: 8px solid #fff; }
+#shutter::after { content: ""; position: absolute; left: 14px; top: 14px; width: 136px; height: 136px; border-radius: 50%; background: rgba(255,255,255,.92); }
+#mhz { position: absolute; left: 260px; top: 958px; width: 560px; height: 5px; background: rgba(255,255,255,.85); clip-path: inset(0 0 0 0); }
+#mhz::before { content: ""; position: absolute; left: 230px; top: 0; width: 100px; height: 5px; background: #040507; }
+/* title */
+#shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4,5,7,0) 45%, rgba(4,5,7,.88) 92%); opacity: 0; }
+#title { position: absolute; left: 0; right: 0; top: 1500px; text-align: center; font-family: 'Be Vietnam Pro', sans-serif; }
+#title b { display: block; font-weight: 700; font-size: 104px; line-height: 1.2; letter-spacing: .14em; margin-right: -.14em; clip-path: inset(0% 100% 0% 0%); }
+#title span { display: block; margin-top: 18px; font-weight: 300; font-size: 46px; line-height: 1.3; color: rgba(255,255,255,.86); opacity: 0; }
+#fadeK { position: absolute; inset: 0; background: #040507; opacity: 0; }
+</style></head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="16" data-width="1080" data-height="1920">
+  <div class="sc" id="S1"><video id="v1" class="clip" src="assets/s1.mp4" data-start="0" data-duration="2.72" data-track-index="1" muted playsinline></video></div>
+  <div class="sc" id="S2"><video id="v2" class="clip" src="assets/s2.mp4" data-start="2.69" data-duration="2.54" data-track-index="2" muted playsinline></video></div>
+  <div class="sc" id="S3"><video id="v3" class="clip" src="assets/s3.mp4" data-start="5.2" data-duration="2.54" data-track-index="3" muted playsinline></video></div>
+  <div class="sc" id="S4">
+    <video id="s4b" class="clip" src="assets/s4b.mp4" data-start="7.71" data-duration="3.02" data-track-index="4" muted playsinline></video>
+    <div id="S4dark"></div>
+    <div id="pg">
+      <video id="v4" class="clip" src="assets/s4.mp4" data-start="7.71" data-duration="3.02" data-track-index="5" muted playsinline></video>
+      <div id="mini"><i class="m a"></i><i class="m b"></i><i class="m c"></i><i class="m d"></i><div id="mhz"></div><div id="shutter"></div></div>
+      <div id="bezel"></div><div id="island"></div>
+      <i class="btn" style="left:1124px;top:420px;height:200px"></i><i class="btn" style="left:-54px;top:380px;height:120px"></i><i class="btn" style="left:-54px;top:540px;height:120px"></i>
+    </div>
+  </div>
+  <div class="sc" id="S5"><video id="v5" class="clip" src="assets/s5.mp4" data-start="10.7" data-duration="2.52" data-track-index="6" muted playsinline></video></div>
+  <div class="sc" id="S6"><video id="v6" class="clip" src="assets/s6.mp4" data-start="13.19" data-duration="2.81" data-track-index="7" muted playsinline></video></div>
+  <div id="vig"></div>
+  <div id="shade"></div>
+  <div id="pulse"><i></i><i></i></div>
+  <div id="hud">
+    <i class="vf a"></i><i class="vf b"></i><i class="vf c"></i><i class="vf d"></i>
+    <div id="hdgWrap"><svg width="1080" height="1920" viewBox="0 0 1080 1920" style="position:absolute;left:0;top:0"><g id="hdg"></g></svg></div>
+    <div id="caret"></div>
+    <div class="lad" id="ladL"><div class="strip" id="stL"></div><i class="ptr"></i></div>
+    <div class="lad" id="ladR"><div class="strip" id="stR"></div><i class="ptr"></i></div>
+    <div id="hz"><i class="l"></i><i class="r"></i></div>
+    <svg id="ac" viewBox="0 0 120 40"><path d="M0 20 H40 L60 34 L80 20 H120" fill="none" stroke="#F2F4F0" stroke-width="3"/></svg>
+    <div id="brk"><i class="bk p"></i><i class="bk q"></i><i class="bk s"></i><i class="bk t"></i><i id="bdot"></i></div>
+  </div>
+  <div id="title"><b>SKYLINE MINI</b><span>See further.</span></div>
+  <div id="fadeK"></div>
+  <audio id="music" src="assets/music.mp3" data-start="0" data-duration="16" data-track-index="9" data-volume="0.9"></audio>
+</div>
+<script>
+(function () {
+  // build ladders (unitless decoration) and heading ticks, deterministic
+  const STEP = 28, N = 80;
+  const stR = document.getElementById("stR"), stL = document.getElementById("stL");
+  for (let i = 0; i < N; i++) {
+    const y = (N - 1 - i) * STEP, major = i % 5 === 0;
+    const r = document.createElement("i"); r.className = "tk"; r.style.top = y + "px"; r.style.left = "16px"; r.style.width = (major ? 34 : 18) + "px";
+    if (major) { const b = document.createElement("b"); b.textContent = String(i * 2).padStart(3, "0"); b.style.left = "46px"; r.appendChild(b); }
+    stR.appendChild(r);
+    const l = document.createElement("i"); l.className = "tk"; l.style.top = y + "px"; l.style.left = (major ? 70 : 86) + "px"; l.style.width = (major ? 34 : 18) + "px";
+    stL.appendChild(l);
+  }
+  const g = document.getElementById("hdg"), NS = "http://www.w3.org/2000/svg";
+  for (let a = -90; a <= 90; a += 5) {
+    const rad = (a * Math.PI) / 180, R = 920, cx = 540, cy = 1240, len = a % 15 === 0 ? 26 : 13;
+    const ln = document.createElementNS(NS, "line");
+    ln.setAttribute("x1", cx + R * Math.sin(rad)); ln.setAttribute("y1", cy - R * Math.cos(rad));
+    ln.setAttribute("x2", cx + (R - len) * Math.sin(rad)); ln.setAttribute("y2", cy - (R - len) * Math.cos(rad));
+    ln.setAttribute("stroke", "#F2F4F0"); ln.setAttribute("stroke-width", a % 15 === 0 ? 3 : 2); g.appendChild(ln);
+  }
+  const arc = document.createElementNS(NS, "path");
+  arc.setAttribute("d", "M " + (540 - 920 * Math.sin(1.4)) + " " + (1240 - 920 * Math.cos(1.4)) + " A 920 920 0 0 1 " + (540 + 920 * Math.sin(1.4)) + " " + (1240 - 920 * Math.cos(1.4)));
+  arc.setAttribute("fill", "none"); arc.setAttribute("stroke", "#F2F4F0"); arc.setAttribute("stroke-width", 2); arc.setAttribute("opacity", .6); g.appendChild(arc);
+  const ladTop = -(N * STEP - 560); // strip y showing the lowest values
+
+  const tl = gsap.timeline({ paused: true });
+  const IR = { immediateRender: false };
+  // bracket helper: centre x/y, width/height
+  const B = (cx, cy, w, h) => [[cx - w / 2, cy - h / 2], [cx + w / 2 - 44, cy - h / 2], [cx - w / 2, cy + h / 2 - 44], [cx + w / 2 - 44, cy + h / 2 - 44]];
+  const bkSet = (t, cx, cy, w, h) => { B(cx, cy, w, h).forEach(([x, y], i) => tl.set(".bk:nth-child(" + (i + 1) + ")", { x, y }, t)); tl.set("#bdot", { x: cx, y: cy }, t); };
+  const bkTo = (t, d, cx, cy, w, h, ease) => { B(cx, cy, w, h).forEach(([x, y], i) => tl.to(".bk:nth-child(" + (i + 1) + ")", { x, y, duration: d, ease: ease || "sine.inOut" }, t)); tl.to("#bdot", { x: cx, y: cy, duration: d, ease: ease || "sine.inOut" }, t); };
+  const lock = (t, kf) => { // kf: [[t, cx, cy, w, h], ...] absolute times
+    const [t0, cx, cy, w, h] = kf[0];
+    bkSet(t, cx, cy, w * 1.6, h * 1.6);
+    tl.to(".bk", { opacity: 1, duration: 0.15 }, t);
+    bkTo(t, 0.45, cx, cy, w, h, "expo.out");
+    tl.fromTo("#bdot", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(3)", ...IR }, t + 0.25);
+    tl.fromTo(".bk", { opacity: 1 }, { opacity: 0.35, duration: 0.06, yoyo: true, repeat: 3, ease: "steps(1)", ...IR }, t + 0.45);
+    for (let k = 1; k < kf.length; k++) bkTo(kf[k - 1][0] < t + 0.45 ? t + 0.45 : kf[k - 1][0], kf[k][0] - Math.max(kf[k - 1][0], t + 0.45), kf[k][1], kf[k][2], kf[k][3], kf[k][4]);
+  };
+  const hudOut = (t) => tl.to([".bk", "#bdot"], { opacity: 0, duration: 0.08 }, t);
+  const cutIn = (id, t, s) => tl.fromTo(id, { scale: s || 1.07 }, { scale: 1, duration: 0.7, ease: "expo.out", ...IR }, t);
+
+  // 0-2.69 power on: slow push, pulse on the status light
+  tl.fromTo("#S1", { scale: 1.0 }, { scale: 1.08, duration: 2.69, ease: "none" }, 0);
+  tl.fromTo("#pulse i", { scale: 0.4, opacity: 0.9 }, { scale: 2.4, opacity: 0, duration: 0.9, stagger: 0.22, ease: "power2.out", ...IR }, 2.05);
+
+  // 2.69-5.2 on the ground, take-off punch-in, HUD boots
+  cutIn("#S2", 2.69, 1.05);
+  tl.to("#S2", { scale: 1.75, duration: 0.55, ease: "expo.inOut", transformOrigin: "42% 64%" }, 4.18);
+  tl.to("#S2", { y: 260, filter: "blur(10px)", duration: 0.35, ease: "power3.in" }, 4.85);
+  tl.to(".vf", { opacity: 0.85, duration: 0.01 }, 4.2);
+  tl.fromTo(".vf", { scale: 1.5 }, { scale: 1, duration: 0.5, ease: "expo.out", stagger: 0.05, ...IR }, 4.2);
+  tl.to("#hz", { opacity: 1, duration: 0.01 }, 4.3);
+  tl.fromTo("#hz i", { scaleX: 0 }, { scaleX: 1, duration: 0.55, ease: "expo.out", ...IR }, 4.3);
+  tl.fromTo("#ac", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2)", ...IR }, 4.45);
+  tl.set(".strip", { y: ladTop }, 0);
+  tl.to(".lad", { clipPath: "inset(0% 0% 0% 0%)", duration: 0.5, ease: "power3.out", stagger: 0.08 }, 4.45);
+  tl.to(["#hdgWrap", "#caret"], { opacity: 1, duration: 0.3 }, 4.6);
+  tl.fromTo("#hdgWrap", { y: -30 }, { y: 0, duration: 0.5, ease: "expo.out", ...IR }, 4.6);
+  // ladder: climbs fast at take-off, then settles
+  tl.to("#stR", { y: ladTop + 1300, duration: 3.0, ease: "power2.inOut" }, 4.7);
+  tl.to("#stL", { y: ladTop + 700, duration: 3.0, ease: "power2.inOut" }, 4.7);
+  tl.to("#stR", { y: ladTop + 1520, duration: 5.2, ease: "sine.inOut" }, 7.7);
+  tl.to("#stL", { y: ladTop + 820, duration: 5.2, ease: "sine.inOut" }, 7.7);
+
+  // 5.2-7.71 hover: horizon tilts with the aircraft, bracket locks on
+  tl.fromTo("#S3", { scale: 1.1, filter: "blur(10px)" }, { scale: 1, filter: "blur(0px)", duration: 0.6, ease: "expo.out", ...IR }, 5.2);
+  tl.to("#S3", { scale: 1.05, duration: 1.9, ease: "none" }, 5.8);
+  tl.to("#hz", { rotation: -4, y: 24, duration: 0.9, ease: "sine.inOut" }, 5.2);
+  tl.to("#hz", { rotation: 2.5, y: 10, duration: 1.0, ease: "sine.inOut" }, 6.1);
+  tl.to("#hz", { rotation: -1, y: 18, duration: 0.6, ease: "sine.inOut" }, 7.1);
+  tl.to("#hdg", { rotation: -10, svgOrigin: "540 1240", duration: 2.5, ease: "sine.inOut" }, 5.2);
+  lock(5.45, [[5.45, 650, 950, 460, 420], [6.5, 655, 960, 450, 410], [7.65, 645, 965, 460, 420]]);
+  hudOut(7.69);
+
+  // 7.71-10.7 live view shrinks into a phone and grows back
+  tl.set("#S4", { opacity: 1 }, 7.71); tl.set("#S4", { opacity: 0 }, 10.7);
+  tl.to(["#bezel", "#island", ".btn"], { opacity: 1, duration: 0.25 }, 8.25);
+  tl.to(["#bezel", "#island", ".btn"], { opacity: 0, duration: 0.2 }, 10.0);
+  tl.to("#hud", { opacity: 0, duration: 0.25 }, 8.05);
+  tl.fromTo("#pg", { scale: 1, rotationY: 0, rotation: 0 }, { scale: 0.5, rotationY: 14, rotation: -3, duration: 0.75, ease: "expo.inOut", ...IR }, 8.2);
+  tl.to("#mini", { opacity: 1, duration: 0.3 }, 8.65);
+  tl.fromTo("#shutter", { scale: 0.6 }, { scale: 1, duration: 0.5, ease: "back.out(2)", ...IR }, 8.7);
+  tl.to("#pg", { rotationY: -10, rotation: 2, y: -30, duration: 0.76, ease: "sine.inOut" }, 8.95);
+  tl.fromTo("#s4b", { scale: 1.2 }, { scale: 1.32, duration: 2.5, ease: "none", ...IR }, 7.71);
+  tl.to("#mini", { opacity: 0, duration: 0.2 }, 9.65);
+  tl.to("#pg", { scale: 1, rotationY: 0, rotation: 0, y: 0, duration: 0.55, ease: "expo.inOut" }, 9.71);
+  tl.to("#hud", { opacity: 1, duration: 0.3 }, 10.2);
+  tl.to("#hz", { rotation: 3, y: 0, duration: 0.01 }, 10.0);
+
+  // 10.7-13.19 tracking shot
+  cutIn("#S5", 10.7, 1.08);
+  tl.to("#S5", { scale: 1.06, duration: 1.8, ease: "none" }, 11.4);
+  tl.to("#hz", { rotation: -2, y: 30, duration: 1.2, ease: "sine.inOut" }, 10.7);
+  tl.to("#hz", { rotation: 0.8, y: 20, duration: 1.2, ease: "sine.inOut" }, 11.9);
+  tl.to("#hdg", { rotation: -26, svgOrigin: "540 1240", duration: 2.5, ease: "sine.inOut" }, 10.7);
+  lock(10.85, [[10.85, 665, 1050, 480, 420], [12.0, 650, 1040, 470, 410], [13.15, 655, 1045, 480, 420]]);
+  hudOut(13.17);
+
+  // 13.19-16 the name: HUD powers down, horizon becomes the title rule
+  cutIn("#S6", 13.19, 1.06);
+  tl.to("#S6", { scale: 1.07, duration: 2.2, ease: "none" }, 13.8);
+  tl.to(["#ac", ".lad", "#hdgWrap", "#caret"], { opacity: 0, duration: 0.3, stagger: 0.04 }, 13.25);
+  tl.to(".vf", { opacity: 0, scale: 1.3, duration: 0.5, ease: "power2.in" }, 13.3);
+  tl.to("#shade", { opacity: 1, duration: 0.7 }, 13.3);
+  tl.to("#hz", { rotation: 0, y: 500, duration: 0.8, ease: "expo.inOut" }, 13.3);
+  tl.to("#hz .l", { scaleX: 0.3, duration: 0.8, ease: "expo.inOut" }, 13.3);
+  tl.to("#hz .r", { scaleX: 0.3, duration: 0.8, ease: "expo.inOut" }, 13.3);
+  tl.fromTo("#title b", { clipPath: "inset(0% 100% 0% 0%)", filter: "blur(12px)" }, { clipPath: "inset(0% 0% 0% 0%)", filter: "blur(0px)", duration: 0.9, ease: "expo.out", ...IR }, 13.45);
+  tl.fromTo("#title span", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", ...IR }, 13.8);
+  tl.to("#fadeK", { opacity: 0.55, duration: 0.9, ease: "power1.in" }, 15.1);
+  tl.to({}, { duration: 0.01 }, 15.99);
+  window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl;
+})();
+</script></body></html>

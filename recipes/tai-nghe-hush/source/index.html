@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<style>
+/* vietnamese */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 200;
+  font-display: block;
+  src: url(assets/fonts/f00.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 200;
+  font-display: block;
+  src: url(assets/fonts/f01.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 200;
+  font-display: block;
+  src: url(assets/fonts/f02.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f03.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f04.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f05.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 800;
+  font-display: block;
+  src: url(assets/fonts/f06.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 800;
+  font-display: block;
+  src: url(assets/fonts/f07.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 800;
+  font-display: block;
+  src: url(assets/fonts/f08.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Headphone reel, 9:16, 16 s, music only: a giant word sits behind the product (frame-by-frame cutout on top)
+   -> material close-up with hairline type -> hand spin -> three freeze frames drop as instant photos -> name.
+   Brand HUSH is fictional. */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #b9a6c8; }
+#root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #b9a6c8; font-family: 'Be Vietnam Pro', sans-serif; color: #fff; }
+.clip { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.sc { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
+#word { position: absolute; left: 0; right: 0; top: 520px; text-align: center; font-weight: 800; font-size: 290px; line-height: 1.18; letter-spacing: -10px; white-space: nowrap; color: #fff; opacity: 0; }
+#word span { display: inline-block; }
+#cutw { position: absolute; inset: 0; }
+#hair { position: absolute; left: 90px; top: 1460px; font-weight: 200; font-size: 76px; line-height: 1.25; opacity: 0; text-shadow: 0 4px 30px rgba(60,40,80,.35); }
+#hair b { font-weight: 500; }
+#photos { position: absolute; inset: 0; background: #c9b8d6; opacity: 0; }
+.ph { position: absolute; left: 190px; top: 420px; width: 700px; height: 900px; background: #fff; padding: 26px 26px 120px; box-shadow: 0 40px 80px rgba(70,40,90,.35); }
+.ph div { width: 100%; height: 100%; background-size: cover; background-position: center; }
+#lock { position: absolute; left: 0; right: 0; top: 1330px; text-align: center; opacity: 0; color: #fff; }
+#lock b { display: block; font-weight: 800; font-size: 230px; letter-spacing: 18px; margin-right: -18px; line-height: 1.18; }
+#lock span { display: block; font-weight: 200; font-size: 52px; }
+#shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(90,60,110,0) 45%, rgba(70,45,90,.55) 100%); opacity: 0; }
+</style></head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="16" data-width="1080" data-height="1920">
+  <div class="sc" id="A"><video id="va" class="clip" src="assets/h10.mp4" data-start="0" data-duration="3.8" data-track-index="1" muted playsinline></video>
+    <div id="word"><span>Q</span><span>U</span><span>I</span><span>E</span><span>T</span></div>
+    <div id="cutw"><video id="vac" class="clip" src="assets/h10-cut.webm" data-start="0" data-duration="3.8" data-track-index="2" muted playsinline></video></div></div>
+  <div class="sc" id="B"><video id="vb" class="clip" src="assets/h06.mp4" data-start="3.4" data-duration="3.3" data-track-index="3" muted playsinline></video></div>
+  <div id="hair">Hear <b>every breath</b><br>of the music</div>
+  <div class="sc" id="C"><video id="vc" class="clip" src="assets/h01.mp4" data-start="6.4" data-duration="2.9" data-track-index="4" muted playsinline></video></div>
+  <div id="photos">
+    <div class="ph" id="ph0"><div style="background-image:url(assets/p6.jpg)"></div></div>
+    <div class="ph" id="ph1"><div style="background-image:url(assets/p12.jpg)"></div></div>
+    <div class="ph" id="ph2"><div style="background-image:url(assets/p22.jpg)"></div></div>
+  </div>
+  <div class="sc" id="D"><video id="vd" class="clip" src="assets/h08.mp4" data-start="11.8" data-duration="4.2" data-track-index="5" muted playsinline></video></div>
+  <div id="shade"></div>
+  <div id="lock"><b>HUSH</b><span>All sound. No noise.</span></div>
+  <audio id="music" src="assets/music.mp3" data-start="0" data-duration="16" data-track-index="9" data-volume="0.9"></audio>
+</div>
+<script>
+(function () {
+  const tl = gsap.timeline({ paused: true });
+  // giant word behind the product
+  tl.set("#A", { opacity: 1 }, 0);
+  tl.fromTo(["#va", "#vac"], { scale: 1.12 }, { scale: 1.0, duration: 3.8, ease: "power1.out" }, 0);
+  tl.set("#word", { opacity: 1 }, 0.3);
+  tl.fromTo("#word span", { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 0.95, duration: 0.8, stagger: 0.12, ease: "expo.out" }, 0.3);
+  tl.to("#word", { y: -40, duration: 3, ease: "none" }, 0.8);
+  // material close-up, hairline type
+  tl.set("#B", { opacity: 1 }, 3.4);
+  tl.fromTo("#B", { clipPath: "circle(0% at 50% 55%)" }, { clipPath: "circle(80% at 50% 55%)", duration: 0.8, ease: "expo.inOut", immediateRender: false }, 3.4);
+  tl.set("#A", { opacity: 0 }, 4.25);
+  tl.fromTo("#vb", { scale: 1.2 }, { scale: 1.05, duration: 3.2, ease: "none" }, 3.4);
+  tl.fromTo("#hair", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", immediateRender: false }, 4.3);
+  tl.to("#hair", { opacity: 0, duration: 0.3 }, 6.1);
+  // hand spin
+  tl.set("#C", { opacity: 1 }, 6.4);
+  tl.fromTo("#C", { clipPath: "inset(0% 0% 0% 100%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.55, ease: "expo.inOut", immediateRender: false }, 6.4);
+  tl.set("#B", { opacity: 0 }, 7.0);
+  tl.fromTo("#vc", { scale: 1.05 }, { scale: 1.15, duration: 2.9, ease: "none" }, 6.4);
+  // instant photos drop and stack
+  tl.set("#photos", { opacity: 1 }, 9.2); tl.set("#C", { opacity: 0 }, 9.3);
+  [[-9, -40, 60], [7, 30, -30], [-3, 0, 0]].forEach(([r, x, y], k) =>
+    tl.fromTo("#ph" + k, { y: -1500, rotation: r * 3, x: x }, { y: y, rotation: r, x: x, duration: 0.55, ease: "power3.out", immediateRender: true }, 9.3 + k * 0.75));
+  tl.to("#photos", { scale: 0.92, duration: 2.6, ease: "none" }, 9.3);
+  // name
+  tl.set("#D", { opacity: 1 }, 11.8);
+  tl.fromTo("#D", { clipPath: "inset(50% 0% 50% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.7, ease: "expo.inOut", immediateRender: false }, 11.8);
+  tl.set("#photos", { opacity: 0 }, 12.55);
+  tl.fromTo("#vd", { scale: 1.12 }, { scale: 1.0, duration: 4.2, ease: "power1.out" }, 11.8);
+  tl.fromTo("#shade", { opacity: 0 }, { opacity: 1, duration: 0.8 }, 12.4);
+  tl.set("#lock", { opacity: 1 }, 12.7);
+  tl.fromTo("#lock b", { y: 60, opacity: 0, filter: "blur(12px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 1.0, ease: "expo.out" }, 12.7);
+  tl.fromTo("#lock span", { opacity: 0 }, { opacity: 1, duration: 0.8 }, 13.4);
+  tl.to({}, { duration: 0.01 }, 15.99);
+  window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl;
+})();
+</script></body></html>

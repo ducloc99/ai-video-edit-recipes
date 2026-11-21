@@ -1,0 +1,22 @@
+# Word-by-word captions
+
+![poster](../../gallery/posters/cap-phu-de.jpg)
+
+**You give the AI:** Video you shot  
+**Tools:** Claude Code, HyperFrames, faster-whisper  
+**Cost:** Free  
+**Length:** 20s, 1080x1920
+
+## Prompt
+
+```text
+Edit my vertical talking video (video-tho.mp4, 9:16, my English voice is already on it) into a 15–20 second reel with HyperFrames. Keep the strongest lines and cut only on sentence boundaries so the voice stays in sync; the scene changes should feel like clean jump cuts. Get word timings with faster-whisper and add bold, modern word-by-word captions: 2–4 words per line, uppercase heavy sans-serif, white with a dark outline, the word being spoken highlighted on a yellow pill, placed in the lower-middle safe zone and never over my face. Add subtle automatic punch-in zooms (1.0 to about 1.12) on the emphasis words, resetting at each cut. Put a light, calm music bed under the voice so the voice stays clear, and master to about -14 LUFS. Keep it clean: no sound effects, no emoji, counters, progress bars or glow, no AI images, no paid services. Show me a few frames before you render.
+```
+
+## Credits
+
+Footage: Michael Burrows (Pexels). Voice: HeyGen.
+
+## Source
+
+`source/` is the HyperFrames project. Add the media listed in `source/MEDIA.md`, then run `npx hyperframes render`.

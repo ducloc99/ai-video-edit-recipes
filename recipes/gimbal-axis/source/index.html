@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<style>
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f00.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f01.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f02.woff2) format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f03.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f04.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f05.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url(assets/fonts/f06.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url(assets/fonts/f07.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url(assets/fonts/f08.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f09.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f10.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f11.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Tech product reel, 9:16, 16 s, music only: a camera-HUD frame boots, tracking brackets and callout lines lock onto
+   the gimbal, a reticle zooms on the screen, a three-panel split cuts on the beat, rings pulse from the lens, name.
+   Product name AXIS is fictional; no invented specs. */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #05070a; }
+#root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #05070a; font-family: 'Space Grotesk', sans-serif; color: #E9FBF7; --c: #7CF5E0; --r: #FF4D3D; }
+.clip { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.sc { position: absolute; inset: 0; overflow: hidden; clip-path: inset(0% 0% 100% 0%); }
+.mono { font-family: 'JetBrains Mono', monospace; font-weight: 500; letter-spacing: 3px; }
+/* HUD chrome */
+#hud { position: absolute; inset: 0; pointer-events: none; }
+.cor { position: absolute; width: 70px; height: 70px; border: 0 solid var(--c); opacity: .9; }
+.cor.a { left: 50px; top: 50px; border-left-width: 3px; border-top-width: 3px; } .cor.b { right: 50px; top: 50px; border-right-width: 3px; border-top-width: 3px; }
+.cor.c { left: 50px; bottom: 50px; border-left-width: 3px; border-bottom-width: 3px; } .cor.d { right: 50px; bottom: 50px; border-right-width: 3px; border-bottom-width: 3px; }
+#tagL { position: absolute; left: 70px; top: 140px; font-size: 26px; color: var(--c); }
+#rec { position: absolute; right: 76px; top: 140px; font-size: 26px; color: #fff; }
+#rec i { display: inline-block; width: 16px; height: 16px; border-radius: 50%; background: var(--r); margin-right: 10px; vertical-align: 1px; }
+#cross { position: absolute; left: 540px; top: 960px; }
+#cross i { position: absolute; background: var(--c); }
+#cross .h { left: -60px; top: -1px; width: 120px; height: 2px; } #cross .v { left: -1px; top: -60px; width: 2px; height: 120px; }
+#scanline { position: absolute; left: 0; top: 0; width: 1080px; height: 3px; background: var(--c); box-shadow: 0 0 24px 6px rgba(124,245,224,.7); opacity: 0; }
+/* tracking box + callout */
+.trk { position: absolute; }
+.trk i { position: absolute; width: 46px; height: 46px; border: 0 solid var(--c); }
+.trk .p { left: 0; top: 0; border-left-width: 4px; border-top-width: 4px; } .trk .q { right: 0; top: 0; border-right-width: 4px; border-top-width: 4px; }
+.trk .s { left: 0; bottom: 0; border-left-width: 4px; border-bottom-width: 4px; } .trk .t { right: 0; bottom: 0; border-right-width: 4px; border-bottom-width: 4px; }
+.call { position: absolute; }
+.call .ln { position: absolute; left: 0; top: 0; height: 3px; background: var(--c); transform-origin: 0 50%; }
+.call .dot { position: absolute; left: -9px; top: -8px; width: 19px; height: 19px; border-radius: 50%; background: var(--c); box-shadow: 0 0 18px var(--c); }
+.call .lb { position: absolute; white-space: nowrap; background: rgba(5,7,10,.72); border-left: 4px solid var(--c); padding: 10px 18px; }
+.call .lb b { display: block; font-weight: 700; font-size: 44px; line-height: 1.2; }
+.call .lb span { display: block; font-size: 22px; color: var(--c); }
+#ret { position: absolute; left: 540px; top: 760px; width: 0; height: 0; }
+#ret i { position: absolute; border: 3px solid var(--c); border-radius: 50%; }
+#ret .r1 { left: -170px; top: -170px; width: 340px; height: 340px; } #ret .r2 { left: -120px; top: -120px; width: 240px; height: 240px; border-style: dashed; }
+.pan { position: absolute; top: 0; width: 356px; height: 1920px; overflow: hidden; }
+.pan video { position: absolute; top: 0; left: -362px; width: 1080px; height: 1920px; object-fit: cover; max-width: none; }
+#rings { position: absolute; left: 540px; top: 930px; }
+#rings i { position: absolute; left: -100px; top: -100px; width: 200px; height: 200px; border-radius: 50%; border: 3px solid var(--c); opacity: 0; }
+#logo { position: absolute; left: 0; right: 0; top: 1360px; text-align: center; opacity: 0; }
+#logo b { display: block; font-weight: 700; font-size: 200px; letter-spacing: 30px; margin-right: -30px; line-height: 1.2; }
+#logo span { display: block; font-size: 44px; font-weight: 400; color: var(--c); }
+#shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,7,10,0) 50%, rgba(5,7,10,.85) 100%); opacity: 0; }
+</style></head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="16" data-width="1080" data-height="1920">
+  <div class="sc" id="A"><video id="va" class="clip" src="assets/g09.mp4" data-start="1.7" data-duration="3.6" data-track-index="1" muted playsinline></video></div>
+  <div class="sc" id="B"><video id="vb" class="clip" src="assets/g01.mp4" data-start="4.9" data-duration="3.4" data-track-index="2" muted playsinline></video></div>
+  <div class="sc" id="C">
+    <div class="pan" style="left:0"><video id="vc1" src="assets/g04.mp4" data-start="7.9" data-duration="3.3" data-track-index="3" muted playsinline></video></div>
+    <div class="pan" style="left:362px"><video id="vc2" src="assets/g10.mp4" data-start="7.9" data-duration="3.3" data-track-index="4" muted playsinline></video></div>
+    <div class="pan" style="left:724px"><video id="vc3" src="assets/g02.mp4" data-start="7.9" data-duration="3.3" data-track-index="5" muted playsinline></video></div>
+  </div>
+  <div class="sc" id="D"><video id="vd" class="clip" src="assets/g11.mp4" data-start="10.9" data-duration="2.4" data-track-index="6" muted playsinline></video></div>
+  <div class="sc" id="E"><video id="ve" class="clip" src="assets/g08.mp4" data-start="12.9" data-duration="3.1" data-track-index="7" muted playsinline></video></div>
+  <div id="shade"></div>
+  <!-- overlays -->
+  <div class="trk" id="trk" style="left:150px;top:470px;width:780px;height:640px;opacity:0"><i class="p"></i><i class="q"></i><i class="s"></i><i class="t"></i></div>
+  <div class="call" id="ca" style="left:640px;top:610px;opacity:0"><div class="ln" style="width:200px;transform:rotate(-28deg)"></div><div class="dot"></div>
+    <div class="lb" style="left:150px;top:-250px"><b>3-axis</b><span>stabilised</span></div></div>
+  <div class="call" id="cb" style="left:330px;top:1060px;opacity:0"><div class="ln" style="width:180px;transform:rotate(150deg)"></div><div class="dot"></div>
+    <div class="lb" style="left:-250px;top:110px"><b>Lock</b><span>quick balance</span></div></div>
+  <div id="ret" style="opacity:0"><i class="r1"></i><i class="r2"></i></div>
+  <div class="call" id="cc" style="left:540px;top:930px;opacity:0"><div class="dot" style="display:none"></div>
+    <div class="lb" style="left:-380px;top:240px"><b>Touch</b><span>screen</span></div></div>
+  <div id="rings"><i></i><i></i><i></i></div>
+  <div id="logo"><b>AXIS</b><span>Smooth in every frame</span></div>
+  <div id="hud"><i class="cor a"></i><i class="cor b"></i><i class="cor c"></i><i class="cor d"></i>
+    <div id="tagL" class="mono">AXIS</div><div id="rec" class="mono"><i></i>REC</div><div id="cross"><i class="h"></i><i class="v"></i></div></div>
+  <div id="scanline"></div>
+  <audio id="music" src="assets/music.mp3" data-start="0" data-duration="16" data-track-index="9" data-volume="0.9"></audio>
+</div>
+<script>
+(function () {
+  const tl = gsap.timeline({ paused: true });
+  // scanline wipe: each scene is revealed top-down behind a bright scanline
+  const wipe = (id, t) => { tl.fromTo(id, { clipPath: "inset(0% 0% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.45, ease: "power3.inOut", immediateRender: false }, t);
+    tl.fromTo("#scanline", { y: 0, opacity: 1 }, { y: 1920, opacity: 1, duration: 0.45, ease: "power3.inOut", immediateRender: false }, t); tl.set("#scanline", { opacity: 0 }, t + 0.46); };
+  // 0-2: HUD boots on black
+  tl.fromTo(".cor", { scale: 1.6, opacity: 0 }, { scale: 1, opacity: 0.9, duration: 0.5, stagger: 0.08, ease: "expo.out" }, 0.2);
+  tl.fromTo("#cross i", { scale: 0 }, { scale: 1, duration: 0.5, ease: "expo.out" }, 0.6);
+  tl.fromTo(["#tagL", "#rec"], { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.15 }, 0.9);
+  tl.fromTo("#rec i", { opacity: 1 }, { opacity: 0.15, duration: 0.5, yoyo: true, repeat: 15, ease: "steps(1)" }, 1.0);
+  tl.to("#cross", { opacity: 0, duration: 0.3 }, 1.8);
+  // 2-5: gimbal, tracking brackets lock on, two callouts
+  wipe("#A", 1.8);
+  tl.fromTo("#va", { scale: 1.15 }, { scale: 1.02, duration: 3.4, ease: "none" }, 1.8);
+  tl.fromTo("#trk", { scale: 1.35, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "expo.out" }, 2.4);
+  tl.to("#trk", { scale: 0.97, duration: 0.25, yoyo: true, repeat: 1 }, 2.85);
+  [["#ca", 3.0], ["#cb", 3.6]].forEach(([c, t]) => {
+    tl.set(c, { opacity: 1 }, t); tl.fromTo(c + " .dot", { scale: 0 }, { scale: 1, duration: 0.25, ease: "back.out(3)" }, t);
+    tl.fromTo(c + " .ln", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.out" }, t + 0.1);
+    tl.fromTo(c + " .lb", { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.35, ease: "power3.out" }, t + 0.3);
+  });
+  tl.to(["#trk", "#ca", "#cb"], { opacity: 0, duration: 0.25 }, 4.9);
+  // 5-8: reticle on the screen, push in
+  wipe("#B", 5.0); tl.set("#A", { clipPath: "inset(0% 0% 100% 0%)" }, 5.5);
+  tl.fromTo("#vb", { scale: 1.0 }, { scale: 1.35, duration: 3.0, ease: "power1.inOut", transformOrigin: "50% 40%" }, 5.0);
+  tl.set("#ret", { opacity: 1 }, 5.5);
+  tl.fromTo("#ret i", { scale: 2.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, stagger: 0.1, ease: "expo.out" }, 5.5);
+  tl.fromTo("#ret .r2", { rotation: 0 }, { rotation: 180, duration: 2.4, ease: "none" }, 5.6);
+  tl.set("#cc", { opacity: 1 }, 6.1); tl.fromTo("#cc .lb", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35 }, 6.1);
+  tl.to(["#ret", "#cc"], { opacity: 0, duration: 0.25 }, 7.75);
+  // 8-11: three panels cut in on the beat
+  tl.set("#C", { clipPath: "inset(0% 0% 0% 0%)" }, 8.0); tl.set("#B", { clipPath: "inset(0% 0% 100% 0%)" }, 8.3);
+  tl.fromTo("#C .pan", { yPercent: (i) => (i % 2 ? -100 : 100) }, { yPercent: 0, duration: 0.55, stagger: 0.12, ease: "expo.out" }, 8.0);
+  tl.fromTo("#C .pan video", { scale: 1.12 }, { scale: 1.0, duration: 3, ease: "none" }, 8.0);
+  tl.to(".cor", { opacity: 0.25, duration: 0.2 }, 8.0); tl.to(".cor", { opacity: 0.9, duration: 0.2 }, 10.9);
+  // 11-13: rings pulse from the lens
+  wipe("#D", 10.9); tl.set("#C", { clipPath: "inset(0% 0% 100% 0%)" }, 11.4);
+  tl.fromTo("#vd", { scale: 1.1 }, { scale: 1.25, duration: 2.2, ease: "none" }, 10.9);
+  tl.fromTo("#rings i", { scale: 0.8, opacity: 0.9 }, { scale: 4.5, opacity: 0, duration: 1.2, stagger: 0.35, ease: "power2.out", immediateRender: false }, 11.3);
+  // 13-16: in hand, the name
+  wipe("#E", 12.9); tl.set("#D", { clipPath: "inset(0% 0% 100% 0%)" }, 13.4);
+  tl.fromTo("#ve", { scale: 1.15 }, { scale: 1.0, duration: 3.1, ease: "power1.out" }, 12.9);
+  tl.fromTo("#shade", { opacity: 0 }, { opacity: 1, duration: 0.8 }, 13.3);
+  tl.set("#logo", { opacity: 1 }, 13.5);
+  tl.fromTo("#logo b", { scaleX: 1.4, opacity: 0, filter: "blur(16px)" }, { scaleX: 1, opacity: 1, filter: "blur(0px)", duration: 1.1, ease: "expo.out" }, 13.5);
+  tl.fromTo("#logo span", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6 }, 14.1);
+  tl.to(["#tagL", "#rec"], { opacity: 0, duration: 0.4 }, 13.5);
+  tl.to({}, { duration: 0.01 }, 15.99);
+  window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl;
+})();
+</script></body></html>

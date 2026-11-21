@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --ground: #040a18;
+        --ground-hi: #0b1a36;
+        --ink: #eef4ff;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--ground);
+      }
+      #root {
+        width: 100%; height: 100%; position: relative;
+        background:
+          radial-gradient(120% 70% at 50% 43%, var(--ground-hi) 0%, #071228 45%, var(--ground) 80%),
+          var(--ground);
+      }
+      #bg {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(120% 70% at 50% 43%, var(--ground-hi) 0%, #071228 45%, var(--ground) 80%),
+          var(--ground);
+      }
+      #stage {
+        position: absolute;
+        inset: 0;
+        width: 1080px;
+        height: 1920px;
+        display: block;
+      }
+      #fontprobe {
+        position: absolute;
+        left: -4000px;
+        top: 0;
+        font-family: "Inter", sans-serif;
+        font-weight: 900;
+        font-size: 40px;
+        color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="17.5"
+      data-width="1080"
+      data-height="1920"
+    >
+      <span id="fontprobe" data-layout-allow-overflow data-layout-allow-safe-zone>CODE</span>
+      <canvas id="stage" class="clip" data-layout-allow-overflow data-start="0" data-duration="17.5" data-track-index="0" width="1080" height="1920"></canvas>
+      <audio id="music" src="assets/music.mp3" data-start="0" data-duration="17.5" data-track-index="1"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.set({}, {}, 17.5);
+      window.__timelines["main"] = tl;
+    </script>
+    <script type="module">
+      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.181.2/+esm";
+
+      const W = 1080, H = 1920, N = 72000, DUR = 17.5;
+      // Morph beats, taken from the music's beat grid (dim-1, ~123 bpm).
+      const BEATS = [3.6, 8.01, 11.94, 14.88];
+      const MORPH = 1.25; // seconds each morph takes, starting a touch before the beat
+
+      // ---------- seeded random ----------
+      function mulberry32(a) {
+        return function () {
+          a |= 0; a = (a + 0x6d2b79f5) | 0;
+          let t = Math.imul(a ^ (a >>> 15), 1 | a);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      const gauss = (r) => {
+        const u = Math.max(1e-7, r()), v = r();
+        return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.2831853 * v);
+      };
+
+      const C = {
+        ice: [0.62, 0.84, 1.0],
+        iceDeep: [0.36, 0.58, 0.95],
+        warm: [1.0, 0.95, 0.88],
+        amber: [1.0, 0.68, 0.3],
+      };
+      const mixc = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+
+      // dust: soft out-of-focus motes filling the depth around a shape
+      function dust(r) {
+        const p = [(r() * 2 - 1) * 3.2, (r() * 2 - 1) * 4.6, -5 + r() * 9];
+        const c = mixc(C.iceDeep, C.ice, r());
+        return { p, c, a: 0.5 };
+      }
+
+      // ---------- shape: galaxy ----------
+      function makeGalaxy() {
+        const r = mulberry32(11), out = [];
+        for (let i = 0; i < N; i++) {
+          const k = r();
+          let x, y, z, c, a = 1;
+          if (k < 0.08) {
+            // bulge
+            const rad = Math.abs(gauss(r)) * 0.42;
+            const th = r() * 6.2831853, ph = Math.acos(2 * r() - 1);
+            x = rad * Math.sin(ph) * Math.cos(th);
+            z = rad * Math.sin(ph) * Math.sin(th);
+            y = rad * Math.cos(ph) * 0.55;
+            c = mixc(C.amber, C.warm, Math.min(1, rad * 3.5));
+            a = 0.16;
+          } else if (k < 0.9) {
+            // two logarithmic arms
+            const arm = r() < 0.5 ? 0 : Math.PI;
+            const rad = 0.12 + Math.pow(r(), 0.9) * 1.95;
+            const th = arm + Math.log(rad / 0.12) * 1.9 + gauss(r) * (0.16 + 0.1 * rad);
+            const spread = 0.05 + rad * 0.05;
+            x = rad * Math.cos(th) + gauss(r) * spread;
+            z = rad * Math.sin(th) + gauss(r) * spread;
+            y = gauss(r) * 0.035 * (1.2 - rad * 0.3);
+            const tt = Math.min(1, rad / 1.6);
+            c = tt < 0.25 ? mixc(C.amber, C.warm, tt / 0.25) : mixc(C.warm, C.ice, Math.min(1, (tt - 0.25) * 1.6));
+            if (r() < 0.06) c = C.iceDeep;
+          } else {
+            // faint disc halo
+            const rad = 0.2 + r() * 2.3;
+            const th = r() * 6.2831853;
+            x = rad * Math.cos(th); z = rad * Math.sin(th); y = gauss(r) * 0.08;
+            c = mixc(C.iceDeep, C.ice, r());
+            a = 0.45;
+          }
+          out.push({ p: [x, y, z], c, a });
+        }
+        return out;
+      }
+
+      // ---------- shape: hand (2D signed distance, thickened) ----------
+      function sdCapsule(px, py, ax, ay, bx, by, ra, rb) {
+        const pax = px - ax, pay = py - ay, bax = bx - ax, bay = by - ay;
+        const h = Math.max(0, Math.min(1, (pax * bax + pay * bay) / (bax * bax + bay * bay)));
+        const dx = pax - bax * h, dy = pay - bay * h;
+        return Math.hypot(dx, dy) - (ra + (rb - ra) * h);
+      }
+      function sdBox(px, py, cx, cy, hw, hh, rr) {
+        const qx = Math.abs(px - cx) - hw + rr, qy = Math.abs(py - cy) - hh + rr;
+        return Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - rr;
+      }
+      const smin = (a, b, k) => {
+        const h = Math.max(0, Math.min(1, 0.5 + (0.5 * (b - a)) / k));
+        return b + (a - b) * h - k * h * (1 - h);
+      };
+      const fingers = [
+        // ax, ay, bx, by, rBase, rTip
+        [-0.37, 0.28, -0.56, 1.33, 0.135, 0.105],
+        [-0.12, 0.34, -0.14, 1.52, 0.14, 0.11],
+        [0.13, 0.32, 0.25, 1.4, 0.135, 0.105],
+        [0.37, 0.22, 0.63, 1.06, 0.115, 0.09],
+        [-0.5, -0.38, -1.02, 0.36, 0.17, 0.12],
+      ];
+      function handSD(x, y) {
+        let d = sdBox(x, y, -0.02, -0.18, 0.5, 0.56, 0.24);
+        d = smin(d, sdBox(x, y, -0.02, -1.0, 0.36, 0.5, 0.12), 0.18);
+        for (const f of fingers) d = smin(d, sdCapsule(x, y, f[0], f[1], f[2], f[3], f[4], f[5]), 0.07);
+        return d;
+      }
+      function makeHand() {
+        const r = mulberry32(22), out = [];
+        const ON = 56000;
+        let made = 0;
+        while (made < ON) {
+          const x = -1.25 + r() * 2.0, y = -1.55 + r() * 3.15;
+          const d = handSD(x, y);
+          const edge = r() < 0.42;
+          if (edge ? d > 0.0 || d < -0.022 : d > 0) continue;
+          // fade out the wrist toward the bottom of frame
+          if (y < -1.05 && r() > Math.max(0, 1 - (-1.05 - y) / 0.45)) continue;
+          const th = Math.sqrt(Math.max(0, -d)) * 0.42 + 0.02;
+          const z = (r() * 2 - 1) * th * (edge ? 0.4 : 1);
+          let c = edge ? mixc(C.warm, C.ice, 0.65) : mixc(C.warm, C.ice, 0.18 + r() * 0.2);
+          // fingertips catch the one amber accent
+          out.push({ p: [x + 0.12, y + 0.0, z], c, a: edge ? 0.95 : 0.6 });
+          made++;
+        }
+        for (let i = ON; i < N; i++) out.push(dust(r));
+        return out;
+      }
+
+      // ---------- shape: globe (lat/lon dot grid on a hand-drawn land mask) ----------
+      const LAND = [
+        [[-168,66],[-162,70],[-140,70],[-125,70],[-110,73],[-95,72],[-85,70],[-80,63],[-90,58],[-95,60],[-82,52],[-78,58],[-70,60],[-62,58],[-56,52],[-60,47],[-66,44],[-70,42],[-74,40],[-76,35],[-81,31],[-80,26],[-82,26],[-84,30],[-90,29],[-97,27],[-97,22],[-95,18],[-90,21],[-87,21],[-88,16],[-84,15],[-83,10],[-79,9],[-77,8],[-80,7],[-86,12],[-92,15],[-98,16],[-105,20],[-106,23],[-110,24],[-112,29],[-115,30],[-117,33],[-121,35],[-124,40],[-124,46],[-123,49],[-130,54],[-135,58],[-142,60],[-150,60],[-155,58],[-160,56],[-165,60],[-166,64]],
+        [[-77,8],[-72,12],[-62,11],[-52,5],[-50,0],[-44,-2],[-35,-5],[-35,-9],[-39,-15],[-40,-22],[-48,-26],[-53,-34],[-58,-38],[-62,-40],[-65,-45],[-68,-51],[-70,-55],[-74,-52],[-75,-46],[-73,-38],[-71,-30],[-70,-18],[-76,-14],[-81,-6],[-80,-2],[-79,2],[-78,6]],
+        [[-17,21],[-16,28],[-9,32],[-6,36],[0,36],[10,37],[11,33],[20,31],[25,32],[32,31],[34,28],[38,20],[43,12],[51,12],[48,5],[40,-3],[40,-11],[35,-18],[35,-24],[32,-28],[27,-34],[20,-35],[18,-32],[15,-26],[12,-17],[13,-12],[9,-1],[9,4],[5,6],[-4,5],[-8,4],[-13,8],[-17,14]],
+        [[-9,37],[-9,43],[-1,44],[-2,47],[-4,48],[2,51],[6,53],[8,55],[10,57],[11,59],[5,59],[5,62],[10,64],[14,67],[18,70],[25,71],[30,70],[40,67],[44,68],[55,69],[60,70],[70,73],[80,73],[90,75],[100,77],[110,76],[120,73],[130,71],[140,72],[150,71],[160,70],[170,70],[180,68],[180,65],[175,62],[165,60],[162,57],[157,51],[156,58],[150,59],[140,58],[136,54],[140,50],[135,43],[130,42],[129,35],[126,37],[125,40],[121,39],[122,31],[120,26],[117,23],[110,21],[106,18],[109,12],[105,9],[103,11],[100,13],[100,8],[103,2],[100,4],[98,9],[97,16],[94,17],[92,22],[88,22],[85,20],[80,15],[78,8],[76,10],[73,17],[72,21],[68,24],[62,25],[57,25],[56,27],[52,28],[49,30],[48,29],[50,26],[52,24],[56,24],[59,22],[55,17],[45,13],[43,15],[39,22],[35,28],[34,31],[36,36],[30,36],[27,37],[26,40],[23,40],[23,37],[20,40],[19,42],[14,45],[12,44],[16,41],[18,40],[15,38],[12,42],[9,44],[3,43],[-1,37],[-5,36]],
+        [[114,-22],[114,-34],[118,-35],[124,-33],[131,-31],[135,-35],[138,-35],[141,-38],[146,-39],[150,-37],[153,-31],[153,-25],[146,-19],[142,-11],[141,-17],[136,-12],[131,-11],[126,-14],[122,-18]],
+        [[-73,78],[-60,82],[-35,83],[-20,80],[-20,72],[-30,68],[-42,60],[-50,64],[-55,70],[-60,76]],
+        [[-5,50],[1,51],[2,53],[-1,55],[-2,57],[-5,58],[-6,56],[-4,54],[-3,52]],
+        [[130,31],[135,34],[140,36],[141,41],[143,44],[145,43],[141,38],[140,35],[135,33]],
+        [[109,1],[110,-3],[116,-4],[118,1],[117,7],[113,3]],
+        [[95,5],[98,4],[106,-6],[103,-5],[100,0]],
+        [[131,-1],[141,-3],[150,-10],[143,-9],[138,-8],[133,-4]],
+        [[44,-25],[47,-25],[50,-15],[49,-12],[44,-17]],
+        [[172,-34],[178,-38],[174,-42],[166,-46],[172,-41]],
+        [[-80,22],[-74,20],[-77,19],[-84,22]],
+      ];
+      function inPoly(x, y, poly) {
+        let ins = false;
+        for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+          const xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1];
+          if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) ins = !ins;
+        }
+        return ins;
+      }
+      const isLand = (lon, lat) => lat < -70 || LAND.some((p) => inPoly(lon, lat, p));
+      function makeGlobe() {
+        const r = mulberry32(33), out = [];
+        const R = 1.08, step = 0.62;
+        const land = [];
+        for (let lat = -88; lat <= 88; lat += step) {
+          const cl = Math.cos((lat * Math.PI) / 180);
+          const ls = step / Math.max(0.08, cl);
+          for (let lon = -180; lon < 180; lon += ls) {
+            if (isLand(lon, lat)) land.push([lon, lat]);
+          }
+        }
+        // shuffle land dots so a subset can be used if there are too many
+        for (let i = land.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [land[i], land[j]] = [land[j], land[i]]; }
+        const nLand = Math.min(land.length, 44000);
+        const sph = (lon, lat, rad) => {
+          const la = (lat * Math.PI) / 180, lo = (lon * Math.PI) / 180;
+          return [rad * Math.cos(la) * Math.sin(lo), rad * Math.sin(la), rad * Math.cos(la) * Math.cos(lo)];
+        };
+        for (let i = 0; i < nLand; i++) {
+          const [lon, lat] = land[i];
+          const c = mixc(C.warm, C.ice, 0.25 + 0.35 * Math.abs(lat) / 90);
+          out.push({ p: sph(lon, lat, R + r() * 0.012), c, a: 0.85 });
+        }
+        // ocean: a sparse graticule of fine dots
+        const OCEAN = 12000;
+        for (let i = 0; i < OCEAN && out.length < N; i++) {
+          const onLat = r() < 0.5;
+          let lon, lat;
+          if (onLat) { lat = -75 + 15 * Math.floor(r() * 11); lon = -180 + r() * 360; }
+          else { lon = -180 + 20 * Math.floor(r() * 18); lat = -85 + r() * 170; }
+          out.push({ p: sph(lon, lat, R * 0.996), c: C.iceDeep, a: 0.32 });
+        }
+        while (out.length < N) out.push(dust(r));
+        return out;
+      }
+
+      // ---------- shape: the word ----------
+      function makeWord() {
+        const r = mulberry32(44), out = [];
+        const cw = 1400, ch = 420;
+        const cv = document.createElement("canvas");
+        cv.width = cw; cv.height = ch;
+        const g = cv.getContext("2d");
+        g.fillStyle = "#000"; g.fillRect(0, 0, cw, ch);
+        g.fillStyle = "#fff";
+        g.textAlign = "center"; g.textBaseline = "middle";
+        g.font = '900 330px "Inter", sans-serif';
+        if ("letterSpacing" in g) g.letterSpacing = "-6px";
+        g.fillText("CODE", cw / 2, ch / 2 + 10);
+        const data = g.getImageData(0, 0, cw, ch).data;
+        let minX = cw, maxX = 0;
+        const px = [];
+        for (let y = 0; y < ch; y += 2)
+          for (let x = 0; x < cw; x += 2)
+            if (data[(y * cw + x) * 4] > 128) { px.push(x, y); if (x < minX) minX = x; if (x > maxX) maxX = x; }
+        const edge = (x, y) => {
+          const v = (xx, yy) => (xx < 0 || yy < 0 || xx >= cw || yy >= ch ? 0 : data[(yy * cw + xx) * 4]);
+          return v(x + 5, y) < 128 || v(x - 5, y) < 128 || v(x, y + 5) < 128 || v(x, y - 5) < 128;
+        };
+        const span = maxX - minX, S = 1.78 / span, cx = (minX + maxX) / 2;
+        const ON = 40000;
+        let made = 0;
+        while (made < ON) {
+          const k = Math.floor(r() * (px.length / 2)) * 2;
+          const x = px[k] + r() * 2, y = px[k + 1] + r() * 2;
+          const e = edge(Math.round(x), Math.round(y));
+          if (!e && r() < 0.45) continue; // thin the interior, keep the strokes' edges crisp
+          const wx = (x - cx) * S, wy = -(y - ch / 2) * S;
+          const t = (wx + 0.89) / 1.78;
+          const c = e ? mixc(C.ice, C.warm, 0.35 + t * 0.4) : mixc(C.iceDeep, C.ice, 0.4 + t * 0.4);
+          out.push({ p: [wx, wy, (r() * 2 - 1) * 0.05], c, a: e ? 0.9 : 0.5 });
+          made++;
+        }
+        for (let i = ON; i < N; i++) out.push(dust(r));
+        return out;
+      }
+
+      // ---------- build ----------
+      const canvas = document.getElementById("stage");
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, preserveDrawingBuffer: true, premultipliedAlpha: false });
+      renderer.setPixelRatio(1);
+      renderer.setSize(W, H, false);
+      renderer.setClearColor(0x000000, 0);
+      const scene = new THREE.Scene();
+      const FOV = 34;
+      const camera = new THREE.PerspectiveCamera(FOV, W / H, 0.05, 60);
+
+      let material = null;
+
+      function packShape(list, seedKey) {
+        // order by height (with a little noise) so morphs sweep coherently
+        const r = mulberry32(seedKey);
+        const keyed = list.map((o) => ({ o, k: o.p[1] + (r() - 0.5) * 0.45 }));
+        keyed.sort((a, b) => a.k - b.k);
+        const P = new Float32Array(N * 3), Cc = new Float32Array(N * 4);
+        keyed.forEach(({ o }, i) => {
+          P[i * 3] = o.p[0]; P[i * 3 + 1] = o.p[1]; P[i * 3 + 2] = o.p[2];
+          Cc[i * 4] = o.c[0]; Cc[i * 4 + 1] = o.c[1]; Cc[i * 4 + 2] = o.c[2]; Cc[i * 4 + 3] = o.a;
+        });
+        return { P, Cc };
+      }
+
+      async function build() {
+        try { await document.fonts.load('900 330px "Inter"'); } catch (e) {}
+        const shapes = [makeGalaxy(), makeHand(), makeGlobe(), makeWord()].map((s, i) => packShape(s, 100 + i));
+        const geo = new THREE.BufferGeometry();
+        const seeds = new Float32Array(N * 4);
+        const rs = mulberry32(55);
+        for (let i = 0; i < N * 4; i++) seeds[i] = rs();
+        geo.setAttribute("position", new THREE.BufferAttribute(shapes[0].P, 3));
+        ["A", "B", "C", "D"].forEach((L, i) => {
+          geo.setAttribute("p" + L, new THREE.BufferAttribute(shapes[i].P, 3));
+          geo.setAttribute("c" + L, new THREE.BufferAttribute(shapes[i].Cc, 4));
+        });
+        geo.setAttribute("seed", new THREE.BufferAttribute(seeds, 4));
+        geo.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 50);
+
+        material = new THREE.ShaderMaterial({
+          transparent: true,
+          depthWrite: false,
+          depthTest: false,
+          blending: THREE.AdditiveBlending,
+          uniforms: {
+            uFrom: { value: 0 }, uProg: { value: 0 }, uTime: { value: 0 },
+            uGal: { value: 0 }, uGlobe: { value: 0 }, uHand: { value: 0 },
+            uStream: { value: 0 }, uFocus: { value: 7 }, uScale: { value: H / (2 * Math.tan((FOV * Math.PI) / 360)) },
+            uGain: { value: 1 }, uLift: { value: 0.3 },
+          },
+          vertexShader: /* glsl */ `
+            attribute vec3 pA; attribute vec3 pB; attribute vec3 pC; attribute vec3 pD;
+            attribute vec4 cA; attribute vec4 cB; attribute vec4 cC; attribute vec4 cD;
+            attribute vec4 seed;
+            uniform float uFrom, uProg, uTime, uGal, uGlobe, uHand, uStream, uFocus, uScale, uGain, uLift;
+            varying vec4 vCol; varying float vSoft;
+
+            vec3 rotY(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(c*p.x+s*p.z, p.y, -s*p.x+c*p.z); }
+            vec3 rotX(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(p.x, c*p.y-s*p.z, s*p.y+c*p.z); }
+            vec3 rotZ(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(c*p.x-s*p.y, s*p.x+c*p.y, p.z); }
+
+            // divergence-free ABC flow, two scales
+            vec3 flow(vec3 p){
+              vec3 q = p*1.15;
+              vec3 v = vec3(sin(q.z)+0.8*cos(q.y), 0.9*sin(q.x)+cos(q.z), 0.8*sin(q.y)+0.9*cos(q.x));
+              vec3 q2 = p*2.6 + vec3(1.7, 4.1, 2.3);
+              v += 0.35*vec3(sin(q2.z)+cos(q2.y), sin(q2.x)+cos(q2.z), sin(q2.y)+cos(q2.x));
+              return v;
+            }
+
+            vec3 shapePos(int k){
+              if (k == 0) {
+                vec3 p = pA * 0.6;
+                float r = length(p.xz);
+                p = rotY(p, -uGal * (0.55 / (0.25 + r)) );
+                p = rotX(p, 1.02);
+                p = rotZ(p, -0.38);
+                return p;
+              }
+              if (k == 1) {
+                vec3 p = pB * 0.86;
+                p.y += 0.012 * sin(uTime*1.3 + p.x*3.0);
+                p = rotY(p, uHand);
+                p = rotZ(p, 0.08);
+                return p;
+              }
+              if (k == 2) {
+                vec3 p = pC;
+                if (length(p) < 1.2) { p = rotY(p, uGlobe); p = rotX(p, 0.32); p = rotZ(p, 0.2); }
+                return p;
+              }
+              return pD;
+            }
+            vec4 shapeCol(int k){
+              if (k == 0) return cA;
+              if (k == 1) return cB;
+              if (k == 2) return cC;
+              return cD;
+            }
+
+            void main(){
+              int f = int(uFrom + 0.5);
+              vec3 pos; vec4 col;
+              if (f < 4) {
+                // per-particle stagger: sweep by height plus noise
+                float delay = seed.x * 0.55;
+                float p = clamp((uProg * 1.55 - delay) / 1.0, 0.0, 1.0);
+                float e = p < 0.5 ? 4.0*p*p*p : 1.0 - pow(-2.0*p + 2.0, 3.0) / 2.0;
+                vec3 a = shapePos(f);
+                vec3 b = shapePos(min(f+1, 3));
+                pos = mix(a, b, e);
+                float lift = sin(3.14159 * p);
+                pos += flow(pos*0.9 + seed.yzw*6.0) * 0.16 * lift;
+                pos.z += (seed.w - 0.5) * 1.2 * lift;
+                col = mix(shapeCol(f), shapeCol(min(f+1,3)), e);
+                if (uProg <= 0.0) { pos = a; col = shapeCol(f); }
+              } else {
+                // dissolve: integrate along the flow from the word
+                pos = pD; col = cD;
+                float T = uStream;
+                float dt = T / 26.0;
+                vec3 drift = vec3(0.0, 0.16, 0.0);
+                for (int i = 0; i < 26; i++) {
+                  float w = smoothstep(0.0, 0.9, float(i)*dt + seed.x*0.35);
+                  vec3 q = pos + vec3(0.0, 0.0, (seed.y - 0.5) * 2.4);
+                  vec3 v = flow(q * 1.7) * 0.42 + flow(q * 3.9 + 2.0) * 0.14;
+                  v.x -= pos.x * 0.55;
+                  v.y -= (pos.y - 0.2) * 0.25;
+                  v.z += (seed.y - 0.5) * 1.1;
+                  v.z -= max(0.0, pos.z - 0.7) * 1.6;
+                  v.x -= 0.18;
+                  pos += (v * w + drift * w) * dt;
+                                  }
+                float hot = step(0.955, seed.z);
+                col.rgb = mix(col.rgb, mix(vec3(0.62,0.84,1.0), vec3(1.0,0.68,0.3), hot), smoothstep(0.0, 1.6, T));
+              }
+              // globe: dim the far hemisphere so the sphere reads solid
+              float gw = (f == 2) ? (1.0 - smoothstep(0.0, 0.6, abs(uProg - 0.0)) * step(0.001, uProg)) : 0.0;
+              if (f == 1) gw = smoothstep(0.4, 1.0, uProg);
+              if (gw > 0.0 && length(pos) < 1.2 && length(pos) > 0.9) {
+                vec3 wp = pos + vec3(0.0, uLift, 0.0);
+                vec3 toCam = normalize(cameraPosition - wp);
+                float facing = dot(normalize(pos), toCam);
+                col.a *= mix(1.0, mix(0.07, 1.0, smoothstep(-0.15, 0.25, facing)), gw);
+              }
+              pos.y += uLift;
+
+              vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+              float depth = -mv.z;
+              float coc = abs(depth - uFocus);
+              float base = 0.0052 * (0.65 + seed.y * 0.9);
+              float blur = min(coc * 0.0105, 0.024);
+              float size = base + blur;
+              gl_PointSize = max(1.0, size * uScale / depth);
+              float energy = (base * base) / (size * size);
+              vSoft = clamp(blur / 0.012, 0.0, 1.0);
+              float tw = 0.85 + 0.15 * sin(uTime * (1.5 + seed.z * 2.5) + seed.w * 40.0);
+              vCol = vec4(col.rgb, col.a * mix(1.0, energy * 3.2 + 0.02, vSoft) * tw * uGain);
+              gl_Position = projectionMatrix * mv;
+            }
+          `,
+          fragmentShader: /* glsl */ `
+            varying vec4 vCol; varying float vSoft;
+            void main(){
+              vec2 d = gl_PointCoord - 0.5;
+              float r = length(d) * 2.0;
+              if (r > 1.0) discard;
+              float sharp = exp(-r*r*3.2);
+              float bokeh = smoothstep(1.0, 0.75, r) * (0.55 + 0.45*r);
+              float a = mix(sharp, bokeh, vSoft) * vCol.a * 1.25;
+              gl_FragColor = vec4(vCol.rgb * a, a);
+            }
+          `,
+        });
+        material.blending = THREE.CustomBlending;
+        material.blendEquation = THREE.AddEquation;
+        material.blendSrc = THREE.OneFactor;
+        material.blendDst = THREE.OneFactor;
+        const pts = new THREE.Points(geo, material);
+        pts.frustumCulled = false;
+        scene.add(pts);
+        renderAt(window.__hfThreeTime || 0);
+      }
+
+      // ---------- time -> state ----------
+      const clamp01 = (x) => Math.max(0, Math.min(1, x));
+      const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+      const smooth = (a, b, x) => { const t = clamp01((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+
+      function renderAt(t) {
+        if (!material) return;
+        const u = material.uniforms;
+        u.uTime.value = t;
+        // which morph are we in
+        let from = 0, prog = 0;
+        for (let i = 0; i < 3; i++) {
+          const s = BEATS[i] - 0.18;
+          if (t >= s) { from = i; prog = clamp01((t - s) / MORPH); if (prog >= 1) { from = i + 1; prog = 0; } }
+        }
+        const sStream = BEATS[3] - 0.1;
+        if (t >= sStream) { from = 4; u.uStream.value = (t - sStream) * 1.0; }
+        u.uFrom.value = from;
+        u.uProg.value = prog;
+        u.uGal.value = 0.9 + t * 0.55;
+        u.uGlobe.value = -0.25 + (t - 10.0) * 0.3;
+        u.uHand.value = -0.32 + 0.22 * Math.sin(t * 0.5);
+        // gentle bloom of brightness on the 3.0 s swell, fade at the end
+        u.uGain.value = (0.86 + 0.14 * smooth(2.6, 3.4, t)) * (1 - smooth(16.2, 17.45, t));
+
+        // camera: slow dolly in with a slight orbit
+        const dist = 7.9 - 1.3 * ease(clamp01(t / DUR));
+        const orb = 0.16 * Math.sin(t * 0.33 + 0.4) - 0.05;
+        const el = 0.06 * Math.sin(t * 0.27 + 1.2);
+        camera.position.set(Math.sin(orb) * dist, Math.sin(el) * dist + 0.3, Math.cos(orb) * dist);
+        camera.lookAt(0, 0.3, 0);
+        camera.updateMatrixWorld();
+        u.uFocus.value = dist;
+        renderer.render(scene, camera);
+      }
+
+      window.__hf = window.__hf || {};
+      window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["particles"] = build();
+
+      window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+    </script>
+  </body>
+</html>

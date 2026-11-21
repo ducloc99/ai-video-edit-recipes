@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=1080, height=1920" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<style>
+@font-face { font-family: 'Lora'; font-style: italic; font-weight: 500; font-display: block; src: url(assets/fonts/Lora-500-italic-latin.woff2) format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: block; src: url(assets/fonts/Inter-500-normal-latin.woff2) format('woff2'); }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: block; src: url(assets/fonts/Inter-700-normal-latin.woff2) format('woff2'); }
+
+/* How bees make honey, 9:16, 19 s, music only. Real Pexels footage, documentary callouts:
+   thin white leader lines from the subject to a two-line label. Facts: proboscis sips nectar,
+   honey stomach carries it, nectar passed bee to bee with enzymes, fanned to evaporate water, capped with wax. */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #0b0906; }
+#root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #0b0906; color: #fff; }
+.sc { position: absolute; inset: 0; overflow: hidden; }
+.clip { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+#fzImg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+#fzDim { position: absolute; inset: 0; background: radial-gradient(ellipse 46% 34% at 50% 47%, rgba(11,9,6,0) 40%, rgba(11,9,6,.55) 100%); opacity: 0; }
+#shTop { position: absolute; left: 0; top: 0; width: 1080px; height: 640px; background: linear-gradient(180deg, rgba(11,9,6,.62) 0%, rgba(11,9,6,.3) 55%, rgba(11,9,6,0) 100%); opacity: 0; }
+#shBot { position: absolute; left: 0; bottom: 0; width: 1080px; height: 760px; background: linear-gradient(0deg, rgba(11,9,6,.72) 0%, rgba(11,9,6,.35) 55%, rgba(11,9,6,0) 100%); opacity: 0; }
+.title { position: absolute; left: 0; right: 0; text-align: center; font-family: 'Lora', serif; font-style: italic; font-weight: 500; line-height: 1.2; text-shadow: 0 2px 18px rgba(0,0,0,.45); }
+#t1 { top: 300px; font-size: 84px; }
+#t1 i { display: block; font-style: normal; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 30px; letter-spacing: .32em; margin-right: -.32em; text-transform: uppercase; color: rgba(255,255,255,.82); margin-bottom: 26px; opacity: 0; }
+#t1 b { display: block; font-weight: 500; clip-path: inset(0% 100% 0% 0%); }
+#t6 { top: 1180px; font-size: 92px; clip-path: inset(0% 100% 0% 0%); }
+/* callouts */
+.co { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; filter: drop-shadow(0 1px 3px rgba(0,0,0,.55)); }
+.co .dot { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transform: scale(0); }
+.co .ring { position: absolute; left: -26px; top: -26px; width: 52px; height: 52px; border-radius: 50%; border: 2px solid #fff; opacity: 0; }
+.co .ln { position: absolute; left: 0; top: -1.5px; height: 3px; background: #fff; transform-origin: 0 50%; }
+.co .lab { position: absolute; width: 560px; font-family: 'Inter', sans-serif; clip-path: inset(0% 0% 100% 0%); text-shadow: 0 2px 12px rgba(0,0,0,.6); }
+.co .lab b { display: block; font-weight: 700; font-size: 46px; line-height: 1.2; }
+.co .lab span { display: block; font-weight: 500; font-size: 32px; line-height: 1.3; color: rgba(255,255,255,.88); margin-top: 4px; }
+.co .lab.r { text-align: right; }
+.co .lab.scrim { background: radial-gradient(ellipse 60% 70% at 30% 50%, rgba(11,9,6,.6), rgba(11,9,6,0)); }
+#trk .lab b { font-size: 40px; }
+#trk .lab span { font-size: 28px; }
+#fadeK { position: absolute; inset: 0; background: #0b0906; opacity: 0; }
+</style></head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="19" data-width="1080" data-height="1920">
+  <div class="sc" id="S1"><video id="v1" class="clip" src="assets/s1.mp4" data-start="0" data-duration="3.7" data-track-index="1" muted playsinline></video></div>
+  <div class="sc" id="S2"><img id="fzImg" class="clip" src="assets/s2.jpg" data-start="3.7" data-duration="3.3" data-track-index="2" alt="" /><div id="fzDim"></div></div>
+  <div class="sc" id="S3"><video id="v3" class="clip" src="assets/s3.mp4" data-start="7" data-duration="3.2" data-track-index="3" muted playsinline></video></div>
+  <div class="sc" id="S4"><video id="v4" class="clip" src="assets/s4.mp4" data-start="10.2" data-duration="3" data-track-index="4" muted playsinline></video></div>
+  <div class="sc" id="S5"><video id="v5" class="clip" src="assets/s5.mp4" data-start="13.2" data-duration="3" data-track-index="5" muted playsinline></video></div>
+  <div class="sc" id="S6"><video id="v6" class="clip" src="assets/s6.mp4" data-start="16.2" data-duration="2.8" data-track-index="6" muted playsinline></video></div>
+  <div id="shTop"></div>
+  <div id="shBot"></div>
+
+  <div id="t1" class="title"><b>How bees make honey</b></div>
+
+  <!-- tracked label: follows the bee in shot 1 -->
+  <div class="co" id="trk"><i class="ring"></i><i class="dot"></i><i class="ln"></i><div class="lab r"><b>Honeybee</b><span>out collecting nectar</span></div></div>
+  <!-- freeze-frame callouts -->
+  <div class="co" id="c1"><i class="ring"></i><i class="dot"></i><i class="ln a"></i><i class="ln b"></i><div class="lab"><b>Straw-like tongue</b><span>sips the flower's nectar</span></div></div>
+  <div class="co" id="c2"><i class="ring"></i><i class="dot"></i><i class="ln a"></i><i class="ln b"></i><div class="lab r"><b>Honey stomach</b><span>carries it back to the hive</span></div></div>
+  <!-- hive callouts -->
+  <div class="co" id="c3"><i class="ring"></i><i class="dot"></i><i class="ln a"></i><i class="ln b"></i><div class="lab scrim"><b>Passed bee to bee</b><span>enzymes split its sugars</span></div></div>
+  <div class="co" id="c4"><i class="ring"></i><i class="dot"></i><i class="ln a"></i><i class="ln b"></i><div class="lab r"><b>Fanned in open cells</b><span>beating wings dry the water off</span></div></div>
+  <div class="co" id="c5"><i class="ring"></i><i class="dot"></i><i class="ln a"></i><i class="ln b"></i><div class="lab scrim"><b>Capped with wax</b><span>sealed once the honey is ripe</span></div></div>
+
+  <div id="t6" class="title">Nectar, made to last.</div>
+  <div id="fadeK"></div>
+  <audio id="music" src="assets/music.mp3" data-start="0" data-duration="19" data-track-index="9" data-volume="0.85"></audio>
+</div>
+<script>
+(function () {
+  const tl = gsap.timeline({ paused: true });
+  const IR = { immediateRender: false };
+  const G = (sel) => document.querySelector(sel);
+
+  // Lay out a two-segment leader: anchor (ax,ay) -> elbow (ex,ey) -> horizontal run of length len (sign = direction).
+  function layout(id, ax, ay, ex, ey, len) {
+    const co = G(id); gsap.set(co, { x: ax, y: ay });
+    const dx = ex - ax, dy = ey - ay, l1 = Math.hypot(dx, dy), ang = Math.atan2(dy, dx) * 180 / Math.PI;
+    gsap.set(co.querySelector(".ln.a"), { width: l1, rotation: ang, scaleX: 0 });
+    const b = co.querySelector(".ln.b");
+    gsap.set(b, { width: Math.abs(len), x: dx, y: dy, rotation: len < 0 ? 180 : 0, scaleX: 0 });
+    const lab = co.querySelector(".lab");
+    const left = len < 0 ? dx + len : dx + len - 560;
+    gsap.set(lab, { x: left, y: ey > ay ? dy + 16 : dy - 112 });
+    return co;
+  }
+  function draw(id, t) {
+    const co = G(id);
+    tl.fromTo(co.querySelector(".dot"), { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(2.5)", ...IR }, t);
+    tl.fromTo(co.querySelector(".ring"), { scale: 0.4, opacity: 0.9 }, { scale: 1, opacity: 0.0, duration: 0.7, ease: "power2.out", ...IR }, t + 0.05);
+    tl.to(co.querySelector(".ln.a"), { scaleX: 1, duration: 0.32, ease: "power3.inOut" }, t + 0.12);
+    tl.to(co.querySelector(".ln.b"), { scaleX: 1, duration: 0.36, ease: "power3.out" }, t + 0.4);
+    tl.fromTo(co.querySelector(".lab"), { clipPath: "inset(0% 0% 100% 0%)", yPercent: 18 }, { clipPath: "inset(0% 0% 0% 0%)", yPercent: 0, duration: 0.5, ease: "expo.out", ...IR }, t + 0.5);
+  }
+  function out(id, t) { tl.to(G(id), { opacity: 0, duration: 0.18, ease: "power1.in" }, t); }
+  const cutIn = (id, t, s) => tl.fromTo(id, { scale: s || 1.06 }, { scale: 1, duration: 0.8, ease: "expo.out", ...IR }, t);
+
+  // ---- S1 0-3.7: bee on the flower, title, tracked label
+  tl.fromTo("#S1", { scale: 1.0 }, { scale: 1.06, duration: 3.7, ease: "none", transformOrigin: "50% 45%" }, 0);
+  tl.to("#shTop", { opacity: 1, duration: 0.5 }, 0);
+  tl.fromTo("#t1 b", { clipPath: "inset(0% 100% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.0, ease: "expo.out", ...IR }, 0.4);
+  tl.to("#t1", { opacity: 0, y: -16, duration: 0.35, ease: "power2.in" }, 3.3);
+  tl.to("#shTop", { opacity: 0, duration: 0.35 }, 3.35);
+
+  // tracked label: dot on the thorax; keyframes measured from the clip (frame px, already incl. the 1.06 push)
+  const trk = G("#trk");
+  const ln = trk.querySelector(".ln"), lab = trk.querySelector(".lab");
+  gsap.set(ln, { width: 150, rotation: -152, scaleX: 0 });
+  gsap.set(lab, { x: -136 - 400, y: -70 - 112, width: 400 });
+  const K = [[0, 594, 760], [0.73, 556, 734], [1.47, 484, 708], [2.2, 548, 708], [2.93, 524, 732], [3.7, 526, 732]];
+  const push = (x, y, t) => [540 + (x - 540) * (1 + 0.06 * t / 3.7), 864 + (y - 864) * (1 + 0.06 * t / 3.7)];
+  const p0 = push(K[0][1], K[0][2], 0);
+  tl.set(trk, { x: p0[0], y: p0[1] }, 0);
+  for (let k = 1; k < K.length; k++) {
+    const p = push(K[k][1], K[k][2], K[k][0]);
+    tl.to(trk, { x: p[0], y: p[1], duration: K[k][0] - K[k - 1][0], ease: "sine.inOut" }, K[k - 1][0]);
+  }
+  tl.fromTo(trk.querySelector(".dot"), { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(2.5)", ...IR }, 1.4);
+  tl.fromTo(trk.querySelector(".ring"), { scale: 0.4, opacity: 0.9 }, { scale: 1, opacity: 0, duration: 0.7, ease: "power2.out", ...IR }, 1.45);
+  tl.to(ln, { scaleX: 1, duration: 0.35, ease: "power3.out" }, 1.55);
+  tl.fromTo(lab, { clipPath: "inset(0% 0% 100% 0%)", yPercent: 18 }, { clipPath: "inset(0% 0% 0% 0%)", yPercent: 0, duration: 0.5, ease: "expo.out", ...IR }, 1.75);
+  out("#trk", 3.5);
+
+  // ---- S2 3.7-7.0: freeze-frame, annotate the bee's anatomy
+  tl.to("#fzDim", { opacity: 1, duration: 0.4, ease: "power2.out" }, 3.72);
+  tl.fromTo("#S2", { scale: 1.06 }, { scale: 1.12, duration: 3.3, ease: "sine.inOut", transformOrigin: "50% 45%", ...IR }, 3.7);
+  layout("#c1", 580, 670, 470, 470, -340);
+  layout("#c2", 470, 1110, 600, 1260, 280);
+  draw("#c1", 3.95); draw("#c2", 4.85);
+  out("#c1", 6.82); out("#c2", 6.82);
+
+  // ---- S3 7.0-10.2: back at the hive, nectar handed over
+  cutIn("#S3", 7.0, 1.07);
+  tl.to("#S3", { scale: 1.05, duration: 2.4, ease: "none" }, 7.8);
+  layout("#c3", 520, 1000, 400, 1220, -280);
+  draw("#c3", 7.45);
+  out("#c3", 10.02);
+
+  // ---- S4 10.2-13.2: open cells, water evaporates
+  cutIn("#S4", 10.2, 1.07);
+  tl.to("#S4", { scale: 1.05, duration: 2.2, ease: "none" }, 11.0);
+  layout("#c4", 440, 1240, 620, 1120, 290);
+  draw("#c4", 10.6);
+  out("#c4", 13.02);
+
+  // ---- S5 13.2-16.2: capped comb
+  cutIn("#S5", 13.2, 1.07);
+  tl.to("#S5", { scale: 1.05, duration: 2.2, ease: "none" }, 14.0);
+  layout("#c5", 600, 760, 420, 1060, -280);
+  draw("#c5", 13.6);
+  out("#c5", 16.02);
+
+  // ---- S6 16.2-19: honey from the spoon, closing line
+  cutIn("#S6", 16.2, 1.05);
+  tl.to("#S6", { scale: 1.04, duration: 2.0, ease: "none" }, 17.0);
+  tl.to("#shBot", { opacity: 1, duration: 0.6 }, 16.3);
+  tl.fromTo("#t6", { clipPath: "inset(0% 100% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.0, ease: "expo.out", ...IR }, 16.6);
+  tl.to("#fadeK", { opacity: 0.6, duration: 0.8, ease: "power1.in" }, 18.2);
+  tl.to({}, { duration: 0.01 }, 18.99);
+  window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl;
+})();
+</script></body></html>

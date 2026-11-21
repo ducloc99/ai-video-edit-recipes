@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<style>
+/* How rain is made: one flat-illustrated world (sun, sea, mountains, hills), a slow camera that follows the
+   water: sun warms sea -> vapor rises -> cools into droplets -> cloud -> wind carries it over the mountains ->
+   rain -> river back to the sea. Pull back reveals the whole loop. All shapes are code-drawn SVG. */
+:root { --ink: #12305A; --cream: #FFF8EA; --gold: #FFD45C; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #9ED8F2; }
+#root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #9ED8F2; font-family: "Nunito", sans-serif; }
+#cam { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; }
+#world { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+.txt { position: absolute; left: 0; width: 1080px; text-align: center; color: #fff;
+  -webkit-text-stroke: 16px var(--ink); paint-order: stroke fill; font-weight: 900; }
+#title { top: 930px; font-size: 110px; padding: 0 150px; line-height: 1.18; letter-spacing: -0.01em; }
+.lab { bottom: 720px; opacity: 0; }
+.lab .term { display: block; padding: 0 300px 0 130px; font-size: 42px; letter-spacing: 0.16em; color: var(--gold); -webkit-text-stroke: 12px var(--ink); line-height: 1.25; margin-bottom: 6px; }
+.lab .line { font-size: 72px; line-height: 1.18; padding: 0 300px 0 130px; }
+.w { display: inline-block; white-space: pre; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="19" data-width="1080" data-height="1920">
+  <div id="cam">
+    <svg id="world" viewBox="0 0 1080 1920" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#6EC3EE" /><stop offset="0.62" stop-color="#B9E6F6" /><stop offset="0.76" stop-color="#E4F6F8" />
+        </linearGradient>
+        <linearGradient id="gSea" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#2FA3DF" /><stop offset="1" stop-color="#145D9E" />
+        </linearGradient>
+        <linearGradient id="gMtn" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#8C9DD8" /><stop offset="1" stop-color="#6B7CBC" />
+        </linearGradient>
+        <linearGradient id="gHill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#86CF6C" /><stop offset="1" stop-color="#4E9F55" />
+        </linearGradient>
+        <linearGradient id="gDrop" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#9BDCFF" /><stop offset="1" stop-color="#2F95DA" />
+        </linearGradient>
+        <marker id="mArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 Z" fill="#fff" />
+        </marker>
+      </defs>
+
+      <rect width="1080" height="1920" fill="url(#gSky)" />
+
+      <!-- sun -->
+      <g id="sunPos" transform="translate(250 540)">
+        <g id="sun">
+          <g id="rays">
+            <g id="raysRot"></g>
+          </g>
+          <circle r="112" fill="#FFC93C" />
+          <circle r="96" fill="#FFD95A" />
+          <circle cx="-52" cy="26" r="17" fill="#FF9F6B" opacity="0.75" />
+          <circle cx="52" cy="26" r="17" fill="#FF9F6B" opacity="0.75" />
+          <g id="sunEyes">
+            <ellipse cx="-34" cy="-14" rx="10" ry="15" fill="#5B3416" />
+            <ellipse cx="34" cy="-14" rx="10" ry="15" fill="#5B3416" />
+          </g>
+          <path d="M-30 22 Q0 52 30 22" fill="none" stroke="#5B3416" stroke-width="8" stroke-linecap="round" />
+        </g>
+      </g>
+
+      <!-- sunlight reaching the sea -->
+      <g id="beams" opacity="0" stroke="#FFE27A" stroke-width="9" stroke-linecap="round" stroke-dasharray="2 34" fill="none">
+        <path class="beam" d="M215 680 L150 1440" />
+        <path class="beam" d="M262 690 L300 1440" />
+        <path class="beam" d="M310 670 L450 1440" />
+      </g>
+
+      <!-- mountains -->
+      <path d="M540 1330 Q640 1150 688 1066 Q708 1034 730 1064 L772 1122 Q820 968 846 902 Q862 872 882 902 Q922 962 962 1012 Q990 974 1010 952 Q1030 934 1052 960 Q1100 1036 1140 1100 L1140 1330 Z" fill="url(#gMtn)" />
+      <path d="M846 902 Q862 872 882 902 Q922 962 962 1012 L930 1330 L860 1330 Q880 1100 846 902 Z" fill="#6474B0" opacity="0.55" />
+      <path d="M824 960 Q840 900 846 902 Q862 872 882 902 L900 930 L882 922 L866 944 L850 926 L836 952 Z" fill="#FFFFFF" />
+      <path d="M996 968 Q1004 958 1010 952 Q1030 934 1052 960 L1062 974 L1046 968 L1032 982 L1018 968 L1004 978 Z" fill="#FFFFFF" />
+
+      <!-- rain sits behind the hills so drops vanish into the ground -->
+      <g id="rain"></g>
+
+      <!-- back hill -->
+      <path d="M540 1420 C620 1290 700 1236 790 1252 C870 1266 940 1182 1080 1150 L1080 1420 Z" fill="#5DAE63" />
+      <!-- front hill / coast -->
+      <path id="hill" d="M462 1470 C540 1382 620 1334 700 1322 C780 1310 822 1262 900 1244 C980 1226 1030 1204 1080 1194 L1080 1920 L930 1920 C840 1780 720 1620 600 1520 C560 1490 520 1478 462 1470 Z" fill="url(#gHill)" />
+
+      <!-- trees -->
+      <g id="trees">
+        <g class="tree" transform="translate(652 1352)"><g class="tc"><rect x="-7" y="-46" width="14" height="48" rx="6" fill="#8A5A36" /><circle cy="-70" r="36" fill="#3F9A4E" /><circle cx="-20" cy="-52" r="24" fill="#3F9A4E" /><circle cx="20" cy="-54" r="24" fill="#3F9A4E" /><circle cx="-10" cy="-82" r="14" fill="#5DBB5E" /></g></g>
+        <g class="tree" transform="translate(744 1346)"><g class="tc"><rect x="-6" y="-38" width="12" height="40" rx="5" fill="#8A5A36" /><circle cy="-58" r="28" fill="#47A452" /><circle cx="-16" cy="-44" r="19" fill="#47A452" /><circle cx="16" cy="-45" r="19" fill="#47A452" /><circle cx="-8" cy="-68" r="11" fill="#68C463" /></g></g>
+        <g class="tree" transform="translate(968 1266)"><g class="tc"><rect x="-7" y="-46" width="14" height="48" rx="6" fill="#8A5A36" /><circle cy="-70" r="36" fill="#3F9A4E" /><circle cx="-20" cy="-52" r="24" fill="#3F9A4E" /><circle cx="20" cy="-54" r="24" fill="#3F9A4E" /><circle cx="-10" cy="-82" r="14" fill="#5DBB5E" /></g></g>
+        <g class="tree" transform="translate(1036 1252)"><g class="tc"><rect x="-6" y="-38" width="12" height="40" rx="5" fill="#8A5A36" /><circle cy="-58" r="28" fill="#47A452" /><circle cx="-16" cy="-44" r="19" fill="#47A452" /><circle cx="16" cy="-45" r="19" fill="#47A452" /><circle cx="-8" cy="-68" r="11" fill="#68C463" /></g></g>
+      </g>
+
+      <!-- river -->
+      <path id="river" d="M905 1236 C860 1292 930 1334 820 1384 C720 1428 700 1462 552 1494" fill="none" stroke="#3AA8E4" stroke-width="24" stroke-linecap="round" />
+      <path id="riverFlow" d="M905 1236 C860 1292 930 1334 820 1384 C720 1428 700 1462 552 1494" fill="none" stroke="#CFF0FF" stroke-width="7" stroke-linecap="round" stroke-dasharray="16 44" opacity="0" />
+
+      <!-- sea -->
+      <path d="M-20 1460 L470 1460 C520 1474 560 1490 600 1520 C720 1620 840 1780 930 1920 L-20 1920 Z" fill="url(#gSea)" />
+      <path d="M462 1470 C520 1478 560 1490 600 1520 C720 1620 840 1780 930 1920" fill="none" stroke="#F4DDA4" stroke-width="22" stroke-linecap="round" />
+      <g id="waves" fill="none" stroke="#8FD6F7" stroke-width="7" stroke-linecap="round">
+        <path id="wv1" d="M-60 1462 q30 -16 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0" />
+        <path id="wv2" d="M20 1580 q24 -12 48 0 t48 0 M240 1640 q24 -12 48 0 t48 0 M60 1740 q24 -12 48 0 t48 0 M380 1790 q24 -12 48 0 t48 0" opacity="0.7" />
+      </g>
+      <!-- warm shimmer on the sea surface -->
+      <g id="heat" opacity="0" fill="none" stroke="#FFE59A" stroke-width="6" stroke-linecap="round">
+        <path d="M110 1512 q20 -10 40 0 t40 0 t40 0" />
+        <path d="M300 1530 q20 -10 40 0 t40 0 t40 0" />
+        <path d="M180 1610 q20 -10 40 0 t40 0 t40 0" />
+        <path d="M400 1670 q20 -10 40 0 t40 0" />
+      </g>
+
+      <!-- water vapor -->
+      <g id="vapor"></g>
+
+      <!-- tiny droplets condensing -->
+      <g id="dots"></g>
+
+      <!-- cloud -->
+      <g id="cloud">
+        <g id="cloudBob">
+          <g id="puffs" fill="#FFFFFF"></g>
+          <g id="cloudGrey" opacity="0" fill="#8F9EBE"></g>
+          <g id="cloudFace" opacity="0">
+            <g id="cloudEyes"><ellipse cx="-34" cy="18" rx="9" ry="13" fill="#2C3E66" /><ellipse cx="34" cy="18" rx="9" ry="13" fill="#2C3E66" /></g>
+            <circle cx="-62" cy="44" r="13" fill="#FFB3C0" opacity="0.7" /><circle cx="62" cy="44" r="13" fill="#FFB3C0" opacity="0.7" />
+            <path d="M-20 46 Q0 64 20 46" fill="none" stroke="#2C3E66" stroke-width="7" stroke-linecap="round" />
+          </g>
+        </g>
+      </g>
+
+      <!-- the loop, drawn at the end -->
+      <path id="loop" d="M90 1440 C30 1050 60 600 230 380 C420 140 840 250 960 640 C1030 900 940 1250 680 1420" fill="none" stroke="#FFFFFF" stroke-width="11" stroke-linecap="round" marker-end="url(#mArrow)" opacity="0" />
+    </svg>
+  </div>
+
+  <div id="title" class="txt"><span class="w">How </span><span class="w">rain</span><br><span class="w">is </span><span class="w">made</span></div>
+  <div id="L1" class="txt lab"><div class="line">The sun warms the sea</div></div>
+  <div id="L2" class="txt lab"><span class="term">EVAPORATION</span><div class="line">Warm water rises as vapor</div></div>
+  <div id="L3" class="txt lab"><span class="term">CONDENSATION</span><div class="line">Up high, it cools into a cloud</div></div>
+  <div id="L4" class="txt lab"><span class="term">PRECIPITATION</span><div class="line">Heavy drops fall as rain</div></div>
+  <div id="L5" class="txt lab"><span class="term">COLLECTION</span><div class="line">Rivers carry it back to the sea</div></div>
+  <div id="L6" class="txt lab"><div class="line">That's the water cycle</div></div>
+
+  <audio id="music" src="assets/music.mp3" data-start="0" data-duration="19" data-track-index="9" data-volume="0.85"></audio>
+</div>
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  let seed = 20251121;
+  const rnd = () => { seed |= 0; seed = (seed + 0x6D2B79F5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+
+  // sun rays
+  const raysRot = document.getElementById("raysRot");
+  for (let i = 0; i < 12; i++) {
+    const a = i * 30;
+    el("rect", { x: -11, y: -186, width: 22, height: i % 2 ? 44 : 58, rx: 11, fill: "#FFC93C", transform: "rotate(" + a + ")" }, raysRot);
+  }
+
+  // cloud puffs (white layer + grey "heavy" layer share the same shapes)
+  const PUFFS = [[-150, 30, 74], [-72, -24, 98], [38, -48, 116], [140, -2, 92], [204, 44, 62], [-214, 62, 52], [0, 40, 110]];
+  const puffs = document.getElementById("puffs"), grey = document.getElementById("cloudGrey");
+  const puffEls = PUFFS.map(([x, y, r]) => el("circle", { cx: x, cy: y, r }, puffs));
+  el("rect", { x: -250, y: 30, width: 500, height: 84, rx: 42 }, puffs);
+  PUFFS.forEach(([x, y, r]) => el("circle", { cx: x, cy: y, r }, grey));
+  el("rect", { x: -250, y: 30, width: 500, height: 84, rx: 42 }, grey);
+  const puffBase = puffs.querySelector("rect");
+
+  // condensation droplets
+  const dots = document.getElementById("dots"), dotEls = [];
+  for (let i = 0; i < 22; i++) {
+    const a = rnd() * Math.PI * 2, rr = Math.sqrt(rnd());
+    dotEls.push(el("circle", { cx: 620 + Math.cos(a) * 210 * rr, cy: 450 + Math.sin(a) * 80 * rr, r: 6 + rnd() * 5, fill: "#FFFFFF", stroke: "#8CCBEA", "stroke-width": 3, opacity: 0 }, dots));
+  }
+
+  // vapor wisps
+  const vapor = document.getElementById("vapor");
+  const WISP = "M0 0 c16 -22 -16 -44 0 -66 c16 -22 -16 -44 0 -66 c16 -22 -16 -44 0 -66";
+  const mkWisp = () => el("path", { d: WISP, fill: "none", stroke: "#FFFFFF", "stroke-width": 9, "stroke-linecap": "round", opacity: 0 }, vapor);
+
+  // rain drops
+  const rain = document.getElementById("rain");
+  const DROP = "M0 -22 C7 -8 11 0 11 6 A11 11 0 0 1 -11 6 C-11 0 -7 -8 0 -22 Z";
+
+  // split label words
+  document.querySelectorAll(".lab .line").forEach((ln) => {
+    const words = ln.textContent.split(" ");
+    ln.innerHTML = words.map((w, i) => '<span class="w">' + w + (i < words.length - 1 ? " " : "") + "</span>").join("");
+  });
+
+  const tl = gsap.timeline({ paused: true });
+  const IR = { immediateRender: false };
+
+  // ---------- camera ----------
+  const cam = (s, cx, cy) => {
+    let x = 540 - s * cx, y = 960 - s * cy;
+    x = Math.min(0, Math.max(1080 - 1080 * s, x)); y = Math.min(0, Math.max(1920 - 1920 * s, y));
+    return { x, y, scale: s };
+  };
+  const K = [
+    [0, 1.5, 330, 600],
+    [2.4, 1.4, 360, 1080],
+    [5.2, 1.36, 400, 1020],
+    [8.6, 1.38, 600, 600],
+    [11.6, 1.3, 790, 980],
+    [14.6, 1.12, 640, 1060],
+    [17.0, 1.0, 540, 960],
+  ];
+  tl.set("#cam", cam(K[0][1], K[0][2], K[0][3]), 0);
+  for (let i = 1; i < K.length; i++) {
+    tl.to("#cam", { ...cam(K[i][1], K[i][2], K[i][3]), duration: K[i][0] - K[i - 1][0], ease: "sine.inOut" }, K[i - 1][0]);
+  }
+  tl.to("#cam", { ...cam(1.035, 540, 960), duration: 2.0, ease: "sine.out" }, 17.0);
+
+  // ---------- ambient ----------
+  tl.fromTo("#raysRot", { rotation: 0, svgOrigin: "0 0" }, { rotation: 60, svgOrigin: "0 0", duration: 19, ease: "none" }, 0);
+  tl.fromTo("#wv1", { x: -30 }, { x: 30, duration: 1.5, ease: "sine.inOut", repeat: 12, yoyo: true }, 0);
+  tl.fromTo("#wv2", { x: 18 }, { x: -18, duration: 1.8, ease: "sine.inOut", repeat: 10, yoyo: true }, 0);
+  [1.7, 6.4, 10.2, 15.9].forEach((t) => tl.fromTo("#sunEyes", { scaleY: 1, svgOrigin: "0 -14" }, { scaleY: 0.12, svgOrigin: "0 -14", duration: 0.08, yoyo: true, repeat: 1, ease: "power1.inOut", ...IR }, t));
+  gsap.utils.toArray(".tc").forEach((t, i) => tl.fromTo(t, { rotation: -2, svgOrigin: "0 0" }, { rotation: 2, svgOrigin: "0 0", duration: 1.6 + i * 0.2, ease: "sine.inOut", repeat: 11, yoyo: true }, i * 0.3));
+
+  // ---------- intro ----------
+  tl.fromTo("#sun", { x: -300, y: -160, scale: 0.7, svgOrigin: "0 0" }, { x: 0, y: 0, scale: 1, svgOrigin: "0 0", duration: 1.1, ease: "back.out(1.6)" }, 0.05);
+  tl.fromTo("#title .w", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.55, stagger: 0.09, ease: "power3.out", ...IR }, 0.35);
+  tl.to("#title", { y: -40, opacity: 0, duration: 0.4, ease: "power2.in" }, 2.1);
+
+  // ---------- labels ----------
+  const lab = (id, tin, tout) => {
+    tl.set(id, { opacity: 1 }, tin);
+    if (document.querySelector(id + " .term")) tl.fromTo(id + " .term", { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out", ...IR }, tin);
+    tl.fromTo(id + " .w", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.07, ease: "power3.out", ...IR }, tin + 0.1);
+    if (tout) tl.to(id, { opacity: 0, y: -24, duration: 0.3, ease: "power2.in" }, tout);
+  };
+  lab("#L1", 2.5, 4.95);
+  lab("#L2", 5.25, 8.35);
+  lab("#L3", 8.65, 11.35);
+  lab("#L4", 11.65, 14.35);
+  lab("#L5", 14.65, 16.45);
+  lab("#L6", 16.7, null);
+
+  // ---------- 1. sun warms the sea ----------
+  tl.to("#beams", { opacity: 1, duration: 0.4 }, 2.5);
+  tl.fromTo(".beam", { strokeDashoffset: 0 }, { strokeDashoffset: -360, duration: 3.4, ease: "none", ...IR }, 2.5);
+  tl.to("#beams", { opacity: 0, duration: 0.5 }, 5.4);
+  tl.fromTo("#rays", { scale: 1, svgOrigin: "0 0" }, { scale: 1.14, svgOrigin: "0 0", duration: 0.5, yoyo: true, repeat: 3, ease: "sine.inOut", ...IR }, 2.6);
+  tl.to("#heat", { opacity: 1, duration: 0.6 }, 3.2);
+  tl.fromTo("#heat path", { y: 0 }, { y: -10, duration: 0.6, yoyo: true, repeat: 7, ease: "sine.inOut", stagger: 0.15, ...IR }, 3.2);
+  tl.to("#heat", { opacity: 0, duration: 0.6 }, 8.0);
+
+  // ---------- 2. evaporation ----------
+  const wispRun = (n, t0, gap, peak, tx, ty) => {
+    for (let i = 0; i < n; i++) {
+      const w = mkWisp();
+      const sx = 120 + rnd() * 320, ex = tx + (rnd() - 0.5) * 200, ey = ty + (rnd() - 0.5) * 60, t = t0 + i * gap, d = 2.5 + rnd() * 0.4;
+      tl.fromTo(w, { y: 1470, scale: 0.8, svgOrigin: "0 0" }, { y: ey + 200, scale: 1.15, svgOrigin: "0 0", duration: d, ease: "sine.inOut", ...IR }, t);
+      tl.fromTo(w, { x: sx }, { x: ex, duration: d, ease: "power2.in", ...IR }, t);
+      tl.fromTo(w, { opacity: 0 }, { opacity: peak, duration: d * 0.3, ease: "power1.out", ...IR }, t);
+      tl.to(w, { opacity: 0, duration: d * 0.35, ease: "power1.in" }, t + d * 0.65);
+    }
+  };
+  wispRun(15, 4.5, 0.27, 0.9, 620, 440);
+
+  // ---------- 3. condensation ----------
+  dotEls.forEach((d, i) => {
+    tl.fromTo(d, { opacity: 0, scale: 0, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, transformOrigin: "50% 50%", duration: 0.35, ease: "back.out(2.5)", ...IR }, 7.7 + i * 0.06);
+  });
+  tl.set("#cloud", { x: 620, y: 440 }, 0);
+  tl.set("#puffs", { opacity: 0 }, 0);
+  tl.set("#puffs", { opacity: 1 }, 8.8);
+  tl.fromTo(puffEls, { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, transformOrigin: "50% 50%", duration: 0.7, stagger: 0.09, ease: "back.out(1.7)", ...IR }, 8.8);
+  tl.fromTo(puffBase, { scaleX: 0, transformOrigin: "50% 50%" }, { scaleX: 1, transformOrigin: "50% 50%", duration: 0.8, ease: "power3.out", ...IR }, 9.0);
+  tl.to(dotEls, { opacity: 0, duration: 0.4, stagger: 0.01 }, 9.6);
+  tl.to("#cloudFace", { opacity: 1, duration: 0.3 }, 10.0);
+  tl.fromTo("#cloudFace", { scale: 0.6, svgOrigin: "0 30" }, { scale: 1, svgOrigin: "0 30", duration: 0.5, ease: "back.out(2)", ...IR }, 10.0);
+  [11.2, 14.6].forEach((t) => tl.fromTo("#cloudEyes", { scaleY: 1, svgOrigin: "0 18" }, { scaleY: 0.12, svgOrigin: "0 18", duration: 0.08, yoyo: true, repeat: 1, ease: "power1.inOut", ...IR }, t));
+  tl.to("#cloudGrey", { opacity: 0.85, duration: 1.2, ease: "sine.inOut" }, 10.4);
+  tl.to("#cloud", { x: 810, y: 620, duration: 1.6, ease: "sine.inOut" }, 10.7);
+  tl.fromTo("#cloudBob", { y: 0 }, { y: 10, duration: 0.9, yoyo: true, repeat: 6, ease: "sine.inOut", ...IR }, 11.6);
+
+  // ---------- 4. precipitation ----------
+  const R0 = 12.3, R1 = 15.4;
+  for (let i = 0; i < 42; i++) {
+    const x = 640 + rnd() * 340, d = 0.62 + rnd() * 0.14, t = R0 + rnd() * 0.7, rep = Math.max(0, Math.floor((R1 - t) / d) - 1);
+    const p = el("path", { d: DROP, fill: "url(#gDrop)", opacity: 0 }, rain);
+    tl.set(p, { opacity: 1 }, t);
+    tl.fromTo(p, { x, y: 690 }, { x: x - 30, y: 1430, duration: d, ease: "power1.in", repeat: rep, ...IR }, t);
+    tl.set(p, { opacity: 0 }, t + (rep + 1) * d);
+  }
+  tl.to("#cloudGrey", { opacity: 0.1, duration: 2.4, ease: "sine.inOut" }, 13.2);
+  tl.fromTo(".tc", { scale: 1, svgOrigin: "0 0" }, { scale: 1.16, svgOrigin: "0 0", duration: 0.7, stagger: 0.12, ease: "back.out(2)", ...IR }, 13.5);
+
+  // ---------- 5. collection ----------
+  const riv = document.getElementById("river"), L = riv.getTotalLength();
+  riv.style.strokeDasharray = L; riv.style.strokeDashoffset = L;
+  tl.fromTo(riv, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 1.4, ease: "power1.inOut", ...IR }, 13.3);
+  tl.to("#riverFlow", { opacity: 1, duration: 0.4 }, 14.4);
+  tl.fromTo("#riverFlow", { strokeDashoffset: 0 }, { strokeDashoffset: -460, duration: 4.6, ease: "none", ...IR }, 14.4);
+  wispRun(8, 15.0, 0.3, 0.55, 760, 520);
+
+  // ---------- 6. the loop ----------
+  const loop = document.getElementById("loop"), LL = loop.getTotalLength();
+  loop.style.strokeDasharray = LL; loop.style.strokeDashoffset = LL;
+  tl.set(loop, { opacity: 0.95 }, 16.5);
+  tl.fromTo(loop, { strokeDashoffset: LL }, { strokeDashoffset: 0, duration: 1.1, ease: "power2.inOut", ...IR }, 16.5);
+
+  window.__timelines = window.__timelines || {};
+  window.__timelines["main"] = tl;
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<style>
+/* vietnamese */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 200;
+  font-display: block;
+  src: url(assets/fonts/f00.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 200;
+  font-display: block;
+  src: url(assets/fonts/f01.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 200;
+  font-display: block;
+  src: url(assets/fonts/f02.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: block;
+  src: url(assets/fonts/f03.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: block;
+  src: url(assets/fonts/f04.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Be Vietnam Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-display: block;
+  src: url(assets/fonts/f05.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Premium car spot, 16:9, 16 s, music only. Dark garage care -> headlights on -> golden-hour drive -> name.
+   VANTA GT is fictional; no specs, no prices. Cuts sit on the music grid (0.15 + n*0.5 s). */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+#root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000; font-family: 'Be Vietnam Pro', sans-serif; color: #fff; }
+.clip { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+/* soft white band that glides over paint */
+.sweep { position: absolute; left: 0; top: -300px; width: 420px; height: 1680px; opacity: 0; mix-blend-mode: screen; pointer-events: none;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,240,225,.18) 30%, rgba(255,255,255,.55) 50%, rgba(255,240,225,.18) 70%, rgba(255,255,255,0) 100%);
+  filter: blur(28px); transform: rotate(16deg); }
+/* headlight bloom: sits on the real lamp positions of s4 */
+#bloom { position: absolute; inset: 0; opacity: 0; mix-blend-mode: screen; pointer-events: none; }
+#bloom i { position: absolute; border-radius: 50%; }
+#bloom .l1 { left: 1152px; top: 580px; width: 900px; height: 900px; margin: -450px 0 0 -450px; background: radial-gradient(circle, rgba(235,245,255,.95) 0%, rgba(200,225,255,.35) 18%, rgba(160,200,255,.08) 45%, rgba(0,0,0,0) 70%); }
+#bloom .l2 { left: 920px; top: 510px; width: 420px; height: 420px; margin: -210px 0 0 -210px; background: radial-gradient(circle, rgba(235,245,255,.8) 0%, rgba(190,220,255,.25) 25%, rgba(0,0,0,0) 70%); }
+#bloom .streak { left: 0; top: 576px; width: 1920px; height: 10px; border-radius: 0; background: linear-gradient(90deg, rgba(160,200,255,0), rgba(200,225,255,.7) 60%, rgba(160,200,255,0)); filter: blur(4px); transform-origin: 1152px 50%; }
+#flash { position: absolute; inset: 0; background: #fff; opacity: 0; mix-blend-mode: screen; }
+/* grade: lift nothing, just pull the eye to the centre */
+#vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 75% 70% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%); }
+#warm { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(255,150,60,.10), rgba(0,0,0,0) 60%); mix-blend-mode: soft-light; opacity: 0; }
+/* end card */
+#shade { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 45% at 50% 50%, rgba(0,0,0,.55), rgba(0,0,0,.2) 100%); opacity: 0; }
+#lock { position: absolute; left: 0; right: 0; top: 410px; text-align: center; }
+#name { opacity: 0; }
+.name { position: relative; display: inline-block; font-weight: 200; font-size: 128px; line-height: 1.2; letter-spacing: 0.42em; margin-right: -0.42em; text-transform: uppercase; color: rgba(255,255,255,.92); }
+#nameShine { position: absolute; left: 0; top: 0; color: #fff; text-shadow: 0 0 22px rgba(255,255,255,.9), 0 0 60px rgba(255,235,210,.6); clip-path: inset(0% 100% 0% 0%); }
+#tag { margin-top: 26px; font-weight: 200; font-size: 34px; line-height: 1.3; letter-spacing: 0.32em; margin-right: -0.32em; text-transform: uppercase; color: rgba(255,255,255,.78); opacity: 0; }
+#rule { width: 120px; height: 1px; margin: 30px auto 0; background: rgba(255,255,255,.55); transform: scaleX(0); }
+/* 2.39:1 letterbox — bars start as full black and part like a curtain */
+.bar { position: absolute; left: 0; width: 1920px; height: 540px; background: #000; z-index: 50; }
+#barT { top: 0; } #barB { bottom: 0; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="16" data-width="1920" data-height="1080">
+  <video id="v1" class="clip" src="assets/s1.mp4" data-start="0" data-duration="4.15" data-track-index="1" muted playsinline></video>
+  <video id="v2" class="clip" src="assets/s2.mp4" data-start="4.15" data-duration="1" data-track-index="2" muted playsinline></video>
+  <video id="v3" class="clip" src="assets/s3.mp4" data-start="5.15" data-duration="1" data-track-index="1" muted playsinline></video>
+  <video id="v4" class="clip" src="assets/s4.mp4" data-start="6.15" data-duration="2" data-track-index="2" muted playsinline></video>
+  <video id="v5" class="clip" src="assets/s5.mp4" data-start="8.15" data-duration="1" data-track-index="1" muted playsinline></video>
+  <video id="v6" class="clip" src="assets/s6.mp4" data-start="9.15" data-duration="1" data-track-index="2" muted playsinline></video>
+  <video id="v7" class="clip" src="assets/s7.mp4" data-start="10.15" data-duration="1" data-track-index="1" muted playsinline></video>
+  <video id="v8" class="clip" src="assets/s8.mp4" data-start="11.15" data-duration="1" data-track-index="2" muted playsinline></video>
+  <video id="v9" class="clip" src="assets/s9.mp4" data-start="12.15" data-duration="1" data-track-index="1" muted playsinline></video>
+  <video id="v10" class="clip" src="assets/s10.mp4" data-start="13.15" data-duration="2.85" data-track-index="2" muted playsinline></video>
+  <div id="bloom"><i class="streak"></i><i class="l1"></i><i class="l2"></i></div>
+  <div class="sweep" id="sw1"></div>
+  <div class="sweep" id="sw2"></div>
+  <div id="warm"></div>
+  <div id="vig"></div>
+  <div id="shade"></div>
+  <div id="lock">
+    <div class="name" id="name">Vanta GT<span class="name" id="nameShine" aria-hidden="true">Vanta GT</span></div>
+    <div id="rule"></div>
+    <div id="tag">Vẻ đẹp sinh ra từ bóng tối</div>
+  </div>
+  <div id="flash"></div>
+  <div class="bar" id="barT"></div><div class="bar" id="barB"></div>
+  <audio id="music" src="assets/music.mp3" data-start="0" data-duration="16" data-track-index="9" data-volume="1"></audio>
+</div>
+<script>
+(function () {
+  const tl = gsap.timeline({ paused: true });
+  const BAR = 401; // 540 -> 139 px bars = 2.39:1 picture
+  // shot windows: hard cuts on the grid
+  const shots = [["#v1",0.15,4.15],["#v2",4.15,5.15],["#v3",5.15,6.15],["#v4",6.15,8.15],["#v5",8.15,9.15],
+                 ["#v6",9.15,10.15],["#v7",10.15,11.15],["#v8",11.15,12.15],["#v9",12.15,13.15],["#v10",13.15,16]];
+  shots.forEach(([id, a, b]) => { tl.set(id, { opacity: 1 }, a); if (b < 16) tl.set(id, { opacity: 0 }, b); });
+
+  // letterbox opens from black
+  tl.fromTo("#barT", { y: 0 }, { y: -BAR, duration: 2.0, ease: "expo.inOut" }, 0.15);
+  tl.fromTo("#barB", { y: 0 }, { y: BAR, duration: 2.0, ease: "expo.inOut" }, 0.15);
+
+  // 1  garage, slow push, light sweep down the flank
+  tl.fromTo("#v1", { scale: 1.0 }, { scale: 1.08, duration: 4.0, ease: "none", transformOrigin: "60% 55%" }, 0.15);
+  tl.set("#sw1", { opacity: 1 }, 1.1);
+  tl.fromTo("#sw1", { x: -600 }, { x: 2300, duration: 2.7, ease: "power2.inOut", immediateRender: false }, 1.1);
+  tl.set("#sw1", { opacity: 0 }, 3.85);
+  // 2  foam macro (ramp baked in), 3  rear wash
+  tl.fromTo("#v2", { scale: 1.12 }, { scale: 1.0, duration: 1.0, ease: "power2.out" }, 4.15);
+  tl.fromTo("#v3", { scale: 1.0 }, { scale: 1.07, duration: 1.0, ease: "none" }, 5.15);
+  // 4  headlights on, on the beat
+  tl.fromTo("#v4", { filter: "brightness(0.07) saturate(0.6)" }, { filter: "brightness(0.07) saturate(0.6)", duration: 0.5, immediateRender: false }, 6.15);
+  tl.fromTo("#v4", { filter: "brightness(1.9) saturate(1)" }, { filter: "brightness(1) saturate(1)", duration: 0.9, ease: "power2.out", immediateRender: false }, 6.65);
+  tl.fromTo("#v4", { scale: 1.0 }, { scale: 1.12, duration: 2.0, ease: "power1.in", transformOrigin: "1152px 580px" }, 6.15);
+  tl.set("#bloom", { opacity: 1 }, 6.65);
+  tl.fromTo("#bloom .l1, #bloom .l2", { scale: 0.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "expo.out", immediateRender: false }, 6.65);
+  tl.fromTo("#bloom .streak", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 6.65);
+  tl.to("#bloom", { opacity: 0.55, duration: 1.0, ease: "power1.out" }, 7.1);
+  tl.set("#bloom", { opacity: 0 }, 8.15);
+  // 5  match cut: light to sunset headlight, white flash carries it
+  tl.fromTo("#flash", { opacity: 0.75 }, { opacity: 0, duration: 0.45, ease: "power2.out", immediateRender: false }, 8.15);
+  tl.set("#warm", { opacity: 1 }, 8.15);
+  tl.fromTo("#v5", { scale: 1.1 }, { scale: 1.0, duration: 1.0, ease: "power2.out" }, 8.15);
+  // 6  exhaust: slow then a hard push
+  tl.fromTo("#v6", { scale: 1.0 }, { scale: 1.22, duration: 1.0, ease: "power3.in", transformOrigin: "55% 60%" }, 9.15);
+  // 7  hands, 8  headlight with a fast sweep
+  tl.fromTo("#v7", { scale: 1.08 }, { scale: 1.0, duration: 1.0, ease: "power2.out" }, 10.15);
+  tl.fromTo("#v8", { scale: 1.0 }, { scale: 1.06, duration: 1.0, ease: "none" }, 11.15);
+  tl.set("#sw2", { opacity: 1 }, 11.25);
+  tl.fromTo("#sw2", { x: -600 }, { x: 2300, duration: 0.8, ease: "power2.inOut", immediateRender: false }, 11.25);
+  tl.set("#sw2", { opacity: 0 }, 12.1);
+  // 9  golden hour drive
+  tl.fromTo("#v9", { scale: 1.0 }, { scale: 1.05, duration: 1.0, ease: "none" }, 12.15);
+  tl.set("#warm", { opacity: 0 }, 13.15);
+  // 10 back to the dark, the name
+  tl.fromTo("#v10", { scale: 1.06, filter: "brightness(0.45)" }, { scale: 1.0, filter: "brightness(0.38)", duration: 2.85, ease: "power1.out" }, 13.15);
+  tl.fromTo("#shade", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 13.15);
+  tl.fromTo("#name", { opacity: 0, filter: "blur(14px)", scale: 1.06 }, { opacity: 1, filter: "blur(0px)", scale: 1, duration: 1.0, ease: "expo.out", immediateRender: false }, 13.25);
+  tl.fromTo("#nameShine", { clipPath: "inset(0% 100% 0% 0%)" }, { keyframes: [ { clipPath: "inset(0% 70% 0% 0%)", duration: 0.25 }, { clipPath: "inset(0% 0% 0% 100%)", duration: 0.75 } ], ease: "power1.inOut", immediateRender: false }, 13.6);
+  tl.fromTo("#rule", { scaleX: 0 }, { scaleX: 1, duration: 0.7, ease: "expo.out", immediateRender: false }, 13.8);
+  tl.fromTo("#tag", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", immediateRender: false }, 13.8);
+  // curtain closes
+  tl.to("#barT", { y: 0, duration: 0.6, ease: "power3.in" }, 15.4);
+  tl.to("#barB", { y: 0, duration: 0.6, ease: "power3.in" }, 15.4);
+  tl.to({}, { duration: 0.01 }, 15.99);
+  window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl;
+})();
+</script>
+</body>
+</html>

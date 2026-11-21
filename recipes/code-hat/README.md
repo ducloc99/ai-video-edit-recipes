@@ -1,0 +1,18 @@
+# Particle morph
+
+![poster](../../gallery/posters/code-hat.jpg)
+
+**You give the AI:** A prompt  
+**Tools:** Claude Code, HyperFrames, Three.js  
+**Cost:** Free  
+**Length:** 18s, 1080x1920
+
+## Prompt
+
+```text
+Make a 17-second vertical (1080x1920) code-art reel in HyperFrames with Three.js: about 72,000 soft additive point particles (tiny, no glow halos or lens flares, depth of field faked by growing size and lowering alpha away from the focal plane) on a deep dark-blue radial gradient, morphing on the beat of a calm glassy electronic track. Start on a slowly swirling two-arm spiral galaxy with a faint amber core, then sweep (staggered by height, with a little curl turbulence mid-flight) into an open human hand built from a 2D signed-distance silhouette, then into a rotating dotted globe (lat/lon dot grid sampled from hand-drawn continent polygons, a sparse graticule for the ocean, far hemisphere dimmed), then into the word "CODE" sampled from bold type, and finally dissolve the word into flowing divergence-free streams that drift up and fade out. Ice blue and warm white with amber as the only accent, a slow camera dolly with a slight orbit, music only with no sound effects, seeded randomness, and every frame a pure function of timeline time.
+```
+
+## Source
+
+`source/` is the HyperFrames project. Add the media listed in `source/MEDIA.md`, then run `npx hyperframes render`.

@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <script type="importmap">
+      { "imports": { "three": "./lib/three.module.js", "three/addons/": "./lib/addons/" } }
+    </script>
+    <style>
+      :root {
+        --ground: #efe3d6;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--ground);
+      }
+      #root {
+        width: 100%;
+        height: 100%;
+        position: relative;
+      }
+      #stage {
+        position: absolute;
+        inset: 0;
+      }
+      #three-layer {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="17"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div id="stage" class="clip" data-start="0" data-duration="17" data-track-index="0" data-track-kind="graphics">
+        <canvas id="three-layer" width="1080" height="1920"></canvas>
+      </div>
+      <audio
+        id="music"
+        class="clip"
+        src="assets/music.mp3"
+        data-start="0"
+        data-duration="17"
+        data-track-index="1"
+        data-volume="0.9"
+        data-fade-in="0.2"
+        data-fade-out="1.4"
+      ></audio>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      tl.to({}, { duration: 17 }, 0);
+      window.__timelines["main"] = tl;
+    </script>
+
+    <script type="module">
+      import * as THREE from "three";
+      import { RoundedBoxGeometry } from "three/addons/RoundedBoxGeometry.js";
+      import { RoomEnvironment } from "three/addons/RoomEnvironment.js";
+
+      // ---------- beat grid (portal-2.mp3, librosa) ----------
+      const B = [2.508, 3.042, 3.599, 4.133, 4.667, 5.224, 5.759, 6.293, 6.85, 7.384, 7.941, 8.475, 9.009, 9.543,
+        10.077, 10.612, 11.169, 11.703, 12.237, 12.794, 13.328, 13.862, 14.396, 14.954, 15.488, 16.022, 16.579];
+      const CUT_B = B[4], CUT_C = B[9], CUT_D = B[14], CUT_E = B[20];
+
+      // ---------- helpers ----------
+      const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+      const lerp = (a, b, u) => a + (b - a) * u;
+      const ss = (a, b, x) => { const u = clamp((x - a) / (b - a)); return u * u * (3 - 2 * u); };
+      const eio = (u) => { u = clamp(u); return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; };
+      const eout = (u) => 1 - Math.pow(1 - clamp(u), 3);
+      const V = (x, y, z) => new THREE.Vector3(x, y, z);
+      const D2R = Math.PI / 180;
+
+      // ---------- renderer ----------
+      const W = 1080, H = 1920;
+      const canvas = document.getElementById("three-layer");
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+      renderer.setPixelRatio(1);
+      renderer.setSize(W, H, false);
+      renderer.toneMapping = THREE.NeutralToneMapping;
+      renderer.toneMappingExposure = 1.0;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.VSMShadowMap;
+
+      const BG = new THREE.Color("#efe3d6");
+      const scene = new THREE.Scene();
+      scene.background = BG;
+      scene.fog = new THREE.Fog(BG, 14, 34);
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+      scene.environmentIntensity = 0.55;
+
+      const camera = new THREE.PerspectiveCamera(30, W / H, 0.1, 80);
+
+      // lights: warm key with soft shadow, cool fill from below/side
+      const key = new THREE.DirectionalLight("#fff3e4", 2.3);
+      key.castShadow = true;
+      key.shadow.mapSize.set(2048, 2048);
+      key.shadow.radius = 10;
+      key.shadow.blurSamples = 24;
+      key.shadow.bias = -0.0006;
+      key.shadow.normalBias = 0.035;
+      const sc = key.shadow.camera;
+      sc.left = -4.5; sc.right = 4.5; sc.top = 4.5; sc.bottom = -4.5; sc.near = 0.5; sc.far = 30;
+      scene.add(key, key.target);
+      scene.add(new THREE.HemisphereLight("#fdf6ee", "#d9c3b4", 0.9));
+      const rim = new THREE.DirectionalLight("#dfe8ff", 0.7);
+      rim.position.set(6, 5, -6);
+      scene.add(rim);
+
+      // ---------- materials ----------
+      const glossy = (c, o = {}) => new THREE.MeshPhysicalMaterial({ color: c, roughness: 0.28, clearcoat: 1, clearcoatRoughness: 0.12, ...o });
+      const clay = (c, o = {}) => new THREE.MeshPhysicalMaterial({ color: c, roughness: 0.62, clearcoat: 0.35, clearcoatRoughness: 0.45, sheen: 0.4, sheenRoughness: 0.6, sheenColor: new THREE.Color("#ffffff"), ...o });
+      const C = {
+        coral: "#f2907e", peach: "#f6b48f", butter: "#f4cf72", mint: "#93d6b8", sky: "#8fc3ee", lilac: "#b6a5ea", pink: "#f3a6c2", cream: "#f4ebe0",
+      };
+      const shadowy = (m) => { m.castShadow = true; m.receiveShadow = true; return m; };
+
+      // ---------- set: seamless studio sweep ----------
+      const setMat = new THREE.MeshStandardMaterial({ color: "#efe1d3", roughness: 0.92 });
+      const floor = new THREE.Mesh(new THREE.PlaneGeometry(60, 40), setMat);
+      floor.rotation.x = -Math.PI / 2;
+      floor.position.set(0, 0, 8);
+      floor.receiveShadow = true;
+      scene.add(floor);
+      // curved cove + back wall
+      {
+        const R = 4, zW = -12;
+        const cove = new THREE.Mesh(new THREE.CylinderGeometry(R, R, 60, 48, 1, true, Math.PI, Math.PI / 2), setMat);
+        cove.rotation.z = Math.PI / 2;
+        cove.position.set(0, R, zW + R);
+        cove.material.side = THREE.DoubleSide;
+        cove.receiveShadow = true;
+        scene.add(cove);
+        const wall = new THREE.Mesh(new THREE.PlaneGeometry(60, 30), setMat);
+        wall.position.set(0, R + 15, zW);
+        scene.add(wall);
+        floor.geometry = new THREE.PlaneGeometry(60, 40 - 0);
+        floor.position.z = zW + R + 20;
+      }
+
+      // soft contact blob texture (ambient occlusion under objects)
+      const blobTex = (() => {
+        const c = document.createElement("canvas"); c.width = c.height = 128;
+        const g = c.getContext("2d");
+        const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+        gr.addColorStop(0, "rgba(90,60,50,0.55)"); gr.addColorStop(0.45, "rgba(90,60,50,0.22)"); gr.addColorStop(1, "rgba(90,60,50,0)");
+        g.fillStyle = gr; g.fillRect(0, 0, 128, 128);
+        const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+      })();
+      const makeBlob = (sx, sz) => {
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: blobTex, transparent: true, depthWrite: false, toneMapped: false }));
+        m.rotation.x = -Math.PI / 2; m.scale.set(sx, sz, 1); m.position.y = 0.004; m.renderOrder = 1;
+        scene.add(m); return m;
+      };
+
+      // ---------- tower + ramp ----------
+      const TOWER_TOP = 2.2, RAMP_X0 = -4.2, RAMP_X1 = -1.4;
+      const tower = shadowy(new THREE.Mesh(new RoundedBoxGeometry(1.5, TOWER_TOP, 1.0, 6, 0.12), clay(C.mint)));
+      tower.position.set(RAMP_X0 - 0.75, TOWER_TOP / 2, 0);
+      scene.add(tower);
+      const rampLen = Math.hypot(RAMP_X1 - RAMP_X0, TOWER_TOP);
+      const rampAng = Math.atan2(TOWER_TOP, RAMP_X1 - RAMP_X0); // descent angle
+      const rampDir = V((RAMP_X1 - RAMP_X0) / rampLen, -TOWER_TOP / rampLen, 0);
+      const rampN = V(TOWER_TOP / rampLen, (RAMP_X1 - RAMP_X0) / rampLen, 0);
+      {
+        const T = 0.14;
+        const ramp = shadowy(new THREE.Mesh(new RoundedBoxGeometry(rampLen + 0.3, T, 0.8, 4, 0.05), clay(C.lilac)));
+        const mid = V((RAMP_X0 + RAMP_X1) / 2, TOWER_TOP / 2, 0).addScaledVector(rampN, -T / 2);
+        ramp.position.copy(mid);
+        ramp.rotation.z = -rampAng;
+        scene.add(ramp);
+        for (const z of [-0.36, 0.36]) {
+          const lip = shadowy(new THREE.Mesh(new RoundedBoxGeometry(rampLen + 0.2, 0.09, 0.07, 3, 0.03), clay(C.lilac)));
+          lip.position.copy(V((RAMP_X0 + RAMP_X1) / 2, TOWER_TOP / 2, z).addScaledVector(rampN, 0.04));
+          lip.rotation.z = -rampAng;
+          scene.add(lip);
+        }
+        // support post under ramp
+        const px = lerp(RAMP_X0, RAMP_X1, 0.45), py = lerp(TOWER_TOP, 0, 0.45) - 0.14;
+        const post = shadowy(new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, py, 32), clay(C.butter)));
+        post.position.set(px, py / 2, 0);
+        scene.add(post);
+      }
+
+      // ---------- ball path (deterministic kinematics) ----------
+      const r = 0.28;
+      const intersect = (p, d, q, e) => { // p + s d = q + u e (2D, xy)
+        const den = d.x * e.y - d.y * e.x; const s = ((q.x - p.x) * e.y - (q.y - p.y) * e.x) / den; return p.clone().addScaledVector(d, s);
+      };
+      const P0 = V(-5.2, TOWER_TOP + r, 0);
+      const rampP = V(RAMP_X0, TOWER_TOP, 0).addScaledVector(rampN, r);
+      const P1 = intersect(P0, V(1, 0, 0), rampP, rampDir);
+      const P2 = intersect(rampP, rampDir, V(0, r, 0), V(1, 0, 0));
+      const Lp = P1.distanceTo(P0), Lr = P2.distanceTo(P1);
+      const v0 = (2 * Lp) / B[0];
+      const Tr = B[3] - B[0];
+      const acc = (2 * (Lr - v0 * Tr)) / (Tr * Tr);
+      const vEnd = v0 + acc * Tr;
+      const Lf = vEnd * 0.94 * (B[4] - B[3]);
+      const S_HIT = Lp + Lr + Lf;
+      function ballS(t) {
+        if (t < B[0]) { const u = t / B[0]; return Lp * u * u; }
+        if (t < B[3]) { const tau = t - B[0]; return Lp + v0 * tau + 0.5 * acc * tau * tau; }
+        if (t < B[4]) { const u = (t - B[3]) / (B[4] - B[3]); return Lp + Lr + Lf * (u * (1.06 - 0.06 * u)); }
+        const tau = t - B[4];
+        return S_HIT - 0.42 * (1 - Math.exp(-tau * 4.2));
+      }
+      function ballPos(s) {
+        if (s < Lp) return P0.clone().lerp(P1, s / Lp);
+        if (s < Lp + Lr) return P1.clone().lerp(P2, (s - Lp) / Lr);
+        return P2.clone().add(V(s - Lp - Lr, 0, 0));
+      }
+      const ball = shadowy(new THREE.Mesh(new THREE.SphereGeometry(r, 64, 48), glossy(C.coral, { roughness: 0.18 })));
+      // a subtle band so the roll reads
+      {
+        const band = new THREE.Mesh(new THREE.TorusGeometry(r * 0.985, 0.022, 16, 96), glossy("#fff2ea", { roughness: 0.25 }));
+        band.rotation.y = Math.PI / 2;
+        ball.add(band);
+      }
+      scene.add(ball);
+      const ballBlob = makeBlob(0.9, 0.9);
+
+      // ---------- dominoes ----------
+      const N = 10, TH = 0.12, TILE_H = 0.92, TILE_D = 0.62, SP = 0.42;
+      const X0back = P2.x + Lf + r; // back face of tile 0 is where the ball center touches minus r
+      const pivots = [], tiles = [];
+      const I = (B[9] - B[4]) / N;
+      const tStart = (k) => B[4] + k * I;
+      const thHit = Math.asin((SP - TH) / TILE_H);
+      const w0 = 0.7, alpha = (2 * (thHit - w0 * I)) / (I * I);
+      const tileCols = [C.coral, C.peach, C.butter, "#c9dd84", C.mint, "#86d0cf", C.sky, "#a3b0ef", C.lilac, C.pink];
+      for (let k = 0; k < N; k++) {
+        const px = X0back + TH + k * SP;
+        pivots.push(px);
+        const g = new THREE.Group();
+        g.position.set(px, 0, 0);
+        const m = shadowy(new THREE.Mesh(new RoundedBoxGeometry(TH, TILE_H, TILE_D, 4, 0.035), clay(tileCols[k])));
+        m.position.set(-TH / 2, TILE_H / 2, 0);
+        g.add(m);
+        scene.add(g);
+        tiles.push(g);
+      }
+      // front-top corner of tile with pivot p at angle a (clockwise lean toward +x)
+      const cornerX = (p, a) => p + TILE_H * Math.sin(a);
+      const cornerY = (a) => TILE_H * Math.cos(a);
+      // signed distance of point (x,y) to back face of tile with pivot p at angle a (positive = in front of / past the face)
+      function backFaceDist(x, y, p, a) {
+        // back face passes through (p - TH cos a, TH sin a) with direction (sin a, cos a); normal pointing back (-cos a, sin a)
+        const bx = p - TH * Math.cos(a), by = TH * Math.sin(a);
+        return -((x - bx) * -Math.cos(a) + (y - by) * Math.sin(a));
+      }
+      function contactAngle(p, pNext, aNext) {
+        // largest angle a for tile at p whose corner has not passed the next tile's back face
+        if (backFaceDist(cornerX(p, Math.PI / 2), cornerY(Math.PI / 2), pNext, aNext) < 0) return Math.PI / 2;
+        let lo = 0, hi = Math.PI / 2;
+        for (let i = 0; i < 26; i++) { const m = (lo + hi) / 2; if (backFaceDist(cornerX(p, m), cornerY(m), pNext, aNext) < 0) lo = m; else hi = m; }
+        return lo;
+      }
+
+      // ---------- ring ----------
+      const RR = 0.42, RT = 0.12;
+      const p9 = pivots[N - 1];
+      const ringX0 = p9 + (SP - TH) + RT;
+      const SLIDE = 1.15;
+      const ringXf = ringX0 + SLIDE;
+      const ringX = (t) => (t < B[9] ? ringX0 : ringX0 + SLIDE * (1 - Math.exp(-(t - B[9]) * 9)));
+      const ringSpin = new THREE.Group(), ringTilt = new THREE.Group();
+      const ringMesh = shadowy(new THREE.Mesh(new THREE.TorusGeometry(RR, RT, 48, 128), glossy(C.mint, { roughness: 0.16 })));
+      ringMesh.rotation.y = Math.PI / 2; // plane = yz, normal along x
+      ringTilt.add(ringMesh); ringSpin.add(ringTilt); scene.add(ringSpin);
+      const ringBlob = makeBlob(1.3, 1.3);
+      const TOP_START = B[12], TOP_END = B[14];
+      function ringState(t) {
+        const tau = Math.max(0, t - B[9]);
+        // spin about y: kicked to 21 rad/s, decays, then speeds up as it settles (Euler disk feel)
+        let psi = t < B[9] ? 0 : (21 / 0.55) * (1 - Math.exp(-0.55 * tau));
+        let beta = 0;
+        if (t > TOP_START) { const u = clamp((t - TOP_START) / (TOP_END - TOP_START)); beta = (Math.PI / 2) * u * u; }
+        let wob = 0, wobDir = 0;
+        if (t > TOP_END) { const q = t - TOP_END; wob = 0.09 * Math.exp(-q * 7) ; wobDir = q * 34; beta = Math.PI / 2; }
+        return { psi, beta, wob, wobDir };
+      }
+
+      // ---------- stack ----------
+      const ringTopY = 2 * RT;
+      const pieces = [];
+      function addPiece(mesh, h, landBeat, yaw0, opts = {}) {
+        const g = new THREE.Group(); const inner = new THREE.Group();
+        mesh.position.y = opts.meshY ?? h / 2;
+        inner.add(shadowy(mesh)); g.add(inner); scene.add(g);
+        pieces.push({ g, inner, h, land: B[landBeat], yaw0, spin: opts.spin ?? 2.2, sink: opts.sink ?? 0 });
+      }
+      addPiece(new THREE.Mesh(new RoundedBoxGeometry(0.86, 0.78, 0.86, 6, 0.13), glossy(C.sky, { roughness: 0.3 })), 0.78, 15, 0);
+      addPiece(new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 0.4, 64), clay(C.butter)), 0.4, 16, 0);
+      addPiece(new THREE.Mesh(new RoundedBoxGeometry(0.56, 0.56, 0.56, 6, 0.1), glossy(C.coral, { roughness: 0.26 })), 0.56, 17, Math.PI / 4);
+      addPiece(new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.075, 32, 96), glossy(C.lilac, { roughness: 0.2 })), 0.15, 18, 0, { meshY: 0.075 });
+      pieces[3].inner.children[0].rotation.x = Math.PI / 2;
+      // sphere nests in the small ring: centre sits sqrt((r+t)^2 - R^2) above ring centre
+      const SPH = 0.24;
+      const nest = Math.sqrt((SPH + 0.075) ** 2 - 0.2 ** 2);
+      addPiece(new THREE.Mesh(new THREE.SphereGeometry(SPH, 64, 48), glossy(C.pink, { roughness: 0.14 })), 0, 19, 0, { meshY: SPH, sink: 0.075 + nest - SPH - 0.15 });
+      const stackBlob = makeBlob(1.7, 1.7);
+
+      const squash = (q, amp) => (q < 0 ? 0 : amp * Math.exp(-q * 9) * Math.cos(q * 24));
+      function stackState(t) {
+        // returns top y and per-piece transforms
+        let y = ringTopY;
+        const out = [];
+        for (let i = 0; i < pieces.length; i++) {
+          const P = pieces[i];
+          const T = 0.5, FALL = 3.2;
+          const vis = t >= P.land - T;
+          let sy = 1;
+          // own landing squash, and smaller echo when later pieces land on top
+          sy -= squash(t - P.land, 0.2);
+          for (let j = i + 1; j < pieces.length; j++) sy -= squash(t - pieces[j].land, 0.05);
+          const base = y + P.sink;
+          let yy = base;
+          let yaw = P.yaw0;
+          if (t < P.land) {
+            const u = clamp((t - (P.land - T)) / T);
+            yy = base + FALL * (1 - u * u);
+            yaw = P.yaw0 + P.spin * Math.pow(1 - u, 2);
+          } else {
+            const q = t - P.land;
+            yaw = P.yaw0 + 0.06 * Math.exp(-q * 8) * Math.sin(q * 30);
+          }
+          out.push({ vis, y: yy, sy, yaw });
+          if (t >= P.land) y = base + P.h * sy;
+          else y = y; // nothing above yet
+        }
+        return { out, top: y };
+      }
+      // final heights for camera framing
+      const STACK_H = ringTopY + 0.78 + 0.4 + 0.56 + 0.15 + 0.2;
+
+      // ---------- cameras ----------
+      const look = new THREE.Vector3();
+      function shot(t) {
+        const pos = new THREE.Vector3();
+        if (t < CUT_B) {
+          const bp = ballPos(ballS(Math.max(0, t - 0.12)));
+          const wide = V(-4.1, 1.5, 0), wideCam = V(0.6, 2.4, 6.6);
+          const u = ss(B[0] - 0.6, B[0] + 0.9, t);
+          const fol = bp.clone().add(V(0.7, 0.15, 0));
+          look.copy(wide).lerp(fol, u);
+          const camFol = fol.clone().add(V(2.7, 0.9, 3.9));
+          pos.copy(wideCam.clone().add(V(-0.12 * t, -0.06 * t, -0.2 * t))).lerp(camFol, u);
+          // last beat: swing low and ahead toward the first tile
+          const v = ss(B[3], B[4], t);
+          pos.lerp(V(X0back - 1.7, 1.25, 4.3), v);
+          look.lerp(V(X0back - 0.35, 0.45, 0), v);
+          return { pos, look: look.clone(), fov: 30 };
+        }
+        if (t < CUT_C) {
+          const f = clamp((t - B[4]) / (B[9] - B[4]));
+          const front = lerp(X0back, ringX0, eio(f) * 0.25 + f * 0.75);
+          look.set(front + 0.9, 0.3, 0);
+          pos.set(front - 1.9, 1.55 - 0.2 * f, 3.6 - 0.2 * f);
+          return { pos, look: look.clone(), fov: 30 };
+        }
+        if (t < CUT_D) {
+          const f = clamp((t - B[9]) / (B[14] - B[9]));
+          const rx = ringX(t);
+          look.set(lerp(rx - 0.2, ringXf, f), lerp(0.5, 0.25, ss(0.5, 1, f)), 0);
+          pos.set(lerp(ringXf - 1.9, ringXf - 0.9, eio(f)), lerp(0.85, 1.9, eio(f)), lerp(2.9, 2.6, f));
+          return { pos, look: look.clone(), fov: 30 };
+        }
+        if (t < CUT_E) {
+          const f = clamp((t - B[14]) / (B[20] - B[14]));
+          const st = stackState(t).top;
+          const ly = lerp(0.5, STACK_H * 0.52, ss(0.0, 1, f) * 0.6 + clamp(st / STACK_H) * 0.4);
+          const a = lerp(-0.42, 0.18, f);
+          const dist = lerp(4.1, 6.2, eout(f));
+          look.set(ringXf, ly, 0);
+          pos.set(ringXf + dist * Math.sin(a), ly + lerp(0.9, 0.55, f), dist * Math.cos(a));
+          return { pos, look: look.clone(), fov: 30 };
+        }
+        const f = clamp((t - CUT_E) / (17 - CUT_E));
+        const ea = (70 - 6 * eio(f)) * D2R, ed = lerp(7.0, 8.3, eout(f)), ep = lerp(9, 13, eout(f)) * D2R;
+        look.set(ringXf - 0.75, 1.05, 0);
+        pos.set(look.x + ed * Math.sin(ea) * Math.cos(ep), look.y + ed * Math.sin(ep), ed * Math.cos(ea) * Math.cos(ep));
+        return { pos, look: look.clone(), fov: 30 };
+      }
+
+      // ---------- render ----------
+      function renderAt(t) {
+        t = clamp(t, 0, 17);
+        // ball
+        const s = ballS(t);
+        const bp = ballPos(s);
+        ball.position.copy(bp);
+        ball.rotation.set(0.35, 0, -s / r);
+        ballBlob.position.set(bp.x, bp.y - r + 0.004 + (bp.y > r + 0.01 ? 0 : 0), 0);
+        ballBlob.visible = bp.y < r + 0.05;
+        // ball on the ramp: put contact blob on ramp is skipped; tower top too
+        // dominoes, solved back to front so each leans on its neighbour
+        const ang = new Array(N).fill(0);
+        const rx = ringX(t);
+        for (let k = N - 1; k >= 0; k--) {
+          const tau = t - tStart(k);
+          let free = tau <= 0 ? 0 : Math.min(Math.PI / 2, w0 * tau + 0.5 * alpha * tau * tau);
+          let lim;
+          if (k === N - 1) {
+            const near = rx - RT;
+            lim = near - pivots[k] >= TILE_H ? Math.PI / 2 : Math.asin(clamp((near - pivots[k]) / TILE_H, 0, 1));
+          } else {
+            lim = contactAngle(pivots[k], pivots[k + 1], ang[k + 1]);
+          }
+          ang[k] = Math.min(free, lim);
+        }
+        for (let k = 0; k < N; k++) tiles[k].rotation.z = -ang[k];
+
+        // ring
+        const R = ringState(t);
+        const by = RR * Math.cos(R.beta) + RT;
+        ringSpin.position.set(rx, by, 0);
+        ringSpin.rotation.set(0, R.psi, 0);
+        ringTilt.rotation.set(R.wob * Math.sin(R.wobDir), 0, R.beta + R.wob * Math.cos(R.wobDir));
+        ringBlob.position.set(rx, 0.004, 0);
+        const flat = Math.sin(R.beta);
+        ringBlob.scale.set(lerp(0.55, 1.35, flat), lerp(1.3, 1.35, flat), 1);
+        ringBlob.rotation.z = 0;
+
+        // stack
+        const st = stackState(t);
+        st.out.forEach((o, i) => {
+          const P = pieces[i];
+          P.g.visible = o.vis;
+          P.g.position.set(ringXf, o.y, 0);
+          P.g.rotation.set(0, o.yaw, 0);
+          const sxz = 1 / Math.sqrt(Math.max(0.5, o.sy));
+          P.inner.scale.set(sxz, o.sy, sxz);
+        });
+        stackBlob.position.set(ringXf, 0.005, 0);
+        stackBlob.material.opacity = t > B[15] - 0.05 ? 1 : 0;
+
+        // camera + key light follow the shot
+        const S = shot(t);
+        camera.position.copy(S.pos);
+        camera.fov = S.fov; camera.updateProjectionMatrix();
+        camera.lookAt(S.look);
+        const wideShot = t >= CUT_E;
+        const span = wideShot ? 7.5 : 3.6;
+        sc.left = -span; sc.right = span; sc.top = span; sc.bottom = -span; sc.updateProjectionMatrix();
+        const fc = wideShot ? V(ringXf - 2.6, 0, 0) : S.look.clone().setY(0);
+        key.target.position.copy(fc);
+        key.position.copy(fc).add(V(-1.2, 9, 7));
+        key.shadow.radius = wideShot ? 6 : 10;
+        renderer.render(scene, camera);
+      }
+
+      window.addEventListener("hf-seek", (e) => renderAt(e.detail.time));
+      renderAt(window.__hfThreeTime || 0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Video Edit Recipes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Familjen+Grotesk:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+/* Gallery of AI video edits. Click a video to see what to give the AI and the prompt. Data: gallery/data.js (tools/build.py) */
+:root{--bg:#f6f5f2;--ink:#141518;--soft:#8a8f98;--line:#e4e2dc;--accent:#e2552b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font:500 15px/1.5 "Familjen Grotesk",ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1360px;margin:0 auto;padding:56px 40px 100px}
+header{display:flex;align-items:end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+h1{font-family:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;font-size:56px;font-weight:800;letter-spacing:-.035em;line-height:1}
+h1 b{color:var(--accent)}
+header nav{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+header a{color:var(--ink);font-weight:600;text-decoration:none;border-bottom:1.5px solid var(--ink)}
+#intro{border:0;background:var(--ink);color:#fff;border-radius:99px;padding:10px 20px;font:600 15px/1.2 inherit;cursor:pointer}
+#intro:hover{background:var(--accent)}
+dialog.solo aside{display:none}
+section{margin-top:64px}
+section h2{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin-bottom:16px}
+.row{display:flex;flex-wrap:wrap;gap:16px}
+.v{position:relative;border:0;padding:0;border-radius:18px;overflow:hidden;background:#0d0f14;cursor:pointer;flex:none;
+  box-shadow:0 1px 2px rgba(0,0,0,.06),0 10px 30px rgba(0,0,0,.07);transition:transform .25s ease,box-shadow .25s ease}
+.v:hover{transform:translateY(-3px);box-shadow:0 2px 4px rgba(0,0,0,.08),0 18px 40px rgba(0,0,0,.12)}
+.v img,.v video{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover}
+.v video{opacity:0;transition:opacity .3s}
+.v.on video{opacity:1}
+.v:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+dialog{margin:auto;border:0;border-radius:18px;padding:0;background:#fff;max-width:min(96vw,1360px);max-height:94vh;overflow:hidden}
+dialog::backdrop{background:rgba(12,12,14,.82)}
+.dl{display:flex;max-height:94vh}
+.dl .pl{background:#000;display:flex;align-items:center;justify-content:center}
+.dl video{display:block;max-width:min(66vw,960px);max-height:94vh}
+.dl aside{width:360px;padding:28px 26px;overflow:auto;display:flex;flex-direction:column;gap:18px}
+.dl h3{font-family:"Bricolage Grotesque",sans-serif;font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.1;padding-right:30px}
+.k{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);margin-bottom:4px}
+.tools{display:flex;flex-wrap:wrap;gap:6px}
+.tools span{border:1px solid var(--line);border-radius:99px;padding:2px 10px;font-size:13px}
+.pr{position:relative;background:#f3f1ec;border-radius:12px;padding:14px 14px 40px;font-size:14px;line-height:1.55}
+.pr button{position:absolute;right:10px;bottom:8px;border:0;background:var(--ink);color:#fff;border-radius:99px;padding:4px 12px;font:600 12px/1.4 inherit;cursor:pointer}
+aside a{color:var(--ink);font-weight:600}
+#dlgx{position:absolute;right:12px;top:12px;width:34px;height:34px;border-radius:50%;border:0;background:#f0eee9;font:600 18px/1 sans-serif;cursor:pointer;z-index:2}
+@media (max-width:860px){.dl{flex-direction:column;overflow:auto}.dl video{max-width:96vw;max-height:60vh}.dl aside{width:auto}#dlgx{background:rgba(255,255,255,.92)}}
+@media (max-width:760px){.wrap{padding:32px 16px 60px}h1{font-size:40px}section{margin-top:44px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><h1>AI Video <b>Edit Recipes</b></h1><nav><button type="button" id="intro">Watch the 2-min intro</button><a href="#" id="repo">Get the prompts &amp; source</a></nav></header>
+  <main id="main"></main>
+</div>
+<dialog id="dlg"><button type="button" id="dlgx" aria-label="Close">×</button>
+  <div class="dl"><div class="pl"><video id="dlgv" controls playsinline></video></div>
+  <aside><h3 id="t"></h3>
+    <div><div class="k">You give the AI</div><div id="in"></div></div>
+    <div><div class="k">Prompt</div><div class="pr"><span id="pr"></span><button type="button" id="cp">Copy</button></div></div>
+    <div><div class="k">Tools</div><div class="tools" id="tl"></div></div>
+    <div><div class="k">Cost</div><div id="co"></div></div>
+    <a id="src" href="#">Recipe &amp; source →</a>
+  </aside></div>
+</dialog>
+<script src="gallery/data.js"></script>
+<script>
+// Where the videos live. Local: "videos/". Published: the GitHub Release download URL, e.g.
+// "https://github.com/<you>/ai-video-edit-recipes/releases/download/v1/"
+const VIDEO_BASE = "videos/";
+// The GitHub repo URL once published, e.g. "https://github.com/<you>/ai-video-edit-recipes"
+const REPO = "";
+const D = window.GALLERY;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const by = Object.fromEntries(D.items.map(i => [i.id, i]));
+const tile = it => `<button class="v" type="button" data-id="${it.id}" data-r="${it.w / 300}" aria-label="${esc(it.title)}" title="${esc(it.title)}">
+  <img src="${it.poster}" alt="" loading="lazy"><video muted loop playsinline preload="none"></video></button>`;
+document.getElementById("main").innerHTML = D.sections.map(s =>
+  `<section><h2>${esc(s.name)}</h2><div class="row">${D.items.filter(i => i.section === s.id).map(tile).join("")}</div></section>`).join("");
+// play each clip silently while it is on screen
+const io = new IntersectionObserver(es => es.forEach(e => {
+  const b = e.target, v = b.querySelector("video");
+  if (e.isIntersecting) { if (!v.src) v.src = VIDEO_BASE + b.dataset.id + ".mp4"; v.play().then(() => b.classList.add("on")).catch(() => {}); }
+  else v.pause();
+}), { threshold: 0.35 });
+document.querySelectorAll(".v").forEach(b => io.observe(b));
+// justified rows: each row fills the full width, tiles in a row share one height
+function lay() {
+  const T = innerWidth < 760 ? 230 : 360, G = 16;
+  document.querySelectorAll(".row").forEach(r => {
+    const W = r.clientWidth; let row = [], sum = 0;
+    const put = h => { row.forEach(b => { b.style.height = h + "px"; b.style.width = Math.floor(h * b.dataset.r) - 0.5 + "px"; }); row = []; sum = 0; };
+    [...r.children].forEach(b => { row.push(b); sum += +b.dataset.r; const h = (W - G * (row.length - 1)) / sum; if (h <= T) put(h); });
+    if (row.length) put(Math.min((W - G * (row.length - 1)) / sum, T * 1.35));
+  });
+}
+lay(); addEventListener("resize", lay);
+document.getElementById("repo").href = REPO || "README.md";
+const dlg = document.getElementById("dlg"), dlgv = document.getElementById("dlgv"), $ = id => document.getElementById(id);
+document.querySelectorAll(".v").forEach(b => b.addEventListener("click", () => {
+  const it = by[b.dataset.id]; dlg.classList.remove("solo");
+  $("t").textContent = it.title; $("in").textContent = it.input; $("pr").textContent = it.prompt; $("co").textContent = it.cost;
+  $("tl").innerHTML = it.tools.map(t => `<span>${esc(t)}</span>`).join("");
+  $("src").href = REPO ? `${REPO}/tree/main/recipes/${it.id}` : `recipes/${it.id}/README.md`; $("cp").textContent = "Copy";
+  dlgv.src = VIDEO_BASE + it.id + ".mp4"; dlg.showModal(); dlgv.play().catch(() => {});
+}));
+$("intro").onclick = () => { dlg.classList.add("solo"); dlgv.src = VIDEO_BASE + "intro.mp4"; dlg.showModal(); dlgv.play().catch(() => {}); };
+$("cp").onclick = () => navigator.clipboard.writeText($("pr").textContent).then(() => $("cp").textContent = "Copied").catch(() => {});
+$("dlgx").onclick = () => dlg.close();
+dlg.addEventListener("close", () => { dlgv.pause(); dlgv.removeAttribute("src"); });
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+</script>
+</body>
+</html>

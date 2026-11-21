@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=1920, height=1080" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<style>
+/* latin-ext */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: block;
+  src: url(assets/fonts/f00.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: block;
+  src: url(assets/fonts/f01.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url(assets/fonts/f02.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url(assets/fonts/f03.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f04.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f05.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f06.woff2) format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f07.woff2) format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f08.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f09.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f10.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f11.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f12.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f13.woff2) format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f14.woff2) format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f15.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f16.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url(assets/fonts/f17.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 800;
+  font-display: block;
+  src: url(assets/fonts/f18.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 800;
+  font-display: block;
+  src: url(assets/fonts/f19.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 800;
+  font-display: block;
+  src: url(assets/fonts/f20.woff2) format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 800;
+  font-display: block;
+  src: url(assets/fonts/f21.woff2) format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 800;
+  font-display: block;
+  src: url(assets/fonts/f22.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 800;
+  font-display: block;
+  src: url(assets/fonts/f23.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter Tight';
+  font-style: normal;
+  font-weight: 800;
+  font-display: block;
+  src: url(assets/fonts/f24.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f25.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f26.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f27.woff2) format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f28.woff2) format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f29.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url(assets/fonts/f30.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root { --bg: #F3EFE6; --ink: #16140F; --soft: #8B857A; --acc: #D97757; --line: #E2DCCF; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+#root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: var(--ink); font-family: "Inter Tight", sans-serif; perspective: 2200px; }
+#bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 70% at 50% 45%, #F8F5EE 0%, #F3EFE6 60%, #ECE6DA 100%); }
+.scene { position: absolute; inset: 0; opacity: 0; }
+.card { position: absolute; border-radius: 22px; overflow: hidden; background: #111; opacity: 0;
+  box-shadow: 0 40px 70px -30px rgba(60,40,15,.45), 0 2px 8px rgba(40,30,10,.10); }
+.card video, .card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.lab { position: absolute; font: 500 28px/1 "JetBrains Mono", monospace; color: var(--soft); opacity: 0; letter-spacing: .5px; }
+.serif { font-family: "Instrument Serif", serif; font-weight: 400; letter-spacing: -1px; }
+.big { position: absolute; font-size: 128px; line-height: 1.18; }
+.big i { font-style: italic; color: #B9573A; }
+.mask { overflow: hidden; display: block; padding-bottom: 8px; }
+.mask > span { display: inline-block; }
+/* prompt card: what the person types */
+.pc { position: absolute; left: 360px; width: 1200px; background: #FFFEFB; border: 1.5px solid var(--line); border-radius: 18px; padding: 30px 40px 36px; opacity: 0;
+  box-shadow: 0 30px 60px -30px rgba(60,40,15,.35); }
+.pc .hd { display: flex; align-items: center; gap: 14px; font: 500 28px/1 "JetBrains Mono", monospace; color: #6F695F; margin-bottom: 22px; }
+.pc .tx { font: 500 38px/1.45 "JetBrains Mono", monospace; color: var(--ink); min-height: 55px; }
+.pc .tx b { color: var(--acc); font-weight: 500; }
+.pc .tx { white-space: pre-wrap; }
+.pc .tx s { text-decoration: none; display: none; }
+.pc .cur { display: inline-block; width: 18px; height: 40px; background: var(--acc); vertical-align: -6px; margin-left: 4px; opacity: 0; }
+/* pixel mascot */
+.clawd { position: relative; }
+.clawd i { position: absolute; display: block; background: var(--acc); }
+/* chapter tag, top-left while a chapter's results play */
+.tag { position: absolute; left: 90px; top: 50px; font: 700 30px/1 "Inter Tight", sans-serif; color: var(--ink); opacity: 0; }
+.tag em { font: 500 24px/1 "JetBrains Mono", monospace; color: var(--soft); font-style: normal; margin-left: 18px; }
+/* film strip in the editing beat */
+.strip { position: absolute; left: 0; top: 0; }
+.strip .fr { position: absolute; width: 160px; height: 284px; border-radius: 10px; overflow: hidden; box-shadow: 0 16px 30px -16px rgba(60,40,15,.5); }
+.strip .fr img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cutline { position: absolute; width: 4px; height: 330px; background: var(--acc); opacity: 0; }
+/* wall of every video */
+#wall { position: absolute; left: 50%; top: 50%; width: 2600px; height: 3400px; margin: -1700px 0 0 -1300px; transform-style: preserve-3d; }
+#wall .wt { position: absolute; width: 330px; height: 586px; border-radius: 16px; overflow: hidden; box-shadow: 0 24px 40px -24px rgba(60,40,15,.5); }
+#wall .wt img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.plate { position: absolute; left: 460px; top: 330px; width: 1000px; height: 420px; background: rgba(243,239,230,.94); border-radius: 26px; opacity: 0;
+  box-shadow: 0 40px 80px -30px rgba(40,30,10,.5); }
+.plate .big { position: static; text-align: center; font-size: 112px; padding-top: 70px; }
+.plate p { text-align: center; font: 500 30px/1.4 "JetBrains Mono", monospace; color: var(--soft); margin-top: 18px; }
+#name { position: absolute; left: 0; right: 0; text-align: center; font: 800 132px/1.2 "Inter Tight", sans-serif; letter-spacing: -4px; }
+#name b { color: var(--acc); font-weight: 800; }
+#sub { position: absolute; left: 0; right: 0; text-align: center; font: 500 34px/1.3 "JetBrains Mono", monospace; color: var(--soft); opacity: 0; }
+#grain { position: absolute; inset: -60px; pointer-events: none; opacity: .06; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+</style></head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="122.6" data-width="1920" data-height="1080">
+<div id="bg"></div>
+<div class="scene" id="o1" style="opacity:1"><div class="big serif" id="o1t" style="left:130px;top:330px"><span class="mask"><span>You shot</span></span><span class="mask"><span>the <i>footage.</i></span></span></div><div class="card" id="c1" style="left:1000px;top:210px;width:340px;height:604px"><video id="v1" class="clip" src="assets/c/raw-h01.mp4" data-start="0.000" data-duration="5.872" data-media-start="0.00" data-track-index="2" muted playsinline></video></div><div class="lab" id="rl0" style="left:1010px;top:840px">h01.mp4</div><div class="card" id="c2" style="left:1250px;top:250px;width:340px;height:604px"><video id="v2" class="clip" src="assets/c/raw-h06.mp4" data-start="0.000" data-duration="5.672" data-media-start="0.00" data-track-index="3" muted playsinline></video></div><div class="lab" id="rl1" style="left:1260px;top:880px">h06.mp4</div><div class="card" id="c3" style="left:1500px;top:190px;width:340px;height:604px"><video id="v3" class="clip" src="assets/c/raw-h10.mp4" data-start="0.120" data-duration="5.472" data-media-start="0.00" data-track-index="4" muted playsinline></video></div><div class="lab" id="rl2" style="left:1510px;top:820px">h10.mp4</div></div>
+<div class="scene" id="o2"><div class="big serif" id="o2t" style="left:360px;top:150px;font-size:110px"><span class="mask"><span>Now just say <i>what you want.</i></span></span></div><div class="pc" style="top:470px" id="pc1"><div class="hd"><div class="clawd" id="pc1k" style="width:72px;height:20px;"><i style="left:12px;top:0px;width:5px;height:5px"></i><i style="left:16px;top:0px;width:5px;height:5px"></i><i style="left:20px;top:0px;width:5px;height:5px"></i><i style="left:24px;top:0px;width:5px;height:5px"></i><i style="left:28px;top:0px;width:5px;height:5px"></i><i style="left:32px;top:0px;width:5px;height:5px"></i><i style="left:36px;top:0px;width:5px;height:5px"></i><i style="left:40px;top:0px;width:5px;height:5px"></i><i style="left:44px;top:0px;width:5px;height:5px"></i><i style="left:48px;top:0px;width:5px;height:5px"></i><i style="left:52px;top:0px;width:5px;height:5px"></i><i style="left:56px;top:0px;width:5px;height:5px"></i><i style="left:12px;top:4px;width:5px;height:5px"></i><i style="left:16px;top:4px;width:5px;height:5px"></i><i style="left:24px;top:4px;width:5px;height:5px"></i><i style="left:28px;top:4px;width:5px;height:5px"></i><i style="left:32px;top:4px;width:5px;height:5px"></i><i style="left:36px;top:4px;width:5px;height:5px"></i><i style="left:40px;top:4px;width:5px;height:5px"></i><i style="left:44px;top:4px;width:5px;height:5px"></i><i style="left:52px;top:4px;width:5px;height:5px"></i><i style="left:56px;top:4px;width:5px;height:5px"></i><i style="left:4px;top:8px;width:5px;height:5px"></i><i style="left:8px;top:8px;width:5px;height:5px"></i><i style="left:12px;top:8px;width:5px;height:5px"></i><i style="left:16px;top:8px;width:5px;height:5px"></i><i style="left:20px;top:8px;width:5px;height:5px"></i><i style="left:24px;top:8px;width:5px;height:5px"></i><i style="left:28px;top:8px;width:5px;height:5px"></i><i style="left:32px;top:8px;width:5px;height:5px"></i><i style="left:36px;top:8px;width:5px;height:5px"></i><i style="left:40px;top:8px;width:5px;height:5px"></i><i style="left:44px;top:8px;width:5px;height:5px"></i><i style="left:48px;top:8px;width:5px;height:5px"></i><i style="left:52px;top:8px;width:5px;height:5px"></i><i style="left:56px;top:8px;width:5px;height:5px"></i><i style="left:60px;top:8px;width:5px;height:5px"></i><i style="left:64px;top:8px;width:5px;height:5px"></i><i style="left:12px;top:12px;width:5px;height:5px"></i><i style="left:16px;top:12px;width:5px;height:5px"></i><i style="left:20px;top:12px;width:5px;height:5px"></i><i style="left:24px;top:12px;width:5px;height:5px"></i><i style="left:28px;top:12px;width:5px;height:5px"></i><i style="left:32px;top:12px;width:5px;height:5px"></i><i style="left:36px;top:12px;width:5px;height:5px"></i><i style="left:40px;top:12px;width:5px;height:5px"></i><i style="left:44px;top:12px;width:5px;height:5px"></i><i style="left:48px;top:12px;width:5px;height:5px"></i><i style="left:52px;top:12px;width:5px;height:5px"></i><i style="left:56px;top:12px;width:5px;height:5px"></i><i style="left:16px;top:16px;width:5px;height:5px"></i><i style="left:24px;top:16px;width:5px;height:5px"></i><i style="left:52px;top:16px;width:5px;height:5px"></i><i style="left:60px;top:16px;width:5px;height:5px"></i></div><span>Claude Edit Agent</span></div><div class="tx"><b>&gt;</b> <s>T</s><s>u</s><s>r</s><s>n</s><s> </s><s>t</s><s>h</s><s>e</s><s>s</s><s>e</s><s> </s><s>c</s><s>l</s><s>i</s><s>p</s><s>s</s><s> </s><s>i</s><s>n</s><s>t</s><s>o</s><s> </s><s>a</s><s> </s><s>1</s><s>5</s><s>-</s><s>s</s><s>e</s><s>c</s><s>o</s><s>n</s><s>d</s><s> </s><s>a</s><s>d</s><s>.</s><s> </s><s>G</s><s>i</s><s>a</s><s>n</s><s>t</s><s> </s><s>w</s><s>o</s><s>r</s><s>d</s><s> </s><s>b</s><s>e</s><s>h</s><s>i</s><s>n</s><s>d</s><s> </s><s>t</s><s>h</s><s>e</s><s> </s><s>h</s><s>e</s><s>a</s><s>d</s><s>p</s><s>h</s><s>o</s><s>n</s><s>e</s><s>s</s><s>,</s><s> </s><s>m</s><s>u</s><s>s</s><s>i</s><s>c</s><s> </s><s>o</s><s>n</s><s>l</s><s>y</s><s>.</s><span class="cur"></span></div></div></div>
+<div class="scene" id="o3"><div class="strip"><div class="fr" id="fr0" style="left:160px;top:380px"><img src="assets/strip/f1.jpg"></div><div class="fr" id="fr1" style="left:340px;top:380px"><img src="assets/strip/f2.jpg"></div><div class="fr" id="fr2" style="left:520px;top:380px"><img src="assets/strip/f3.jpg"></div><div class="fr" id="fr3" style="left:700px;top:380px"><img src="assets/strip/f4.jpg"></div><div class="fr" id="fr4" style="left:880px;top:380px"><img src="assets/strip/f5.jpg"></div><div class="fr" id="fr5" style="left:1060px;top:380px"><img src="assets/strip/f6.jpg"></div><div class="fr" id="fr6" style="left:1240px;top:380px"><img src="assets/strip/f7.jpg"></div><div class="fr" id="fr7" style="left:1420px;top:380px"><img src="assets/strip/f8.jpg"></div><div class="fr" id="fr8" style="left:1600px;top:380px"><img src="assets/strip/f9.jpg"></div></div><div class="clawd" id="cw" style="width:180px;height:50px;position:absolute;left:160px;top:290px"><i style="left:30px;top:0px;width:11px;height:11px"></i><i style="left:40px;top:0px;width:11px;height:11px"></i><i style="left:50px;top:0px;width:11px;height:11px"></i><i style="left:60px;top:0px;width:11px;height:11px"></i><i style="left:70px;top:0px;width:11px;height:11px"></i><i style="left:80px;top:0px;width:11px;height:11px"></i><i style="left:90px;top:0px;width:11px;height:11px"></i><i style="left:100px;top:0px;width:11px;height:11px"></i><i style="left:110px;top:0px;width:11px;height:11px"></i><i style="left:120px;top:0px;width:11px;height:11px"></i><i style="left:130px;top:0px;width:11px;height:11px"></i><i style="left:140px;top:0px;width:11px;height:11px"></i><i style="left:30px;top:10px;width:11px;height:11px"></i><i style="left:40px;top:10px;width:11px;height:11px"></i><i style="left:60px;top:10px;width:11px;height:11px"></i><i style="left:70px;top:10px;width:11px;height:11px"></i><i style="left:80px;top:10px;width:11px;height:11px"></i><i style="left:90px;top:10px;width:11px;height:11px"></i><i style="left:100px;top:10px;width:11px;height:11px"></i><i style="left:110px;top:10px;width:11px;height:11px"></i><i style="left:130px;top:10px;width:11px;height:11px"></i><i style="left:140px;top:10px;width:11px;height:11px"></i><i style="left:10px;top:20px;width:11px;height:11px"></i><i style="left:20px;top:20px;width:11px;height:11px"></i><i style="left:30px;top:20px;width:11px;height:11px"></i><i style="left:40px;top:20px;width:11px;height:11px"></i><i style="left:50px;top:20px;width:11px;height:11px"></i><i style="left:60px;top:20px;width:11px;height:11px"></i><i style="left:70px;top:20px;width:11px;height:11px"></i><i style="left:80px;top:20px;width:11px;height:11px"></i><i style="left:90px;top:20px;width:11px;height:11px"></i><i style="left:100px;top:20px;width:11px;height:11px"></i><i style="left:110px;top:20px;width:11px;height:11px"></i><i style="left:120px;top:20px;width:11px;height:11px"></i><i style="left:130px;top:20px;width:11px;height:11px"></i><i style="left:140px;top:20px;width:11px;height:11px"></i><i style="left:150px;top:20px;width:11px;height:11px"></i><i style="left:160px;top:20px;width:11px;height:11px"></i><i style="left:30px;top:30px;width:11px;height:11px"></i><i style="left:40px;top:30px;width:11px;height:11px"></i><i style="left:50px;top:30px;width:11px;height:11px"></i><i style="left:60px;top:30px;width:11px;height:11px"></i><i style="left:70px;top:30px;width:11px;height:11px"></i><i style="left:80px;top:30px;width:11px;height:11px"></i><i style="left:90px;top:30px;width:11px;height:11px"></i><i style="left:100px;top:30px;width:11px;height:11px"></i><i style="left:110px;top:30px;width:11px;height:11px"></i><i style="left:120px;top:30px;width:11px;height:11px"></i><i style="left:130px;top:30px;width:11px;height:11px"></i><i style="left:140px;top:30px;width:11px;height:11px"></i><i style="left:40px;top:40px;width:11px;height:11px"></i><i style="left:60px;top:40px;width:11px;height:11px"></i><i style="left:130px;top:40px;width:11px;height:11px"></i><i style="left:150px;top:40px;width:11px;height:11px"></i></div><div class="lab" id="edl" style="left:0;right:0;text-align:center;top:720px;font-size:30px;color:#16140F">Claude is editing</div></div>
+<div class="scene" id="o4"><div class="card" id="c4" style="left:330px;top:260px;width:330px;height:586px"><video id="v4" class="clip" src="assets/c/raw-h10.mp4" data-start="14.082" data-duration="5.883" data-media-start="0.00" data-track-index="5" muted playsinline></video></div><div class="card" id="c5" style="left:860px;top:80px;width:520px;height:924px"><video id="v5" class="clip" src="assets/c/tai-nghe-hush.mp4" data-start="14.082" data-duration="5.883" data-media-start="0.00" data-track-index="6" muted playsinline></video></div><div class="lab" id="l1" style="left:340px;top:870px">your clip</div><div class="lab" id="l2" style="left:1420px;top:480px;color:#16140F;font-size:30px">the edit</div></div>
+<div class="scene" id="nm1"><div class="clawd" id="nm1k" style="width:396px;height:110px;position:absolute;left:762px;top:250px"><i style="left:66px;top:0px;width:23px;height:23px"></i><i style="left:88px;top:0px;width:23px;height:23px"></i><i style="left:110px;top:0px;width:23px;height:23px"></i><i style="left:132px;top:0px;width:23px;height:23px"></i><i style="left:154px;top:0px;width:23px;height:23px"></i><i style="left:176px;top:0px;width:23px;height:23px"></i><i style="left:198px;top:0px;width:23px;height:23px"></i><i style="left:220px;top:0px;width:23px;height:23px"></i><i style="left:242px;top:0px;width:23px;height:23px"></i><i style="left:264px;top:0px;width:23px;height:23px"></i><i style="left:286px;top:0px;width:23px;height:23px"></i><i style="left:308px;top:0px;width:23px;height:23px"></i><i style="left:66px;top:22px;width:23px;height:23px"></i><i style="left:88px;top:22px;width:23px;height:23px"></i><i style="left:132px;top:22px;width:23px;height:23px"></i><i style="left:154px;top:22px;width:23px;height:23px"></i><i style="left:176px;top:22px;width:23px;height:23px"></i><i style="left:198px;top:22px;width:23px;height:23px"></i><i style="left:220px;top:22px;width:23px;height:23px"></i><i style="left:242px;top:22px;width:23px;height:23px"></i><i style="left:286px;top:22px;width:23px;height:23px"></i><i style="left:308px;top:22px;width:23px;height:23px"></i><i style="left:22px;top:44px;width:23px;height:23px"></i><i style="left:44px;top:44px;width:23px;height:23px"></i><i style="left:66px;top:44px;width:23px;height:23px"></i><i style="left:88px;top:44px;width:23px;height:23px"></i><i style="left:110px;top:44px;width:23px;height:23px"></i><i style="left:132px;top:44px;width:23px;height:23px"></i><i style="left:154px;top:44px;width:23px;height:23px"></i><i style="left:176px;top:44px;width:23px;height:23px"></i><i style="left:198px;top:44px;width:23px;height:23px"></i><i style="left:220px;top:44px;width:23px;height:23px"></i><i style="left:242px;top:44px;width:23px;height:23px"></i><i style="left:264px;top:44px;width:23px;height:23px"></i><i style="left:286px;top:44px;width:23px;height:23px"></i><i style="left:308px;top:44px;width:23px;height:23px"></i><i style="left:330px;top:44px;width:23px;height:23px"></i><i style="left:352px;top:44px;width:23px;height:23px"></i><i style="left:66px;top:66px;width:23px;height:23px"></i><i style="left:88px;top:66px;width:23px;height:23px"></i><i style="left:110px;top:66px;width:23px;height:23px"></i><i style="left:132px;top:66px;width:23px;height:23px"></i><i style="left:154px;top:66px;width:23px;height:23px"></i><i style="left:176px;top:66px;width:23px;height:23px"></i><i style="left:198px;top:66px;width:23px;height:23px"></i><i style="left:220px;top:66px;width:23px;height:23px"></i><i style="left:242px;top:66px;width:23px;height:23px"></i><i style="left:264px;top:66px;width:23px;height:23px"></i><i style="left:286px;top:66px;width:23px;height:23px"></i><i style="left:308px;top:66px;width:23px;height:23px"></i><i style="left:88px;top:88px;width:23px;height:23px"></i><i style="left:132px;top:88px;width:23px;height:23px"></i><i style="left:286px;top:88px;width:23px;height:23px"></i><i style="left:330px;top:88px;width:23px;height:23px"></i></div><div id="nm1n" style="position:absolute;left:0;right:0;top:430px;text-align:center;font:800 132px/1.2 'Inter Tight',sans-serif;letter-spacing:-4px"><span class="mask"><span>Claude <b style="color:#D97757;font-weight:800">Edit Agent</b></span></span></div><div class="lab" id="nm1s" style="left:0;right:0;text-align:center;top:650px;font-size:34px">Edit videos by describing them.</div></div>
+<div class="scene" id="ch0"><div class="big serif" id="ch0t" style="left:360px;top:200px;font-size:120px"><span class="mask"><span>Real estate</span></span></div><div class="pc" style="top:450px" id="pc2"><div class="hd"><div class="clawd" id="pc2k" style="width:72px;height:20px;"><i style="left:12px;top:0px;width:5px;height:5px"></i><i style="left:16px;top:0px;width:5px;height:5px"></i><i style="left:20px;top:0px;width:5px;height:5px"></i><i style="left:24px;top:0px;width:5px;height:5px"></i><i style="left:28px;top:0px;width:5px;height:5px"></i><i style="left:32px;top:0px;width:5px;height:5px"></i><i style="left:36px;top:0px;width:5px;height:5px"></i><i style="left:40px;top:0px;width:5px;height:5px"></i><i style="left:44px;top:0px;width:5px;height:5px"></i><i style="left:48px;top:0px;width:5px;height:5px"></i><i style="left:52px;top:0px;width:5px;height:5px"></i><i style="left:56px;top:0px;width:5px;height:5px"></i><i style="left:12px;top:4px;width:5px;height:5px"></i><i style="left:16px;top:4px;width:5px;height:5px"></i><i style="left:24px;top:4px;width:5px;height:5px"></i><i style="left:28px;top:4px;width:5px;height:5px"></i><i style="left:32px;top:4px;width:5px;height:5px"></i><i style="left:36px;top:4px;width:5px;height:5px"></i><i style="left:40px;top:4px;width:5px;height:5px"></i><i style="left:44px;top:4px;width:5px;height:5px"></i><i style="left:52px;top:4px;width:5px;height:5px"></i><i style="left:56px;top:4px;width:5px;height:5px"></i><i style="left:4px;top:8px;width:5px;height:5px"></i><i style="left:8px;top:8px;width:5px;height:5px"></i><i style="left:12px;top:8px;width:5px;height:5px"></i><i style="left:16px;top:8px;width:5px;height:5px"></i><i style="left:20px;top:8px;width:5px;height:5px"></i><i style="left:24px;top:8px;width:5px;height:5px"></i><i style="left:28px;top:8px;width:5px;height:5px"></i><i style="left:32px;top:8px;width:5px;height:5px"></i><i style="left:36px;top:8px;width:5px;height:5px"></i><i style="left:40px;top:8px;width:5px;height:5px"></i><i style="left:44px;top:8px;width:5px;height:5px"></i><i style="left:48px;top:8px;width:5px;height:5px"></i><i style="left:52px;top:8px;width:5px;height:5px"></i><i style="left:56px;top:8px;width:5px;height:5px"></i><i style="left:60px;top:8px;width:5px;height:5px"></i><i style="left:64px;top:8px;width:5px;height:5px"></i><i style="left:12px;top:12px;width:5px;height:5px"></i><i style="left:16px;top:12px;width:5px;height:5px"></i><i style="left:20px;top:12px;width:5px;height:5px"></i><i style="left:24px;top:12px;width:5px;height:5px"></i><i style="left:28px;top:12px;width:5px;height:5px"></i><i style="left:32px;top:12px;width:5px;height:5px"></i><i style="left:36px;top:12px;width:5px;height:5px"></i><i style="left:40px;top:12px;width:5px;height:5px"></i><i style="left:44px;top:12px;width:5px;height:5px"></i><i style="left:48px;top:12px;width:5px;height:5px"></i><i style="left:52px;top:12px;width:5px;height:5px"></i><i style="left:56px;top:12px;width:5px;height:5px"></i><i style="left:16px;top:16px;width:5px;height:5px"></i><i style="left:24px;top:16px;width:5px;height:5px"></i><i style="left:52px;top:16px;width:5px;height:5px"></i><i style="left:60px;top:16px;width:5px;height:5px"></i></div><span>Claude Edit Agent</span></div><div class="tx"><b>&gt;</b> <s>D</s><s>r</s><s>a</s><s>w</s><s> </s><s>t</s><s>h</s><s>e</s><s> </s><s>f</s><s>l</s><s>o</s><s>o</s><s>r</s><s> </s><s>p</s><s>l</s><s>a</s><s>n</s><s>,</s><s> </s><s>t</s><s>h</s><s>e</s><s>n</s><s> </s><s>t</s><s>u</s><s>r</s><s>n</s><s> </s><s>i</s><s>t</s><s> </s><s>i</s><s>n</s><s>t</s><s>o</s><s> </s><s>t</s><s>h</s><s>e</s><s> </s><s>r</s><s>e</s><s>a</s><s>l</s><s> </s><s>h</s><s>o</s><s>u</s><s>s</s><s>e</s><s>.</s><span class="cur"></span></div></div></div>
+<div class="tag" id="tg0">Real estate</div>
+<div class="card" id="c6" style="left:200px;top:150px;width:1520px;height:855px"><video id="v6" class="clip" src="assets/c/bds-ban-ve.mp4" data-start="27.271" data-duration="5.907" data-media-start="0.00" data-track-index="7" muted playsinline></video></div>
+<div class="card" id="c7" style="left:110px;top:258px;width:1180px;height:664px"><video id="v7" class="clip" src="assets/c/bds-tour-map.mp4" data-start="32.078" data-duration="5.906" data-media-start="0.00" data-track-index="8" muted playsinline></video></div>
+<div class="card" id="c8" style="left:1326px;top:150px;width:484px;height:860px"><video id="v8" class="clip" src="assets/c/bds-noi-that.mp4" data-start="32.078" data-duration="5.906" data-media-start="0.00" data-track-index="1" muted playsinline></video></div>
+<div class="card" id="c9" style="left:110px;top:258px;width:1180px;height:664px"><video id="v9" class="clip" src="assets/c/bds-dung-3d.mp4" data-start="36.884" data-duration="5.883" data-media-start="0.00" data-track-index="2" muted playsinline></video></div>
+<div class="card" id="c10" style="left:1326px;top:150px;width:484px;height:860px"><video id="v10" class="clip" src="assets/c/bds-vi-tri.mp4" data-start="36.884" data-duration="5.883" data-media-start="0.00" data-track-index="3" muted playsinline></video></div>
+<div class="scene" id="ch1"><div class="big serif" id="ch1t" style="left:360px;top:200px;font-size:120px"><span class="mask"><span>Product ads</span></span></div><div class="pc" style="top:450px" id="pc3"><div class="hd"><div class="clawd" id="pc3k" style="width:72px;height:20px;"><i style="left:12px;top:0px;width:5px;height:5px"></i><i style="left:16px;top:0px;width:5px;height:5px"></i><i style="left:20px;top:0px;width:5px;height:5px"></i><i style="left:24px;top:0px;width:5px;height:5px"></i><i style="left:28px;top:0px;width:5px;height:5px"></i><i style="left:32px;top:0px;width:5px;height:5px"></i><i style="left:36px;top:0px;width:5px;height:5px"></i><i style="left:40px;top:0px;width:5px;height:5px"></i><i style="left:44px;top:0px;width:5px;height:5px"></i><i style="left:48px;top:0px;width:5px;height:5px"></i><i style="left:52px;top:0px;width:5px;height:5px"></i><i style="left:56px;top:0px;width:5px;height:5px"></i><i style="left:12px;top:4px;width:5px;height:5px"></i><i style="left:16px;top:4px;width:5px;height:5px"></i><i style="left:24px;top:4px;width:5px;height:5px"></i><i style="left:28px;top:4px;width:5px;height:5px"></i><i style="left:32px;top:4px;width:5px;height:5px"></i><i style="left:36px;top:4px;width:5px;height:5px"></i><i style="left:40px;top:4px;width:5px;height:5px"></i><i style="left:44px;top:4px;width:5px;height:5px"></i><i style="left:52px;top:4px;width:5px;height:5px"></i><i style="left:56px;top:4px;width:5px;height:5px"></i><i style="left:4px;top:8px;width:5px;height:5px"></i><i style="left:8px;top:8px;width:5px;height:5px"></i><i style="left:12px;top:8px;width:5px;height:5px"></i><i style="left:16px;top:8px;width:5px;height:5px"></i><i style="left:20px;top:8px;width:5px;height:5px"></i><i style="left:24px;top:8px;width:5px;height:5px"></i><i style="left:28px;top:8px;width:5px;height:5px"></i><i style="left:32px;top:8px;width:5px;height:5px"></i><i style="left:36px;top:8px;width:5px;height:5px"></i><i style="left:40px;top:8px;width:5px;height:5px"></i><i style="left:44px;top:8px;width:5px;height:5px"></i><i style="left:48px;top:8px;width:5px;height:5px"></i><i style="left:52px;top:8px;width:5px;height:5px"></i><i style="left:56px;top:8px;width:5px;height:5px"></i><i style="left:60px;top:8px;width:5px;height:5px"></i><i style="left:64px;top:8px;width:5px;height:5px"></i><i style="left:12px;top:12px;width:5px;height:5px"></i><i style="left:16px;top:12px;width:5px;height:5px"></i><i style="left:20px;top:12px;width:5px;height:5px"></i><i style="left:24px;top:12px;width:5px;height:5px"></i><i style="left:28px;top:12px;width:5px;height:5px"></i><i style="left:32px;top:12px;width:5px;height:5px"></i><i style="left:36px;top:12px;width:5px;height:5px"></i><i style="left:40px;top:12px;width:5px;height:5px"></i><i style="left:44px;top:12px;width:5px;height:5px"></i><i style="left:48px;top:12px;width:5px;height:5px"></i><i style="left:52px;top:12px;width:5px;height:5px"></i><i style="left:56px;top:12px;width:5px;height:5px"></i><i style="left:16px;top:16px;width:5px;height:5px"></i><i style="left:24px;top:16px;width:5px;height:5px"></i><i style="left:52px;top:16px;width:5px;height:5px"></i><i style="left:60px;top:16px;width:5px;height:5px"></i></div><span>Claude Edit Agent</span></div><div class="tx"><b>&gt;</b> <s>M</s><s>a</s><s>k</s><s>e</s><s> </s><s>a</s><s> </s><s>1</s><s>5</s><s>-</s><s>s</s><s>e</s><s>c</s><s>o</s><s>n</s><s>d</s><s> </s><s>a</s><s>d</s><s>.</s><s> </s><s>B</s><s>i</s><s>g</s><s> </s><s>t</s><s>y</s><s>p</s><s>e</s><s>,</s><s> </s><s>m</s><s>u</s><s>s</s><s>i</s><s>c</s><s> </s><s>o</s><s>n</s><s>l</s><s>y</s><s>.</s><span class="cur"></span></div></div></div>
+<div class="tag" id="tg1">Product ads</div>
+<div class="card" id="c11" style="left:186px;top:150px;width:484px;height:860px"><video id="v11" class="clip" src="assets/c/nuoc-hoa-noir.mp4" data-start="45.290" data-duration="5.883" data-media-start="0.00" data-track-index="4" muted playsinline></video></div>
+<div class="card" id="c12" style="left:718px;top:150px;width:484px;height:860px"><video id="v12" class="clip" src="assets/c/gimbal-axis.mp4" data-start="45.290" data-duration="5.883" data-media-start="0.00" data-track-index="5" muted playsinline></video></div>
+<div class="card" id="c13" style="left:1250px;top:150px;width:484px;height:860px"><video id="v13" class="clip" src="assets/c/tennis-ace.mp4" data-start="45.290" data-duration="5.883" data-media-start="0.00" data-track-index="6" muted playsinline></video></div>
+<div class="card" id="c14" style="left:200px;top:150px;width:1520px;height:855px"><video id="v14" class="clip" src="assets/c/xe-vanta.mp4" data-start="50.073" data-duration="5.907" data-media-start="0.00" data-track-index="7" muted playsinline></video></div>
+<div class="card" id="c15" style="left:110px;top:258px;width:1180px;height:664px"><video id="v15" class="clip" src="assets/c/dong-ho-3d.mp4" data-start="54.880" data-duration="5.883" data-media-start="0.00" data-track-index="8" muted playsinline></video></div>
+<div class="card" id="c16" style="left:1326px;top:150px;width:484px;height:860px"><video id="v16" class="clip" src="assets/c/drone-skyline.mp4" data-start="54.880" data-duration="5.883" data-media-start="0.00" data-track-index="1" muted playsinline></video></div>
+<div class="scene" id="ch2"><div class="big serif" id="ch2t" style="left:360px;top:200px;font-size:120px"><span class="mask"><span>Education</span></span></div><div class="pc" style="top:450px" id="pc4"><div class="hd"><div class="clawd" id="pc4k" style="width:72px;height:20px;"><i style="left:12px;top:0px;width:5px;height:5px"></i><i style="left:16px;top:0px;width:5px;height:5px"></i><i style="left:20px;top:0px;width:5px;height:5px"></i><i style="left:24px;top:0px;width:5px;height:5px"></i><i style="left:28px;top:0px;width:5px;height:5px"></i><i style="left:32px;top:0px;width:5px;height:5px"></i><i style="left:36px;top:0px;width:5px;height:5px"></i><i style="left:40px;top:0px;width:5px;height:5px"></i><i style="left:44px;top:0px;width:5px;height:5px"></i><i style="left:48px;top:0px;width:5px;height:5px"></i><i style="left:52px;top:0px;width:5px;height:5px"></i><i style="left:56px;top:0px;width:5px;height:5px"></i><i style="left:12px;top:4px;width:5px;height:5px"></i><i style="left:16px;top:4px;width:5px;height:5px"></i><i style="left:24px;top:4px;width:5px;height:5px"></i><i style="left:28px;top:4px;width:5px;height:5px"></i><i style="left:32px;top:4px;width:5px;height:5px"></i><i style="left:36px;top:4px;width:5px;height:5px"></i><i style="left:40px;top:4px;width:5px;height:5px"></i><i style="left:44px;top:4px;width:5px;height:5px"></i><i style="left:52px;top:4px;width:5px;height:5px"></i><i style="left:56px;top:4px;width:5px;height:5px"></i><i style="left:4px;top:8px;width:5px;height:5px"></i><i style="left:8px;top:8px;width:5px;height:5px"></i><i style="left:12px;top:8px;width:5px;height:5px"></i><i style="left:16px;top:8px;width:5px;height:5px"></i><i style="left:20px;top:8px;width:5px;height:5px"></i><i style="left:24px;top:8px;width:5px;height:5px"></i><i style="left:28px;top:8px;width:5px;height:5px"></i><i style="left:32px;top:8px;width:5px;height:5px"></i><i style="left:36px;top:8px;width:5px;height:5px"></i><i style="left:40px;top:8px;width:5px;height:5px"></i><i style="left:44px;top:8px;width:5px;height:5px"></i><i style="left:48px;top:8px;width:5px;height:5px"></i><i style="left:52px;top:8px;width:5px;height:5px"></i><i style="left:56px;top:8px;width:5px;height:5px"></i><i style="left:60px;top:8px;width:5px;height:5px"></i><i style="left:64px;top:8px;width:5px;height:5px"></i><i style="left:12px;top:12px;width:5px;height:5px"></i><i style="left:16px;top:12px;width:5px;height:5px"></i><i style="left:20px;top:12px;width:5px;height:5px"></i><i style="left:24px;top:12px;width:5px;height:5px"></i><i style="left:28px;top:12px;width:5px;height:5px"></i><i style="left:32px;top:12px;width:5px;height:5px"></i><i style="left:36px;top:12px;width:5px;height:5px"></i><i style="left:40px;top:12px;width:5px;height:5px"></i><i style="left:44px;top:12px;width:5px;height:5px"></i><i style="left:48px;top:12px;width:5px;height:5px"></i><i style="left:52px;top:12px;width:5px;height:5px"></i><i style="left:56px;top:12px;width:5px;height:5px"></i><i style="left:16px;top:16px;width:5px;height:5px"></i><i style="left:24px;top:16px;width:5px;height:5px"></i><i style="left:52px;top:16px;width:5px;height:5px"></i><i style="left:60px;top:16px;width:5px;height:5px"></i></div><span>Claude Edit Agent</span></div><div class="tx"><b>&gt;</b> <s>E</s><s>x</s><s>p</s><s>l</s><s>a</s><s>i</s><s>n</s><s> </s><s>h</s><s>o</s><s>w</s><s> </s><s>r</s><s>a</s><s>i</s><s>n</s><s> </s><s>i</s><s>s</s><s> </s><s>m</s><s>a</s><s>d</s><s>e</s><s>,</s><s> </s><s>a</s><s>s</s><s> </s><s>a</s><s> </s><s>c</s><s>a</s><s>r</s><s>t</s><s>o</s><s>o</s><s>n</s><s>.</s><span class="cur"></span></div></div></div>
+<div class="tag" id="tg2">Education</div>
+<div class="card" id="c17" style="left:186px;top:150px;width:484px;height:860px"><video id="v17" class="clip" src="assets/c/gd-hoat-hinh.mp4" data-start="63.285" data-duration="5.884" data-media-start="0.00" data-track-index="2" muted playsinline></video></div>
+<div class="card" id="c18" style="left:718px;top:150px;width:484px;height:860px"><video id="v18" class="clip" src="assets/c/gd-vu-tru.mp4" data-start="63.285" data-duration="5.884" data-media-start="0.00" data-track-index="3" muted playsinline></video></div>
+<div class="card" id="c19" style="left:1250px;top:150px;width:484px;height:860px"><video id="v19" class="clip" src="assets/c/gd-thuc-te.mp4" data-start="63.285" data-duration="5.884" data-media-start="0.00" data-track-index="4" muted playsinline></video></div>
+<div class="card" id="c20" style="left:186px;top:150px;width:484px;height:860px"><video id="v20" class="clip" src="assets/c/viet-chu-han.mp4" data-start="68.069" data-duration="5.906" data-media-start="0.00" data-track-index="5" muted playsinline></video></div>
+<div class="card" id="c21" style="left:718px;top:150px;width:484px;height:860px"><video id="v21" class="clip" src="assets/c/ve-phan-bang-den.mp4" data-start="68.069" data-duration="5.906" data-media-start="0.00" data-track-index="6" muted playsinline></video></div>
+<div class="card" id="c22" style="left:1250px;top:150px;width:484px;height:860px"><video id="v22" class="clip" src="assets/c/tu-long-gen-z.mp4" data-start="68.069" data-duration="5.906" data-media-start="0.00" data-track-index="7" muted playsinline></video></div>
+<div class="card" id="c23" style="left:186px;top:150px;width:484px;height:860px"><video id="v23" class="clip" src="assets/c/tu-vung-anh.mp4" data-start="72.875" data-duration="5.907" data-media-start="0.00" data-track-index="8" muted playsinline></video></div>
+<div class="card" id="c24" style="left:718px;top:150px;width:484px;height:860px"><video id="v24" class="clip" src="assets/c/hoat-hinh-phu-de.mp4" data-start="72.875" data-duration="5.907" data-media-start="0.00" data-track-index="1" muted playsinline></video></div>
+<div class="card" id="c25" style="left:1250px;top:150px;width:484px;height:860px"><video id="v25" class="clip" src="assets/c/ca-phe-hay-tra.mp4" data-start="72.875" data-duration="5.907" data-media-start="0.00" data-track-index="2" muted playsinline></video></div>
+<div class="scene" id="ch3"><div class="big serif" id="ch3t" style="left:360px;top:200px;font-size:120px"><span class="mask"><span>Everyday edits</span></span></div><div class="pc" style="top:450px" id="pc5"><div class="hd"><div class="clawd" id="pc5k" style="width:72px;height:20px;"><i style="left:12px;top:0px;width:5px;height:5px"></i><i style="left:16px;top:0px;width:5px;height:5px"></i><i style="left:20px;top:0px;width:5px;height:5px"></i><i style="left:24px;top:0px;width:5px;height:5px"></i><i style="left:28px;top:0px;width:5px;height:5px"></i><i style="left:32px;top:0px;width:5px;height:5px"></i><i style="left:36px;top:0px;width:5px;height:5px"></i><i style="left:40px;top:0px;width:5px;height:5px"></i><i style="left:44px;top:0px;width:5px;height:5px"></i><i style="left:48px;top:0px;width:5px;height:5px"></i><i style="left:52px;top:0px;width:5px;height:5px"></i><i style="left:56px;top:0px;width:5px;height:5px"></i><i style="left:12px;top:4px;width:5px;height:5px"></i><i style="left:16px;top:4px;width:5px;height:5px"></i><i style="left:24px;top:4px;width:5px;height:5px"></i><i style="left:28px;top:4px;width:5px;height:5px"></i><i style="left:32px;top:4px;width:5px;height:5px"></i><i style="left:36px;top:4px;width:5px;height:5px"></i><i style="left:40px;top:4px;width:5px;height:5px"></i><i style="left:44px;top:4px;width:5px;height:5px"></i><i style="left:52px;top:4px;width:5px;height:5px"></i><i style="left:56px;top:4px;width:5px;height:5px"></i><i style="left:4px;top:8px;width:5px;height:5px"></i><i style="left:8px;top:8px;width:5px;height:5px"></i><i style="left:12px;top:8px;width:5px;height:5px"></i><i style="left:16px;top:8px;width:5px;height:5px"></i><i style="left:20px;top:8px;width:5px;height:5px"></i><i style="left:24px;top:8px;width:5px;height:5px"></i><i style="left:28px;top:8px;width:5px;height:5px"></i><i style="left:32px;top:8px;width:5px;height:5px"></i><i style="left:36px;top:8px;width:5px;height:5px"></i><i style="left:40px;top:8px;width:5px;height:5px"></i><i style="left:44px;top:8px;width:5px;height:5px"></i><i style="left:48px;top:8px;width:5px;height:5px"></i><i style="left:52px;top:8px;width:5px;height:5px"></i><i style="left:56px;top:8px;width:5px;height:5px"></i><i style="left:60px;top:8px;width:5px;height:5px"></i><i style="left:64px;top:8px;width:5px;height:5px"></i><i style="left:12px;top:12px;width:5px;height:5px"></i><i style="left:16px;top:12px;width:5px;height:5px"></i><i style="left:20px;top:12px;width:5px;height:5px"></i><i style="left:24px;top:12px;width:5px;height:5px"></i><i style="left:28px;top:12px;width:5px;height:5px"></i><i style="left:32px;top:12px;width:5px;height:5px"></i><i style="left:36px;top:12px;width:5px;height:5px"></i><i style="left:40px;top:12px;width:5px;height:5px"></i><i style="left:44px;top:12px;width:5px;height:5px"></i><i style="left:48px;top:12px;width:5px;height:5px"></i><i style="left:52px;top:12px;width:5px;height:5px"></i><i style="left:56px;top:12px;width:5px;height:5px"></i><i style="left:16px;top:16px;width:5px;height:5px"></i><i style="left:24px;top:16px;width:5px;height:5px"></i><i style="left:52px;top:16px;width:5px;height:5px"></i><i style="left:60px;top:16px;width:5px;height:5px"></i></div><span>Claude Edit Agent</span></div><div class="tx"><b>&gt;</b> <s>A</s><s>d</s><s>d</s><s> </s><s>c</s><s>a</s><s>p</s><s>t</s><s>i</s><s>o</s><s>n</s><s>s</s><s> </s><s>w</s><s>o</s><s>r</s><s>d</s><s> </s><s>b</s><s>y</s><s> </s><s>w</s><s>o</s><s>r</s><s>d</s><s>.</s><s> </s><s>T</s><s>h</s><s>e</s><s>n</s><s> </s><s>c</s><s>u</s><s>t</s><s> </s><s>i</s><s>t</s><s> </s><s>t</s><s>o</s><s> </s><s>t</s><s>h</s><s>e</s><s> </s><s>b</s><s>e</s><s>a</s><s>t</s><s>.</s><span class="cur"></span></div></div></div>
+<div class="tag" id="tg3">Everyday edits</div>
+<div class="card" id="c26" style="left:186px;top:150px;width:484px;height:860px"><video id="v26" class="clip" src="assets/c/cap-phu-de.mp4" data-start="81.281" data-duration="5.906" data-media-start="0.00" data-track-index="3" muted playsinline></video></div>
+<div class="card" id="c27" style="left:718px;top:150px;width:484px;height:860px"><video id="v27" class="clip" src="assets/c/nhip-bong-ro.mp4" data-start="81.281" data-duration="5.906" data-media-start="0.00" data-track-index="4" muted playsinline></video></div>
+<div class="card" id="c28" style="left:1250px;top:150px;width:484px;height:860px"><video id="v28" class="clip" src="assets/c/alaska.mp4" data-start="81.281" data-duration="5.906" data-media-start="0.00" data-track-index="5" muted playsinline></video></div>
+<div class="card" id="c29" style="left:110px;top:258px;width:1180px;height:664px"><video id="v29" class="clip" src="assets/c/tin-indonesia.mp4" data-start="86.087" data-duration="5.884" data-media-start="0.00" data-track-index="6" muted playsinline></video></div>
+<div class="card" id="c30" style="left:1326px;top:150px;width:484px;height:860px"><video id="v30" class="clip" src="assets/c/noi-sang-hon.mp4" data-start="86.087" data-duration="5.884" data-media-start="0.00" data-track-index="7" muted playsinline></video></div>
+<div class="scene" id="ch4"><div class="big serif" id="ch4t" style="left:360px;top:200px;font-size:120px"><span class="mask"><span>3D & code</span></span></div><div class="pc" style="top:450px" id="pc6"><div class="hd"><div class="clawd" id="pc6k" style="width:72px;height:20px;"><i style="left:12px;top:0px;width:5px;height:5px"></i><i style="left:16px;top:0px;width:5px;height:5px"></i><i style="left:20px;top:0px;width:5px;height:5px"></i><i style="left:24px;top:0px;width:5px;height:5px"></i><i style="left:28px;top:0px;width:5px;height:5px"></i><i style="left:32px;top:0px;width:5px;height:5px"></i><i style="left:36px;top:0px;width:5px;height:5px"></i><i style="left:40px;top:0px;width:5px;height:5px"></i><i style="left:44px;top:0px;width:5px;height:5px"></i><i style="left:48px;top:0px;width:5px;height:5px"></i><i style="left:52px;top:0px;width:5px;height:5px"></i><i style="left:56px;top:0px;width:5px;height:5px"></i><i style="left:12px;top:4px;width:5px;height:5px"></i><i style="left:16px;top:4px;width:5px;height:5px"></i><i style="left:24px;top:4px;width:5px;height:5px"></i><i style="left:28px;top:4px;width:5px;height:5px"></i><i style="left:32px;top:4px;width:5px;height:5px"></i><i style="left:36px;top:4px;width:5px;height:5px"></i><i style="left:40px;top:4px;width:5px;height:5px"></i><i style="left:44px;top:4px;width:5px;height:5px"></i><i style="left:52px;top:4px;width:5px;height:5px"></i><i style="left:56px;top:4px;width:5px;height:5px"></i><i style="left:4px;top:8px;width:5px;height:5px"></i><i style="left:8px;top:8px;width:5px;height:5px"></i><i style="left:12px;top:8px;width:5px;height:5px"></i><i style="left:16px;top:8px;width:5px;height:5px"></i><i style="left:20px;top:8px;width:5px;height:5px"></i><i style="left:24px;top:8px;width:5px;height:5px"></i><i style="left:28px;top:8px;width:5px;height:5px"></i><i style="left:32px;top:8px;width:5px;height:5px"></i><i style="left:36px;top:8px;width:5px;height:5px"></i><i style="left:40px;top:8px;width:5px;height:5px"></i><i style="left:44px;top:8px;width:5px;height:5px"></i><i style="left:48px;top:8px;width:5px;height:5px"></i><i style="left:52px;top:8px;width:5px;height:5px"></i><i style="left:56px;top:8px;width:5px;height:5px"></i><i style="left:60px;top:8px;width:5px;height:5px"></i><i style="left:64px;top:8px;width:5px;height:5px"></i><i style="left:12px;top:12px;width:5px;height:5px"></i><i style="left:16px;top:12px;width:5px;height:5px"></i><i style="left:20px;top:12px;width:5px;height:5px"></i><i style="left:24px;top:12px;width:5px;height:5px"></i><i style="left:28px;top:12px;width:5px;height:5px"></i><i style="left:32px;top:12px;width:5px;height:5px"></i><i style="left:36px;top:12px;width:5px;height:5px"></i><i style="left:40px;top:12px;width:5px;height:5px"></i><i style="left:44px;top:12px;width:5px;height:5px"></i><i style="left:48px;top:12px;width:5px;height:5px"></i><i style="left:52px;top:12px;width:5px;height:5px"></i><i style="left:56px;top:12px;width:5px;height:5px"></i><i style="left:16px;top:16px;width:5px;height:5px"></i><i style="left:24px;top:16px;width:5px;height:5px"></i><i style="left:52px;top:16px;width:5px;height:5px"></i><i style="left:60px;top:16px;width:5px;height:5px"></i></div><span>Claude Edit Agent</span></div><div class="tx"><b>&gt;</b> <s>B</s><s>u</s><s>i</s><s>l</s><s>d</s><s> </s><s>a</s><s> </s><s>t</s><s>i</s><s>n</s><s>y</s><s> </s><s>3</s><s>D</s><s> </s><s>r</s><s>o</s><s>o</s><s>m</s><s> </s><s>t</s><s>h</s><s>a</s><s>t</s><s> </s><s>t</s><s>u</s><s>r</s><s>n</s><s>s</s><s> </s><s>f</s><s>r</s><s>o</s><s>m</s><s> </s><s>d</s><s>a</s><s>y</s><s> </s><s>t</s><s>o</s><s> </s><s>n</s><s>i</s><s>g</s><s>h</s><s>t</s><s>.</s><span class="cur"></span></div></div></div>
+<div class="tag" id="tg4">3D & code</div>
+<div class="card" id="c31" style="left:186px;top:150px;width:484px;height:860px"><video id="v31" class="clip" src="assets/c/3d-phong.mp4" data-start="94.470" data-duration="5.906" data-media-start="0.00" data-track-index="8" muted playsinline></video></div>
+<div class="card" id="c32" style="left:718px;top:150px;width:484px;height:860px"><video id="v32" class="clip" src="assets/c/3d-dao.mp4" data-start="94.470" data-duration="5.906" data-media-start="0.00" data-track-index="1" muted playsinline></video></div>
+<div class="card" id="c33" style="left:1250px;top:150px;width:484px;height:860px"><video id="v33" class="clip" src="assets/c/3d-hinh-khoi.mp4" data-start="94.470" data-duration="5.906" data-media-start="0.00" data-track-index="2" muted playsinline></video></div>
+<div class="card" id="c34" style="left:186px;top:150px;width:484px;height:860px"><video id="v34" class="clip" src="assets/c/code-hat.mp4" data-start="99.276" data-duration="5.907" data-media-start="0.00" data-track-index="3" muted playsinline></video></div>
+<div class="card" id="c35" style="left:718px;top:150px;width:484px;height:860px"><video id="v35" class="clip" src="assets/c/code-chu.mp4" data-start="99.276" data-duration="5.907" data-media-start="0.00" data-track-index="4" muted playsinline></video></div>
+<div class="card" id="c36" style="left:1250px;top:150px;width:484px;height:860px"><video id="v36" class="clip" src="assets/c/voxel.mp4" data-start="99.276" data-duration="5.907" data-media-start="0.00" data-track-index="5" muted playsinline></video></div>
+<div class="scene" id="wl"><div id="wall"><div class="wt" style="left:0px;top:0px"><img src="assets/posters/3d-dao.jpg"></div><div class="wt" style="left:370px;top:220px"><img src="assets/posters/3d-hinh-khoi.jpg"></div><div class="wt" style="left:740px;top:0px"><img src="assets/posters/3d-phong.jpg"></div><div class="wt" style="left:1110px;top:220px"><img src="assets/posters/alaska.jpg"></div><div class="wt" style="left:1480px;top:0px"><img src="assets/posters/bds-ban-ve.jpg"></div><div class="wt" style="left:1850px;top:220px"><img src="assets/posters/bds-dung-3d.jpg"></div><div class="wt" style="left:2220px;top:0px"><img src="assets/posters/bds-noi-that.jpg"></div><div class="wt" style="left:0px;top:626px"><img src="assets/posters/bds-tour-map.jpg"></div><div class="wt" style="left:370px;top:846px"><img src="assets/posters/bds-vi-tri.jpg"></div><div class="wt" style="left:740px;top:626px"><img src="assets/posters/ca-phe-hay-tra.jpg"></div><div class="wt" style="left:1110px;top:846px"><img src="assets/posters/cap-phu-de.jpg"></div><div class="wt" style="left:1480px;top:626px"><img src="assets/posters/code-chu.jpg"></div><div class="wt" style="left:1850px;top:846px"><img src="assets/posters/code-hat.jpg"></div><div class="wt" style="left:2220px;top:626px"><img src="assets/posters/dong-ho-3d.jpg"></div><div class="wt" style="left:0px;top:1252px"><img src="assets/posters/drone-skyline.jpg"></div><div class="wt" style="left:370px;top:1472px"><img src="assets/posters/gd-hoat-hinh.jpg"></div><div class="wt" style="left:740px;top:1252px"><img src="assets/posters/gd-thuc-te.jpg"></div><div class="wt" style="left:1110px;top:1472px"><img src="assets/posters/gd-vu-tru.jpg"></div><div class="wt" style="left:1480px;top:1252px"><img src="assets/posters/giay-xoay-3d.jpg"></div><div class="wt" style="left:1850px;top:1472px"><img src="assets/posters/gimbal-axis.jpg"></div><div class="wt" style="left:2220px;top:1252px"><img src="assets/posters/heygen-tren-duoi.jpg"></div><div class="wt" style="left:0px;top:1878px"><img src="assets/posters/hoat-hinh-phu-de.jpg"></div><div class="wt" style="left:370px;top:2098px"><img src="assets/posters/luyen-noi-theo-phim.jpg"></div><div class="wt" style="left:740px;top:1878px"><img src="assets/posters/ngu-du-van-met.jpg"></div><div class="wt" style="left:1110px;top:2098px"><img src="assets/posters/nhan-vat-3d.jpg"></div><div class="wt" style="left:1480px;top:1878px"><img src="assets/posters/nhip-bong-ro.jpg"></div><div class="wt" style="left:1850px;top:2098px"><img src="assets/posters/noi-sang-hon.jpg"></div><div class="wt" style="left:2220px;top:1878px"><img src="assets/posters/nuoc-hoa-noir.jpg"></div><div class="wt" style="left:0px;top:2504px"><img src="assets/posters/pixel-art.jpg"></div><div class="wt" style="left:370px;top:2724px"><img src="assets/posters/review-3d.jpg"></div><div class="wt" style="left:740px;top:2504px"><img src="assets/posters/tai-nghe-hush.jpg"></div><div class="wt" style="left:1110px;top:2724px"><img src="assets/posters/tai-nghe.jpg"></div><div class="wt" style="left:1480px;top:2504px"><img src="assets/posters/tennis-ace.jpg"></div><div class="wt" style="left:1850px;top:2724px"><img src="assets/posters/tin-indonesia.jpg"></div><div class="wt" style="left:2220px;top:2504px"><img src="assets/posters/tu-long-gen-z.jpg"></div><div class="wt" style="left:0px;top:3130px"><img src="assets/posters/tu-vung-anh.jpg"></div><div class="wt" style="left:370px;top:3350px"><img src="assets/posters/tu-vung-quan-ca-phe.jpg"></div><div class="wt" style="left:740px;top:3130px"><img src="assets/posters/ve-phan-bang-den.jpg"></div><div class="wt" style="left:1110px;top:3350px"><img src="assets/posters/viet-chu-han.jpg"></div><div class="wt" style="left:1480px;top:3130px"><img src="assets/posters/voxel.jpg"></div><div class="wt" style="left:1850px;top:3350px"><img src="assets/posters/xe-vanta.jpg"></div><div class="wt" style="left:2220px;top:3130px"><img src="assets/posters/3d-dao.jpg"></div></div><div class="plate" id="pl1"><div class="big serif"><span class="mask"><span>Every video here</span></span><span class="mask"><span>comes with its <i>prompt.</i></span></span></div></div><div class="plate" id="pl2"><div class="big serif"><span class="mask"><span>Copy it. Change it.</span></span><span class="mask"><span><i>Make yours.</i></span></span></div></div></div>
+<div class="scene" id="nm2"><div class="clawd" id="nm2k" style="width:396px;height:110px;position:absolute;left:762px;top:250px"><i style="left:66px;top:0px;width:23px;height:23px"></i><i style="left:88px;top:0px;width:23px;height:23px"></i><i style="left:110px;top:0px;width:23px;height:23px"></i><i style="left:132px;top:0px;width:23px;height:23px"></i><i style="left:154px;top:0px;width:23px;height:23px"></i><i style="left:176px;top:0px;width:23px;height:23px"></i><i style="left:198px;top:0px;width:23px;height:23px"></i><i style="left:220px;top:0px;width:23px;height:23px"></i><i style="left:242px;top:0px;width:23px;height:23px"></i><i style="left:264px;top:0px;width:23px;height:23px"></i><i style="left:286px;top:0px;width:23px;height:23px"></i><i style="left:308px;top:0px;width:23px;height:23px"></i><i style="left:66px;top:22px;width:23px;height:23px"></i><i style="left:88px;top:22px;width:23px;height:23px"></i><i style="left:132px;top:22px;width:23px;height:23px"></i><i style="left:154px;top:22px;width:23px;height:23px"></i><i style="left:176px;top:22px;width:23px;height:23px"></i><i style="left:198px;top:22px;width:23px;height:23px"></i><i style="left:220px;top:22px;width:23px;height:23px"></i><i style="left:242px;top:22px;width:23px;height:23px"></i><i style="left:286px;top:22px;width:23px;height:23px"></i><i style="left:308px;top:22px;width:23px;height:23px"></i><i style="left:22px;top:44px;width:23px;height:23px"></i><i style="left:44px;top:44px;width:23px;height:23px"></i><i style="left:66px;top:44px;width:23px;height:23px"></i><i style="left:88px;top:44px;width:23px;height:23px"></i><i style="left:110px;top:44px;width:23px;height:23px"></i><i style="left:132px;top:44px;width:23px;height:23px"></i><i style="left:154px;top:44px;width:23px;height:23px"></i><i style="left:176px;top:44px;width:23px;height:23px"></i><i style="left:198px;top:44px;width:23px;height:23px"></i><i style="left:220px;top:44px;width:23px;height:23px"></i><i style="left:242px;top:44px;width:23px;height:23px"></i><i style="left:264px;top:44px;width:23px;height:23px"></i><i style="left:286px;top:44px;width:23px;height:23px"></i><i style="left:308px;top:44px;width:23px;height:23px"></i><i style="left:330px;top:44px;width:23px;height:23px"></i><i style="left:352px;top:44px;width:23px;height:23px"></i><i style="left:66px;top:66px;width:23px;height:23px"></i><i style="left:88px;top:66px;width:23px;height:23px"></i><i style="left:110px;top:66px;width:23px;height:23px"></i><i style="left:132px;top:66px;width:23px;height:23px"></i><i style="left:154px;top:66px;width:23px;height:23px"></i><i style="left:176px;top:66px;width:23px;height:23px"></i><i style="left:198px;top:66px;width:23px;height:23px"></i><i style="left:220px;top:66px;width:23px;height:23px"></i><i style="left:242px;top:66px;width:23px;height:23px"></i><i style="left:264px;top:66px;width:23px;height:23px"></i><i style="left:286px;top:66px;width:23px;height:23px"></i><i style="left:308px;top:66px;width:23px;height:23px"></i><i style="left:88px;top:88px;width:23px;height:23px"></i><i style="left:132px;top:88px;width:23px;height:23px"></i><i style="left:286px;top:88px;width:23px;height:23px"></i><i style="left:330px;top:88px;width:23px;height:23px"></i></div><div id="nm2n" style="position:absolute;left:0;right:0;top:430px;text-align:center;font:800 132px/1.2 'Inter Tight',sans-serif;letter-spacing:-4px"><span class="mask"><span>Claude <b style="color:#D97757;font-weight:800">Edit Agent</b></span></span></div><div class="lab" id="nm2s" style="left:0;right:0;text-align:center;top:650px;font-size:34px">Prompts and source, free on GitHub.</div></div>
+<div id="grain"></div>
+<audio id="music" src="assets/music.mp3" data-start="0" data-duration="122.6" data-track-index="9" data-volume="0.95"></audio>
+</div>
+<script>
+(function () {
+  const tl = gsap.timeline({ paused: true });
+    tl.set("#c1", { rotation: -5 }, 0);
+  tl.fromTo("#c1", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 0.220);
+  tl.fromTo("#c1", { scale: 1 }, { scale: 1.03, duration: 4.77, ease: "none", immediateRender: false }, 0.220);
+  tl.to("#rl0", { opacity: 1, duration: 0.4 }, 0.670);
+  tl.set("#c2", { rotation: 3 }, 0);
+  tl.fromTo("#c2", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 0.420);
+  tl.fromTo("#c2", { scale: 1 }, { scale: 1.03, duration: 4.57, ease: "none", immediateRender: false }, 0.420);
+  tl.to("#rl1", { opacity: 1, duration: 0.4 }, 0.920);
+  tl.set("#c3", { rotation: -2 }, 0);
+  tl.fromTo("#c3", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 0.620);
+  tl.fromTo("#c3", { scale: 1 }, { scale: 1.03, duration: 4.37, ease: "none", immediateRender: false }, 0.620);
+  tl.to("#rl2", { opacity: 1, duration: 0.4 }, 1.170);
+  tl.set("#o1", { opacity: 1 }, 0.020);
+  tl.to("#o1", { y: -70, opacity: 0, duration: 0.35, ease: "power2.in" }, 4.642);
+  tl.set("#pc1 .cur", { opacity: 1 }, 5.892);
+  tl.to("#pc1 .tx s", { display: "inline", duration: 0.001, stagger: 0.0294 }, 5.892);
+  tl.set("#o2", { opacity: 1 }, 4.942);
+  tl.to("#o2", { y: -70, opacity: 0, duration: 0.35, ease: "power2.in" }, 9.426);
+  tl.fromTo("#o2t .mask > span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.08, immediateRender: false }, 5.092);
+  tl.fromTo("#pc1", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 5.392);
+  tl.set("#o3", { opacity: 1 }, 9.726);
+  tl.to("#o3", { y: -70, opacity: 0, duration: 0.35, ease: "power2.in" }, 14.232);
+  tl.fromTo("#o3 .fr", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: "expo.out", immediateRender: false }, 9.776);
+  tl.to("#edl", { opacity: 1, duration: 0.4 }, 10.176);
+  tl.fromTo("#cw", { x: 0 }, { x: 1440, duration: 4.20, ease: "none", immediateRender: false }, 9.776);
+  tl.to("#cw", { y: -26, duration: 0.290, ease: "power2.out", yoyo: true, repeat: 1 }, 9.776);
+  tl.to("#cw", { y: -26, duration: 0.290, ease: "power2.out", yoyo: true, repeat: 1 }, 10.379);
+  tl.to("#cw", { y: -26, duration: 0.290, ease: "power2.out", yoyo: true, repeat: 1 }, 10.983);
+  tl.to("#cw", { y: -26, duration: 0.290, ease: "power2.out", yoyo: true, repeat: 1 }, 11.587);
+  tl.to("#cw", { y: -26, duration: 0.290, ease: "power2.out", yoyo: true, repeat: 1 }, 12.190);
+  tl.to("#cw", { y: -26, duration: 0.290, ease: "power2.out", yoyo: true, repeat: 1 }, 12.794);
+  tl.to("#cw", { y: -26, duration: 0.290, ease: "power2.out", yoyo: true, repeat: 1 }, 13.375);
+  tl.to("#fr1", { y: 160, rotation: 12, opacity: 0, duration: 0.4, ease: "power2.in" }, 10.983);
+  tl.to("#fr4", { y: 160, rotation: 12, opacity: 0, duration: 0.4, ease: "power2.in" }, 12.190);
+  tl.to("#fr7", { y: 160, rotation: 12, opacity: 0, duration: 0.4, ease: "power2.in" }, 13.375);
+  tl.to("#fr2", { x: -180, duration: 0.35, ease: "power3.inOut" }, 11.283);
+  tl.to("#fr3", { x: -180, duration: 0.35, ease: "power3.inOut" }, 11.283);
+  tl.to("#fr4", { x: -180, duration: 0.35, ease: "power3.inOut" }, 11.283);
+  tl.to("#fr5", { x: -180, duration: 0.35, ease: "power3.inOut" }, 11.283);
+  tl.to("#fr6", { x: -180, duration: 0.35, ease: "power3.inOut" }, 11.283);
+  tl.to("#fr7", { x: -180, duration: 0.35, ease: "power3.inOut" }, 11.283);
+  tl.to("#fr8", { x: -180, duration: 0.35, ease: "power3.inOut" }, 11.283);
+  tl.to("#fr5", { x: -360, duration: 0.35, ease: "power3.inOut" }, 12.490);
+  tl.to("#fr6", { x: -360, duration: 0.35, ease: "power3.inOut" }, 12.490);
+  tl.to("#fr7", { x: -360, duration: 0.35, ease: "power3.inOut" }, 12.490);
+  tl.to("#fr8", { x: -360, duration: 0.35, ease: "power3.inOut" }, 12.490);
+  tl.to("#fr8", { x: -540, duration: 0.35, ease: "power3.inOut" }, 13.675);
+  tl.fromTo("#c4", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 14.582);
+  tl.fromTo("#c4", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 14.582);
+  tl.fromTo("#c5", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 14.682);
+  tl.fromTo("#c5", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 14.582);
+  tl.set("#o4", { opacity: 1 }, 14.532);
+  tl.to("#o4", { y: -70, opacity: 0, duration: 0.35, ease: "power2.in" }, 19.015);
+  tl.to("#l1, #l2", { opacity: 1, duration: 0.4, stagger: 0.2 }, 15.182);
+  tl.set("#nm1", { opacity: 1 }, 19.315);
+  tl.to("#nm1", { y: -70, opacity: 0, duration: 0.35, ease: "power2.in" }, 23.822);
+  tl.fromTo("#nm1k i", { x: (i) => ((i * 137) % 1500) - 750, y: (i) => ((i * 89) % 900) - 450, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.7, stagger: 0.004, ease: "expo.out", immediateRender: false }, 19.365);
+  tl.fromTo("#nm1n .mask > span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.08, immediateRender: false }, 20.566);
+  tl.to("#nm1s", { opacity: 1, duration: 0.5 }, 21.767);
+  tl.set("#pc2 .cur", { opacity: 1 }, 24.672);
+  tl.to("#pc2 .tx s", { display: "inline", duration: 0.001, stagger: 0.0250 }, 24.672);
+  tl.set("#ch0", { opacity: 1 }, 24.122);
+  tl.to("#ch0", { y: -70, opacity: 0, duration: 0.35, ease: "power2.in" }, 27.421);
+  tl.fromTo("#ch0t .mask > span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.08, immediateRender: false }, 24.172);
+  tl.fromTo("#pc2", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 24.372);
+  tl.fromTo("#tg0", { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 27.771); tl.to("#tg0", { opacity: 0, duration: 0.3 }, 41.867);
+  tl.fromTo("#c6", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 27.771);
+  tl.fromTo("#c6", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 27.771);
+  tl.to("#c6", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 32.228);
+  tl.fromTo("#c7", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 32.578);
+  tl.fromTo("#c7", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 32.578);
+  tl.to("#c7", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 37.034);
+  tl.fromTo("#c8", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 32.668);
+  tl.fromTo("#c8", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 32.578);
+  tl.to("#c8", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 37.079);
+  tl.fromTo("#c9", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 37.384);
+  tl.fromTo("#c9", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 37.384);
+  tl.to("#c9", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 41.817);
+  tl.fromTo("#c10", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 37.474);
+  tl.fromTo("#c10", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 37.384);
+  tl.to("#c10", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 41.862);
+  tl.set("#pc3 .cur", { opacity: 1 }, 42.667);
+  tl.to("#pc3 .tx s", { display: "inline", duration: 0.001, stagger: 0.0250 }, 42.667);
+  tl.set("#ch1", { opacity: 1 }, 42.117);
+  tl.to("#ch1", { y: -70, opacity: 0, duration: 0.35, ease: "power2.in" }, 45.440);
+  tl.fromTo("#ch1t .mask > span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.08, immediateRender: false }, 42.167);
+  tl.fromTo("#pc3", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 42.367);
+  tl.fromTo("#tg1", { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 45.790); tl.to("#tg1", { opacity: 0, duration: 0.3 }, 59.863);
+  tl.fromTo("#c11", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 45.790);
+  tl.fromTo("#c11", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 45.790);
+  tl.to("#c11", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 50.223);
+  tl.fromTo("#c12", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 45.880);
+  tl.fromTo("#c12", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 45.790);
+  tl.to("#c12", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 50.268);
+  tl.fromTo("#c13", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 45.970);
+  tl.fromTo("#c13", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 45.790);
+  tl.to("#c13", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 50.313);
+  tl.fromTo("#c14", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 50.573);
+  tl.fromTo("#c14", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 50.573);
+  tl.to("#c14", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 55.030);
+  tl.fromTo("#c15", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 55.380);
+  tl.fromTo("#c15", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 55.380);
+  tl.to("#c15", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 59.813);
+  tl.fromTo("#c16", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 55.470);
+  tl.fromTo("#c16", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 55.380);
+  tl.to("#c16", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 59.858);
+  tl.set("#pc4 .cur", { opacity: 1 }, 60.663);
+  tl.to("#pc4 .tx s", { display: "inline", duration: 0.001, stagger: 0.0250 }, 60.663);
+  tl.set("#ch2", { opacity: 1 }, 60.113);
+  tl.to("#ch2", { y: -70, opacity: 0, duration: 0.35, ease: "power2.in" }, 63.435);
+  tl.fromTo("#ch2t .mask > span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.08, immediateRender: false }, 60.163);
+  tl.fromTo("#pc4", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 60.363);
+  tl.fromTo("#tg2", { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 63.785); tl.to("#tg2", { opacity: 0, duration: 0.3 }, 77.882);
+  tl.fromTo("#c17", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 63.785);
+  tl.fromTo("#c17", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 63.785);
+  tl.to("#c17", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 68.219);
+  tl.fromTo("#c18", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 63.875);
+  tl.fromTo("#c18", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 63.785);
+  tl.to("#c18", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 68.264);
+  tl.fromTo("#c19", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 63.965);
+  tl.fromTo("#c19", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 63.785);
+  tl.to("#c19", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 68.309);
+  tl.fromTo("#c20", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 68.569);
+  tl.fromTo("#c20", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 68.569);
+  tl.to("#c20", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 73.025);
+  tl.fromTo("#c21", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 68.659);
+  tl.fromTo("#c21", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 68.569);
+  tl.to("#c21", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 73.070);
+  tl.fromTo("#c22", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 68.749);
+  tl.fromTo("#c22", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 68.569);
+  tl.to("#c22", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 73.115);
+  tl.fromTo("#c23", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 73.375);
+  tl.fromTo("#c23", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 73.375);
+  tl.to("#c23", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 77.832);
+  tl.fromTo("#c24", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 73.465);
+  tl.fromTo("#c24", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 73.375);
+  tl.to("#c24", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 77.877);
+  tl.fromTo("#c25", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 73.555);
+  tl.fromTo("#c25", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 73.375);
+  tl.to("#c25", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 77.922);
+  tl.set("#pc5 .cur", { opacity: 1 }, 78.682);
+  tl.to("#pc5 .tx s", { display: "inline", duration: 0.001, stagger: 0.0250 }, 78.682);
+  tl.set("#ch3", { opacity: 1 }, 78.132);
+  tl.to("#ch3", { y: -70, opacity: 0, duration: 0.35, ease: "power2.in" }, 81.431);
+  tl.fromTo("#ch3t .mask > span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.08, immediateRender: false }, 78.182);
+  tl.fromTo("#pc5", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 78.382);
+  tl.fromTo("#tg3", { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 81.781); tl.to("#tg3", { opacity: 0, duration: 0.3 }, 91.071);
+  tl.fromTo("#c26", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 81.781);
+  tl.fromTo("#c26", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 81.781);
+  tl.to("#c26", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 86.237);
+  tl.fromTo("#c27", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 81.871);
+  tl.fromTo("#c27", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 81.781);
+  tl.to("#c27", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 86.282);
+  tl.fromTo("#c28", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 81.961);
+  tl.fromTo("#c28", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 81.781);
+  tl.to("#c28", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 86.327);
+  tl.fromTo("#c29", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 86.587);
+  tl.fromTo("#c29", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 86.587);
+  tl.to("#c29", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 91.021);
+  tl.fromTo("#c30", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 86.677);
+  tl.fromTo("#c30", { scale: 1 }, { scale: 1.03, duration: 4.78, ease: "none", immediateRender: false }, 86.587);
+  tl.to("#c30", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 91.066);
+  tl.set("#pc6 .cur", { opacity: 1 }, 91.871);
+  tl.to("#pc6 .tx s", { display: "inline", duration: 0.001, stagger: 0.0250 }, 91.871);
+  tl.set("#ch4", { opacity: 1 }, 91.321);
+  tl.to("#ch4", { y: -70, opacity: 0, duration: 0.35, ease: "power2.in" }, 94.620);
+  tl.fromTo("#ch4t .mask > span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.08, immediateRender: false }, 91.371);
+  tl.fromTo("#pc6", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 91.571);
+  tl.fromTo("#tg4", { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 94.970); tl.to("#tg4", { opacity: 0, duration: 0.3 }, 104.283);
+  tl.fromTo("#c31", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 94.970);
+  tl.fromTo("#c31", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 94.970);
+  tl.to("#c31", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 99.426);
+  tl.fromTo("#c32", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 95.060);
+  tl.fromTo("#c32", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 94.970);
+  tl.to("#c32", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 99.471);
+  tl.fromTo("#c33", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 95.150);
+  tl.fromTo("#c33", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 94.970);
+  tl.to("#c33", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 99.516);
+  tl.fromTo("#c34", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 99.776);
+  tl.fromTo("#c34", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 99.776);
+  tl.to("#c34", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 104.233);
+  tl.fromTo("#c35", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 99.866);
+  tl.fromTo("#c35", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 99.776);
+  tl.to("#c35", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 104.278);
+  tl.fromTo("#c36", { x: 260, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, 99.956);
+  tl.fromTo("#c36", { scale: 1 }, { scale: 1.03, duration: 4.81, ease: "none", immediateRender: false }, 99.776);
+  tl.to("#c36", { x: -260, opacity: 0, duration: 0.35, ease: "power2.in" }, 104.323);
+  tl.set("#wl", { opacity: 1 }, 104.533);
+  tl.set("#wl", { opacity: 0 }, 117.772);
+  tl.set("#wall", { rotationX: 28, rotationZ: -10 }, 0);
+  tl.fromTo("#wall", { y: 900 }, { y: -700, duration: 13.19, ease: "none", immediateRender: false }, 104.583);
+  tl.fromTo("#wl", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, 104.583);
+  tl.fromTo("#pl1", { scale: 0.94, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 105.790);
+  tl.fromTo("#pl1 .mask > span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.1, immediateRender: false }, 105.890);
+  tl.to("#pl1", { opacity: 0, duration: 0.25 }, 110.904);
+  tl.fromTo("#pl2", { scale: 0.94, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, 111.154);
+  tl.fromTo("#pl2 .mask > span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.1, immediateRender: false }, 111.254);
+  tl.to("#pl2", { opacity: 0, duration: 0.25 }, 117.522);
+  tl.set("#nm2", { opacity: 1 }, 117.722);
+  tl.set("#nm2", { opacity: 0 }, 122.600);
+  tl.fromTo("#nm2k i", { x: (i) => ((i * 137) % 1500) - 750, y: (i) => ((i * 89) % 900) - 450, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.7, stagger: 0.004, ease: "expo.out", immediateRender: false }, 117.772);
+  tl.fromTo("#nm2n .mask > span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.08, immediateRender: false }, 118.973);
+  tl.to("#nm2s", { opacity: 1, duration: 0.5 }, 120.174);
+  tl.fromTo("#grain", { x: 0, y: 0 }, { keyframes: { x: [0, -40, 30, -20, 50, -30, 10, 0], y: [0, 20, -30, 40, -10, 30, -20, 0] }, duration: 0.8, ease: "steps(8)", repeat: 152 }, 0);
+  tl.to({}, { duration: 0.01 }, 122.58999999999999);
+  window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl;
+})();
+</script></body></html>

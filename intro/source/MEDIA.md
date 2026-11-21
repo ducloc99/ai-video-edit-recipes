@@ -1,6 +1,6 @@
 # Media not in the repo
 
-The intro is cut from the gallery videos. `tools/prep.py` makes the short clips in `assets/c/` from them; the music is an original Suno track.
+The intro is cut from the gallery videos. `tools/prep.py` makes the short clips in `assets/c/` from them; the music is an original Suno trailer track (130 bpm).
 
 - `assets/c/3d-dao.mp4` (1.1 MB)
 - `assets/c/3d-hinh-khoi.mp4` (0.9 MB)
@@ -26,9 +26,12 @@ The intro is cut from the gallery videos. `tools/prep.py` makes the short clips 
 - `assets/c/noi-sang-hon.mp4` (1.5 MB)
 - `assets/c/nuoc-hoa-noir.mp4` (3.0 MB)
 - `assets/c/pixel-art.mp4` (1.7 MB)
+- `assets/c/raw-ball.mp4` (1.3 MB)
 - `assets/c/raw-h01.mp4` (0.4 MB)
 - `assets/c/raw-h06.mp4` (0.3 MB)
 - `assets/c/raw-h10.mp4` (0.5 MB)
+- `assets/c/raw-talk.mp4` (1.5 MB)
+- `assets/c/raw-villa.mp4` (7.3 MB)
 - `assets/c/tai-nghe-hush.mp4` (1.5 MB)
 - `assets/c/tennis-ace.mp4` (2.0 MB)
 - `assets/c/tin-indonesia.mp4` (8.5 MB)
@@ -39,5 +42,5 @@ The intro is cut from the gallery videos. `tools/prep.py` makes the short clips 
 - `assets/c/voxel.mp4` (2.5 MB)
 - `assets/c/xe-vanta.mp4` (5.3 MB)
 - `assets/music-a.mp3` (3.0 MB)
-- `assets/music-b.mp3` (2.8 MB)
-- `assets/music.mp3` (2.8 MB)
+- `assets/music-b.mp3` (3.0 MB)
+- `assets/music.mp3` (3.0 MB)

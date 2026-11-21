@@ -1,27 +1,27 @@
-# Claude Edit Agent: the 2-minute intro
+# Claude Edit Agent: the 2-minute trailer
 
 ![poster](../gallery/intro.jpg)
 
-**You give the AI:** the finished gallery videos and a music brief  
+**You give the AI:** the finished gallery videos, a few raw clips, and a music brief  
 **Tools:** Claude Code, HyperFrames, Suno (music), librosa (beats)  
 **Cost:** about 12 Suno credits for the music; everything else is free  
-**Length:** 2:03, 1920x1080
+**Length:** 2:04, 1920x1080, Vietnamese on-screen text
 
 ## Prompt
 
 ```text
-Make a 2-minute 16:9 intro for "Claude Edit Agent" from the videos in this gallery, in English, no voice-over.
-Light editorial look (warm off-white page, serif headlines, the orange pixel mascot as the only brand mark).
-Open on three raw headphone clips: "You shot the footage." Then a prompt card types the request, the mascot
-walks along a film strip while frames are cut out, and the finished headphone ad plays next to the raw clip.
-Show the name, then one chapter per industry (real estate, product ads, education, everyday edits, 3D & code):
-the chapter's request is typed into the prompt card, then its results slide in as single, side-by-side or
-three-up cards. End on a moving wall of every video ("Every video here comes with its prompt.") and the name.
-Make a new instrumental track with a different feel from earlier intros (funky breakbeat, slap bass, brass, ~100 bpm),
-detect its beats and put every cut on a beat. No counters, numbering, dots or glow.
+Make a 2-minute 16:9 cinematic trailer for "Claude Edit Agent" in Vietnamese, fast and powerful, no voice-over.
+Black, letterboxed, hard cuts on every beat of a new hybrid-trailer track (phonk/trap drums, braams, ~130 bpm,
+a drop near 27 s, a near-silent breakdown near 81 s, a second drop near 87 s). Cold open: raw clips flicker
+three-up on the beat. One sentence is typed into a terminal, then the edit timeline cuts itself on the beat,
+and a strobe of raw vs finished frames speeds up into the drop: the name slams in. Prove the editing: for each
+industry show the raw clip turning into the finished edit as an orange scan line crosses it (headphones, villa
+footage to sketch, talking clip to captions, loose basketball clips to a beat cut), then hard-cut montages with
+the industry word slammed between. Breakdown: three lines on black. Second drop: one cut per beat, then two,
+into the final name. No counters, dots or glow.
 ```
 
 ## How it was built
 
-`source/tools/gen.py` writes `index.html` from the beat grid in `tools/beats.json`; `tools/prep.py` cuts the short clips it plays.
-To render: add the media listed in `source/MEDIA.md`, run `python tools/prep.py`, `python tools/gen.py`, then `npx hyperframes render`.
+`source/tools/gen.py` writes `index.html` from the beat grid in `tools/beats.json`.
+To render: add the media listed in `source/MEDIA.md` (short proxies of the gallery videos in `assets/c/`), then run `python tools/gen.py` and `npx hyperframes render`.

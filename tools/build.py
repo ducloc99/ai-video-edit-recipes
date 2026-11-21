@@ -90,13 +90,13 @@ out["sections"] = [s for s in R["sections"] if s["id"] in used]
 open("gallery/data.js", "w", encoding="utf-8", newline="\n").write("window.GALLERY = " + json.dumps(out, ensure_ascii=False) + ";\n")
 print(len(out["items"]), "videos;", "missing:", ", ".join(missing) or "none")
 # the 2-minute intro: video next to the others, its HyperFrames source in intro/
-PROMO = f"{K}/promo-agent"
-pv = f"{PROMO}/deliverables/claude-edit-agent-promo.mp4"
+PROMO = f"{K}/promo-vi"
+pv = f"{PROMO}/deliverables/claude-edit-agent-trailer.mp4"
 if os.path.exists(pv):
     if not os.path.exists("videos/intro.mp4") or os.path.getmtime(pv) > os.path.getmtime("videos/intro.mp4"): shutil.copy2(pv, "videos/intro.mp4")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "21", "-i", pv, "-frames:v", "1", "-vf", "scale=-2:540", "-q:v", "4", "gallery/intro.jpg"], check=True)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "27.6", "-i", pv, "-frames:v", "1", "-vf", "scale=-2:540", "-q:v", "4", "gallery/intro.jpg"], check=True)
     media = copy_source(PROMO, "intro/source")
     with open("intro/source/MEDIA.md", "w", encoding="utf-8", newline="\n") as f:
-        f.write("# Media not in the repo\n\nThe intro is cut from the gallery videos. `tools/prep.py` makes the short clips in `assets/c/` from them; the music is an original Suno track.\n\n")
+        f.write("# Media not in the repo\n\nThe intro is cut from the gallery videos. `tools/prep.py` makes the short clips in `assets/c/` from them; the music is an original Suno trailer track (130 bpm).\n\n")
         f.writelines(f"- `{p}` ({s / 1e6:.1f} MB)\n" for p, s in sorted(media))
     print("intro copied")

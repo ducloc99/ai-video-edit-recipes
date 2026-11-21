@@ -42,7 +42,7 @@ Most recipes are **free** apart from your Claude plan.
 node tools/serve.mjs 4340   # then open http://localhost:4340
 ```
 
-The finished MP4s are not in git (they are large). They are attached to the GitHub Release; `VIDEO_BASE` at the top of `index.html` points the page at them. `tools/build.py` rebuilds `gallery/data.js`, the posters and `recipes/` from `recipes.json`.
+The finished MP4s are not in git (they are large). They are attached to the GitHub Release `v1`; fetch them next to the page with `gh release download v1 -D videos`. `VIDEO_BASE` at the top of `index.html` points the page at them. `tools/build.py` rebuilds `gallery/data.js`, the posters and `recipes/` from `recipes.json`.
 
 ## Credits and licence
 

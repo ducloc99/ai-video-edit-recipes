@@ -78,7 +78,7 @@ def wipe(raw, rm, edit, em, t0, t1, vertical, rawlab="Video thô", edlab="AI edi
     tags = "" if vertical else (f'<div class="tagw" id="{i}a" style="left:90px">{rawlab}</div><div class="tagw o" id="{i}b" style="right:90px">{edlab}</div>')
     H.append(f'<div class="sh" id="{i}">{side}<div class="wp" id="{i}w" style="left:{x}px;width:{w}px">{video(raw, t0 - 0.35, t1 - t0 + 0.4, rm)}'
              f'<div class="ed" id="{i}e">{video(edit, t0 - 0.35, t1 - t0 + 0.4, em)}</div><div class="sc" id="{i}s"></div></div>{tags}</div>')
-    js(f'tl.set("#{i}", {{ opacity: 1 }}, {t0:.3f}); tl.set("#{i}", {{ opacity: 0 }}, {t1:.3f});')
+    js(f'tl.set("#{i}", {{ opacity: 1, immediateRender: {"true" if t0 <= 0 else "false"} }}, {t0:.3f}); tl.set("#{i}", {{ opacity: 0 }}, {t1:.3f});')
     js(f'tl.fromTo("#{i}w", {{ scale: 1.12 }}, {{ scale: 1, duration: 0.4, ease: "expo.out", immediateRender: false }}, {t0:.3f});')
     js(f'tl.fromTo("#{i}e", {{ clipPath: "inset(0 100% 0 0)" }}, {{ clipPath: "inset(0 0% 0 0)", duration: {sweep1 - sweep0:.3f}, ease: "power2.inOut", immediateRender: false }}, {sweep0:.3f});')
     js(f'tl.fromTo("#{i}s", {{ x: 0, opacity: 1 }}, {{ x: {w}, duration: {sweep1 - sweep0:.3f}, ease: "power2.inOut", immediateRender: false }}, {sweep0:.3f}); tl.set("#{i}s", {{ opacity: 0 }}, {sweep1:.3f});')
@@ -107,22 +107,18 @@ def timeline_cut(t0, t1):
             js(f'tl.to("#tf{n}", {{ x: {shift[n]}, duration: 0.25, ease: "power3.inOut" }}, {tc + 0.22:.3f});')
         shake(tc, 8, 0.2)
 
-# ---------- 0: cold open, raw footage flickers on the beat ----------
-line("Ổ cứng đầy <b>video thô.</b>", 0.0, b(nb(3.5)), 470, 0.8)
-raw = [("raw-h01", 0.2), ("raw-h06", 0.4), ("raw-h10", 0.3), ("raw-h01", 1.6), ("raw-h06", 1.8), ("raw-h10", 2.0)]
+# ---------- 0: straight in: the raw clip becomes the ad before the drums even start ----------
+wipe("raw-h10", 0.2, "tai-nghe-hush", 1.0, 0.0, b(nb(3.5)), True)
 k = nb(3.5)
-for n in range(8):   # 2 beats each: a raw shot, three-up, so it feels like a pile of files
-    a, z = b(k + 2 * n), b(k + 2 * n + 2)
-    r = [raw[(n + j) % 6] for j in range(3)]
-    shot(("t", r[0], r[1], r[2]) if n % 2 == 0 else ("t", (r[2][0], r[2][1] + 0.7), (r[0][0], r[0][1] + 0.9), (r[1][0], r[1][1] + 0.5)), a, z)
-k += 16
-slam("Không có thời gian dựng.", b(k), b(k + 4), "s2")
-k += 4
+slam("Chỉ bằng một câu lệnh.", b(k), b(k + 4), "s2"); k += 4
+# what one sentence gets you: finished edits from every industry, two beats each
+hook = [("h", "bds-ban-ve", 7.0), ("t", ("nuoc-hoa-noir", 5), ("tennis-ace", 5), ("gd-hoat-hinh", 7)), ("h", "xe-vanta", 4),
+        ("t", ("3d-phong", 7), ("code-chu", 3), ("nhip-bong-ro", 7)), ("h", "bds-dung-3d", 7.5), ("t", ("gd-vu-tru", 3), ("tai-nghe-hush", 8), ("cap-phu-de", 6)),
+        ("h", "tin-indonesia", 5)][:6]
+for spec in hook:
+    shot(spec, b(k), b(k + 2), "punch"); k += 2
 
 # ---------- the sentence ----------
-T0 = b(k)
-line("Chỉ cần <b>nói một câu.</b>", T0, b(k + 4), 470)
-k += 4
 text = "Dựng thành quảng cáo 15 giây. Chữ thật to sau tai nghe. Nhạc mạnh."
 chars = "".join(f"<s>{ch}</s>" for ch in text)
 H.append(f'<div class="term" id="term"><div class="hd">{clawd("tk", 4, 0, 0).replace("position:absolute", "")}<span style="margin-left:86px">Claude Edit Agent</span></div><div class="tx"><b>&gt;</b> {chars}<span class="cur"></span></div></div>')
@@ -148,7 +144,6 @@ js(f'tl.fromTo("#nk i", {{ x: (i) => ((i * 137) % 1500) - 750, y: (i) => ((i * 8
 js(f'tl.fromTo("#nm1t", {{ scale: 1.5, opacity: 0, filter: "blur(20px)" }}, {{ scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power4.out", immediateRender: false }}, {t0 + 0.05:.3f}); tl.to("#nm1t", {{ scale: 1.06, duration: 3.4, ease: "none" }}, {t0 + 0.3:.3f});')
 shake(t0, 26, 0.5)
 k = D1 + 8
-wipe("raw-h10", 0.2, "tai-nghe-hush", 1.0, b(k), b(k + 8), True); k += 8
 
 # ---------- industries ----------
 def sector(word, shots, k, w=None):
@@ -205,7 +200,7 @@ while k < FIN:
 # ---------- the name, and where to get the prompts ----------
 t0 = b(FIN)
 H.append(f'<div class="sh" id="nm2">{clawd("nk2", 20, 780, 230)}<div class="name" id="nm2t" style="top:400px">Claude <b>Edit Agent</b></div>'
-         '<div class="sub" id="nm2s" style="top:650px">Mọi câu lệnh và mã nguồn: miễn phí trên GitHub</div></div>')
+         '<div class="sub" id="nm2s" style="top:650px">Skill edit video cho Claude</div></div>')
 js(f'tl.set("#nm2", {{ opacity: 1 }}, {t0:.3f});')
 js(f'tl.fromTo("#nk2 i", {{ x: (i) => ((i * 137) % 1500) - 750, y: (i) => ((i * 89) % 900) - 450, opacity: 0 }}, {{ x: 0, y: 0, opacity: 1, duration: 0.45, stagger: 0.002, ease: "expo.out", immediateRender: false }}, {t0:.3f});')
 js(f'tl.fromTo("#nm2t", {{ scale: 1.5, opacity: 0, filter: "blur(20px)" }}, {{ scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power4.out", immediateRender: false }}, {t0 + 0.05:.3f}); tl.to("#nm2t", {{ scale: 1.05, duration: {DUR - t0 - 0.3:.2f}, ease: "none" }}, {t0 + 0.3:.3f});')

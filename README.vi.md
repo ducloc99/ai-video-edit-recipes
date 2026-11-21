@@ -13,6 +13,10 @@ Bộ video ngắn do AI (Claude Code) edit. Mỗi video kèm câu lệnh đã d�
 
 Muốn render lại một dự án có sẵn: chép `recipes/<id>/source/`, thêm các file trong `MEDIA.md`, rồi chạy `npx hyperframes render`.
 
+## Xem trang trên máy
+
+Video không nằm trong git vì nặng. Tải về bằng `gh release download v1 -D videos`, rồi chạy `node tools/serve.mjs 4340` và mở http://localhost:4340.
+
 ## Chi phí
 
 Phần lớn video **miễn phí** ngoài gói Claude: HyperFrames, ffmpeg, OpenCV, rembg, faster-whisper, librosa chạy trên máy; footage lấy từ Pexels. Chỉ các video ghi "credits" mới tốn tiền (HeyGen, Vbee hoặc giọng đọc AI khác).

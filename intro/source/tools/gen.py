@@ -108,13 +108,21 @@ def timeline_cut(t0, t1):
         shake(tc, 8, 0.2)
 
 # ---------- 0: straight in: the raw clip becomes the ad before the drums even start ----------
-wipe("raw-h10", 0.2, "tai-nghe-hush", 1.0, 0.0, b(nb(3.5)), True)
-k = nb(3.5)
+# frame 0 is the thumbnail: Claude's mascot and what it does, then it steps up and the proof plays under it
+H.append(f'<div id="hk" style="position:absolute;left:0;top:0;width:1920px;height:1080px;z-index:30">{clawd("hkc", 22, 762, 250)}'
+         '<div class="name" style="top:430px;font-size:180px">Claude <b>tự edit video</b></div>'
+         '<div class="sub" id="hks" style="top:690px;opacity:1">Bạn nói. Claude dựng.</div></div>')
+js('tl.set("#hk", { opacity: 1, immediateRender: true }, 0);')
+js('tl.to("#hks", { opacity: 0, duration: 0.2 }, 1.25);')
+js('tl.to("#hk", { scale: 1.6, opacity: 0, filter: "blur(16px)", duration: 0.3, ease: "power3.in" }, 1.3);')
+js(f'tl.set("#hk", {{ opacity: 0 }}, {b(nb(3.5)):.3f});')
+wipe("raw-h10", 0.2, "tai-nghe-hush", 1.0, 1.55, b(nb(3.5)) + 1.0, True)
+k = nb(b(nb(3.5)) + 1.0)
 slam("Chỉ bằng một câu lệnh.", b(k), b(k + 4), "s2"); k += 4
 # what one sentence gets you: finished edits from every industry, two beats each
 hook = [("h", "bds-ban-ve", 7.0), ("t", ("nuoc-hoa-noir", 5), ("tennis-ace", 5), ("gd-hoat-hinh", 7)), ("h", "xe-vanta", 4),
         ("t", ("3d-phong", 7), ("code-chu", 3), ("nhip-bong-ro", 7)), ("h", "bds-dung-3d", 7.5), ("t", ("gd-vu-tru", 3), ("tai-nghe-hush", 8), ("cap-phu-de", 6)),
-        ("h", "tin-indonesia", 5)][:6]
+        ("h", "tin-indonesia", 5)][:5]
 for spec in hook:
     shot(spec, b(k), b(k + 2), "punch"); k += 2
 

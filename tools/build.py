@@ -94,7 +94,7 @@ PROMO = f"{K}/promo-vi"
 pv = f"{PROMO}/deliverables/claude-edit-agent-trailer.mp4"
 if os.path.exists(pv):
     if not os.path.exists("videos/intro.mp4") or os.path.getmtime(pv) > os.path.getmtime("videos/intro.mp4"): shutil.copy2(pv, "videos/intro.mp4")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "27.6", "-i", pv, "-frames:v", "1", "-vf", "scale=-2:540", "-q:v", "4", "gallery/intro.jpg"], check=True)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", "0.5", "-i", pv, "-frames:v", "1", "-vf", "scale=-2:540", "-q:v", "4", "gallery/intro.jpg"], check=True)
     media = copy_source(PROMO, "intro/source")
     with open("intro/source/MEDIA.md", "w", encoding="utf-8", newline="\n") as f:
         f.write("# Media not in the repo\n\nThe intro is cut from the gallery videos. `tools/prep.py` makes the short clips in `assets/c/` from them; the music is an original Suno trailer track (130 bpm).\n\n")

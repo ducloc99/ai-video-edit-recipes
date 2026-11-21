@@ -11,7 +11,7 @@
 
 ```text
 Make a 2-minute 16:9 cinematic trailer for "Claude Edit Agent" in Vietnamese, fast and powerful, no voice-over.
-Black, letterboxed, hard cuts on every beat of a new hybrid-trailer track (phonk/trap drums, braams, ~130 bpm,
+Open on frame 0 with the orange pixel mascot and "CLAUDE TỰ EDIT VIDEO", which bursts away into a raw clip turning into the finished ad. Black, letterboxed, hard cuts on every beat of a new hybrid-trailer track (phonk/trap drums, braams, ~130 bpm,
 a drop near 27 s, a near-silent breakdown near 81 s, a second drop near 87 s). Cold open: raw clips flicker
 three-up on the beat. One sentence is typed into a terminal, then the edit timeline cuts itself on the beat,
 and a strobe of raw vs finished frames speeds up into the drop: the name slams in. Prove the editing: for each

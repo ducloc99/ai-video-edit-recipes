@@ -1,10 +1,25 @@
-# AI Video Edit Recipes
+# Claude Edit Agent: AI Video Edit Recipes
 
-Short videos edited by an AI agent (Claude Code), each with the prompt that made it, what you hand the AI, the tools, the cost and — for most of them — the full editable project.
+**A skill that makes Claude edit videos for you**, plus a gallery of 41 videos it made, each with the prompt, what you hand the AI, the tools, the cost and, for most of them, the full editable project.
 
-**[Open the gallery](index.html)** · **[Watch the 2-minute intro](intro/)** · [Tiếng Việt](README.vi.md)
+[![Watch the 2-minute trailer](gallery/intro-preview.gif)](https://github.com/ducloc99/ai-video-edit-recipes/releases/download/v1/intro.mp4)
 
-[![Claude Edit Agent intro](gallery/intro.jpg)](intro/)
+**[▶ Watch the 2-minute trailer](https://github.com/ducloc99/ai-video-edit-recipes/releases/download/v1/intro.mp4)** · **[Install the skill](#install-the-skill)** · [Open the gallery](index.html) · [Tiếng Việt](README.vi.md)
+
+## Install the skill
+
+In Claude Code:
+
+```text
+/plugin marketplace add ducloc99/ai-video-edit-recipes
+/plugin install edit-agent@ai-video-edit-recipes
+```
+
+Or just tell Claude Code: *"Install the skill from https://github.com/ducloc99/ai-video-edit-recipes following INSTALL.md"*. Full steps, requirements and the manual install are in [INSTALL.md](INSTALL.md).
+
+Then open a folder with your clips or photos and say what you want, e.g. *"Turn these clips into a 15-second ad, giant word behind the product, music only."* The skill picks the closest recipe, prepares your footage, builds the edit, checks its own frames and renders an MP4. How it works: [skills/edit-agent/SKILL.md](skills/edit-agent/SKILL.md).
+
+## The gallery
 
 | Section | What you'll find |
 |---|---|
@@ -16,14 +31,9 @@ Short videos edited by an AI agent (Claude Code), each with the prompt that made
 
 Every recipe lives in [`recipes/<id>/`](recipes/): a README with the prompt and, where available, `source/` — a [HyperFrames](https://hyperframes.heygen.com) project (HTML + GSAP rendered to MP4).
 
-## How to make one yourself
+## Using a recipe by hand
 
-1. Install [Claude Code](https://claude.com/claude-code), [Node.js 22+](https://nodejs.org) and [ffmpeg](https://ffmpeg.org).
-2. Open a folder with your footage or photos in Claude Code.
-3. Paste a prompt from the gallery and change the names, text and length to yours.
-4. The agent builds a HyperFrames project, checks its own frames, and renders an MP4 (`npx hyperframes render`).
-
-To re-render a published project: copy `recipes/<id>/source/`, add the media listed in its `MEDIA.md`, then run `npx hyperframes render`.
+Paste a prompt from the gallery into Claude Code (with the skill installed) and change the names, text and length to yours. To re-render a published project: copy `recipes/<id>/source/`, add the media listed in its `MEDIA.md`, then run `npx hyperframes render`.
 
 ## What it costs
 

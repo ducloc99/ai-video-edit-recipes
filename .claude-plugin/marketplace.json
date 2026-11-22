@@ -1,0 +1,17 @@
+{
+  "name": "ai-video-edit-recipes",
+  "owner": {
+    "name": "Weekend Build"
+  },
+  "plugins": [
+    {
+      "name": "edit-agent",
+      "source": "./",
+      "description": "Claude edits your footage, photos or idea into finished short videos, using the AI Video Edit Recipes gallery as templates.",
+      "version": "1.0.0"
+    }
+  ],
+  "metadata": {
+    "description": "Claude Edit Agent: a skill that edits your footage, photos or idea into finished short videos, with a gallery of recipes."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "edit-agent",
+  "description": "Claude edits your footage, photos or idea into finished short videos, using the AI Video Edit Recipes gallery as templates.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Weekend Build"
+  },
+  "repository": "https://github.com/ducloc99/ai-video-edit-recipes",
+  "license": "MIT",
+  "keywords": [
+    "video",
+    "editing",
+    "hyperframes",
+    "reels",
+    "motion-graphics"
+  ]
+}

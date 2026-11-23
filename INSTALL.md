@@ -15,7 +15,6 @@ In Claude Code, type:
 ```
 
 Then start a new session. The whole repo (skill, scripts and every recipe) is installed together.
-While the repo is private, your machine must be signed in to a GitHub account that has access (`gh auth login`).
 
 ## Option B: by hand (what Claude does when you ask it to install)
 
